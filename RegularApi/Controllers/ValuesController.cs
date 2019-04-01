@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Controllers
 {
@@ -10,10 +8,15 @@ namespace RegularApi.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<IEnumerable<string>> Get([FromServices] IRabbitMqTemplate rabbitTemplate)
         {
+            rabbitTemplate.SendMessage(exchange: "regular-deployer-exchange",
+                queue: "com.dorefactor.deploy.command", 
+                message: "hola mundo!");
+
             return new string[] { "value1", "value2" };
         }
 
