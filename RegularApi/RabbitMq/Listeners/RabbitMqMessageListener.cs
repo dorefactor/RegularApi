@@ -5,18 +5,23 @@ using RabbitMQ.Client.Events;
 
 namespace RegularApi.RabbitMq.Listeners
 {
-    public abstract class RabbitMqMessageListener
+    public abstract class RabbitMqMessageListener : IMessageListener
     {
         private readonly ILogger _logger;
         
-        public string ConsumerTag { get; set; }
+        protected string ConsumerTag;
 
         protected RabbitMqMessageListener(ILogger<RabbitMqMessageListener> logger)
         {
             _logger = logger;
         }
 
-        protected abstract void OnMessage(string message);
+        public abstract void OnMessage(string message);
+
+        public string GetConsumerTag()
+        {
+            return ConsumerTag;
+        }
         
         protected string AddQueueListener(IModel channel, string queue)
         {
@@ -35,7 +40,7 @@ namespace RegularApi.RabbitMq.Listeners
             return channel.BasicConsume(queue, false, consumer);            
         }     
         
-        protected IModel CreateConnection(IConnectionFactory connectionFactory)
+        protected static IModel CreateConnection(IConnectionFactory connectionFactory)
         {
             var connection = connectionFactory.CreateConnection();
             return connection.CreateModel();

@@ -7,6 +7,8 @@ namespace RegularApi.RabbitMq.Listeners
     {
         private readonly ILogger _logger;
         private readonly IModel _channel;
+        public string LastReceivedMessage { get; set; }
+        
         
         public RabbiMqCommandQueueListener(IConnectionFactory connectionFactory, string queue, ILogger<RabbiMqCommandQueueListener> logger) : base(logger)
         {
@@ -15,8 +17,9 @@ namespace RegularApi.RabbitMq.Listeners
             ConsumerTag = AddQueueListener(_channel, queue);
         }
 
-        protected override void OnMessage(string message)
+        public override void OnMessage(string message)
         {
+            LastReceivedMessage = message;
             _logger.LogInformation("message received: {0}", message);
         }
     }

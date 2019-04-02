@@ -31,7 +31,7 @@ namespace RegularApi.Configurations
             var exchange = configuration["RabbitMq:Exchange"];
             var queue = configuration["RabbitMq:CommandQueue"];
 
-            services.AddSingleton<IRabbitMqTemplate>(new RabbitMqTemplate(connectionFactory, queue, exchange, logger));
+            services.AddSingleton<IRabbitMqTemplate>(new RabbitMqTemplate(connectionFactory, exchange, queue, logger));
         }
 
         public static void AddCommandQueueListener(IServiceCollection services, IConfiguration configuration,
