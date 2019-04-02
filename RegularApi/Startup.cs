@@ -1,30 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using RegularApi.Configurations;
+using RegularApi.RabbitMq.Listeners;
+using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+
+        private readonly ILoggerFactory _loggerFactory;
+
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             Configuration = configuration;
+            _loggerFactory = loggerFactory;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // RabbitMQ services
+            RabbitMqServiceConfig.AddConnectionFactory(services, Configuration);
+            RabbitMqServiceConfig.AddRabbitMqTemplate(services, Configuration, _loggerFactory.CreateLogger<RabbitMqTemplate>());
+            RabbitMqServiceConfig.AddCommandQueueListener(services, Configuration, _loggerFactory.CreateLogger<RabbiMqCommandQueueListener>());
+                        
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Controllers
 {
@@ -10,6 +8,7 @@ namespace RegularApi.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
