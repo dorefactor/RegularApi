@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client;
+using Microsoft.Extensions.Logging;
+using RegularApi.Configurations;
 using RegularApi.RabbitMq.Listeners;
 using RegularApi.RabbitMq.Templates;
 
@@ -14,27 +14,22 @@ namespace RegularApi
     {
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        private readonly ILoggerFactory _loggerFactory;
+
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             Configuration = configuration;
+            _loggerFactory = loggerFactory;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IConnectionFactory>(option => new ConnectionFactory()
-            {
-                HostName = Configuration["RABBIT_HOST"],
-                UserName = Configuration["RABBIT_USER"],
-                Password = Configuration["RABBIT_PASSWORD"],
-                AutomaticRecoveryEnabled = true,
-                NetworkRecoveryInterval = TimeSpan.FromSeconds(5)
-            });
-
-            services.AddSingleton<IRabbitMqMessageListener, RabbiMqCommandQueueListener>();
-
-            services.AddSingleton<IRabbitMqTemplate, RabbitMqTemplate>();
-            
+            // RabbitMQ services
+            RabbitMqServiceConfig.AddConnectionFactory(services, Configuration);
+            RabbitMqServiceConfig.AddRabbitMqTemplate(services, Configuration, _loggerFactory.CreateLogger<RabbitMqTemplate>());
+            RabbitMqServiceConfig.AddCommandQueueListener(services, Configuration, _loggerFactory.CreateLogger<RabbiMqCommandQueueListener>());
+                        
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

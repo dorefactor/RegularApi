@@ -1,19 +1,21 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace RegularApi.RabbitMq.Listeners
 {
-    public class RabbiMqCommandQueueListener : IRabbitMqMessageListener
+    public class RabbiMqCommandQueueListener : RabbitMqMessageListener
     {
         private readonly ILogger _logger;
+        private readonly IModel _channel;
         
-        public RabbiMqCommandQueueListener(ILogger<RabbiMqCommandQueueListener> logger) 
+        public RabbiMqCommandQueueListener(IConnectionFactory connectionFactory, string queue, ILogger<RabbiMqCommandQueueListener> logger) : base(logger)
         {
             _logger = logger;
+            _channel = CreateConnection(connectionFactory); 
+            ConsumerTag = AddQueueListener(_channel, queue);
         }
 
-        public void OnMessage(string message)
+        protected override void OnMessage(string message)
         {
             _logger.LogInformation("message received: {0}", message);
         }

@@ -11,12 +11,8 @@ namespace RegularApi.Controllers
         
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get([FromServices] IRabbitMqTemplate rabbitTemplate)
+        public ActionResult<IEnumerable<string>> Get()
         {
-            rabbitTemplate.SendMessage(exchange: "regular-deployer-exchange",
-                queue: "com.dorefactor.deploy.command", 
-                message: "hola mundo!");
-
             return new string[] { "value1", "value2" };
         }
 

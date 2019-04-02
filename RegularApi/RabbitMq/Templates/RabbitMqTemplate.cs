@@ -10,35 +10,31 @@ namespace RegularApi.RabbitMq.Templates
 {
     public class RabbitMqTemplate : IRabbitMqTemplate
     {
-        public string ConsumerTag { get; }
-
         private readonly ILogger<RabbitMqTemplate> _logger;
         private readonly IModel _channel;
+        private readonly string _exchange;
+        private readonly string _queue;
 
-        private readonly IRabbitMqMessageListener _messageListener;
+//        private readonly IRabbitMqMessageListener _messageListener;
 
-        public RabbitMqTemplate(IConnectionFactory connectionFactory, 
-            IConfiguration configuration, 
-            IRabbitMqMessageListener messageListener,
-            ILogger<RabbitMqTemplate> logger)
+        public RabbitMqTemplate(IConnectionFactory connectionFactory, string exchange, string queue, ILogger<RabbitMqTemplate> logger)
         {
-           _channel = CreateConnection(connectionFactory, configuration["RabbitMq:Exchange"], configuration["RabbitMq:CommandQueue"]);
-           ConsumerTag = AddQueueListener(_channel, configuration["RabbitMq:CommandQueue"]);
-           _messageListener = messageListener;
-           _logger = logger;
+            _exchange = exchange;
+            _queue = queue;
+            _logger = logger;
+            _channel = CreateConnection(connectionFactory, exchange, queue);
         }
 
-        public void SendMessage(string exchange, string queue, string message)
+        public void SendMessage(string message)
         {
-            _logger.LogInformation("send message: {0} to exchange: {1} and route: {2}", message, exchange, queue);
+            _logger.LogInformation("send message: {0} to exchange: {1} and route: {2}", message, _exchange, _queue);
 
             var body = Encoding.UTF8.GetBytes(message);
 
-            _channel.BasicPublish(exchange:exchange,
-                routingKey: queue, body: body);
+            _channel.BasicPublish(_exchange,_queue, body: body);
         }
 
-        private IModel CreateConnection(IConnectionFactory connectionFactory, string exchange, string queue)
+        private static IModel CreateConnection(IConnectionFactory connectionFactory, string exchange, string queue)
         {
             var connection = connectionFactory.CreateConnection();
             var channel = connection.CreateModel();
@@ -47,28 +43,11 @@ namespace RegularApi.RabbitMq.Templates
             return channel;
         }
 
-        private void ResourceDeclare(IModel channel, string exchange, string queue)
+        private static void ResourceDeclare(IModel channel, string exchange, string queue)
         {
-            channel.ExchangeDeclare(exchange: exchange, type: "direct", durable: true, autoDelete: false);
-            channel.QueueDeclare(queue: queue, durable: true, exclusive: false, autoDelete: false);
-            channel.QueueBind(queue: queue, exchange: exchange, routingKey: queue);
+            channel.ExchangeDeclare(exchange, "direct", true);
+            channel.QueueDeclare(queue, true,  false,  false);
+            channel.QueueBind(queue, exchange, queue);
         }
-
-        private string AddQueueListener(IModel channel, string queue)
-        {
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += (ch, ea) =>
-                            {
-                                var body = Encoding.UTF8.GetString(ea.Body);
-                                _logger.LogInformation("message received from queue: {0}", queue);
-
-                                // do something
-                                _messageListener.OnMessage(body);
-
-                                channel.BasicAck(ea.DeliveryTag, false);
-                            };
-                            
-            return channel.BasicConsume(queue, false, consumer);            
-        }     
     }
 }

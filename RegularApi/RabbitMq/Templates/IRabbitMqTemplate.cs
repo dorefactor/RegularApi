@@ -2,6 +2,6 @@
 {
     public interface IRabbitMqTemplate
     {
-        void SendMessage(string exchange, string queue, string message);
+        void SendMessage(string message);
     }
 }
