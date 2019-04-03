@@ -1,6 +1,6 @@
 using System.Threading;
 using NUnit.Framework;
-using RegularApi.RabbitMq.Listeners;
+using RegularApi.RabbitMq.Listener;
 using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Tests.RabbitMq.Listeners

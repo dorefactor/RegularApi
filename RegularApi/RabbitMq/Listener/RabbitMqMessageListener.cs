@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace RegularApi.RabbitMq.Listeners
+namespace RegularApi.RabbitMq.Listener
 {
     public abstract class RabbitMqMessageListener : IMessageListener
     {

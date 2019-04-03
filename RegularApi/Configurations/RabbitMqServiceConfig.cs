@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Logging;
-using RegularApi.RabbitMq.Listeners;
+using RegularApi.RabbitMq.Listener;
 using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Configurations

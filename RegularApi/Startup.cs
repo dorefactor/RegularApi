@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RegularApi.Configurations;
-using RegularApi.RabbitMq.Listeners;
+using RegularApi.RabbitMq.Listener;
 using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi
@@ -29,7 +29,10 @@ namespace RegularApi
             RabbitMqServiceConfig.AddConnectionFactory(services, Configuration);
             RabbitMqServiceConfig.AddRabbitMqTemplate(services, Configuration, _loggerFactory.CreateLogger<RabbitMqTemplate>());
             RabbitMqServiceConfig.AddCommandQueueListener(services, Configuration, _loggerFactory.CreateLogger<RabbiMqCommandQueueListener>());
-                        
+            
+            // MongoDb services
+            MongoServiceConfig.AddMongoClient(services, Configuration);
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
-namespace RegularApi.RabbitMq.Listeners
+namespace RegularApi.RabbitMq.Listener
 {
     public class RabbiMqCommandQueueListener : RabbitMqMessageListener
     {

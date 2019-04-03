@@ -1,4 +1,4 @@
-namespace RegularApi.RabbitMq.Listeners
+namespace RegularApi.RabbitMq.Listener
 {
     public interface IMessageListener
     {
