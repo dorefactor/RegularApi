@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using RegularApi.Dao;
 
 namespace RegularApi.Configurations
 {
@@ -17,6 +18,15 @@ namespace RegularApi.Configurations
             };
 
             services.AddSingleton<IMongoClient>(new MongoClient(settings));
+        }
+
+        public static void AddDaos(IServiceCollection services, IConfiguration configuration)
+        {
+            var provider = services.BuildServiceProvider();
+
+            var mongoClient = (IMongoClient) provider.GetService(typeof(IMongoClient));
+
+            services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient));
         }
     }
 }

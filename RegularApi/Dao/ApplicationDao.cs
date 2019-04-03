@@ -15,11 +15,11 @@ namespace RegularApi.Dao
         
         public IList<Application> GetApplications()
         {
-            var database = _mongoClient.GetDatabase("regular-deployer");
+            var database = _mongoClient.GetDatabase("regularOrchestrator");
 
             var collection = database.GetCollection<Application>("applications");
 
-            return collection.Find(FilterDefinition<Application>.Empty).ToList();
+            return collection.Find(FilterDefinition<Application>.Empty).ToList().
         }
 
         public Application GetApplicationByName(string name)
