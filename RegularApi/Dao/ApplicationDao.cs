@@ -19,7 +19,7 @@ namespace RegularApi.Dao
 
             var collection = database.GetCollection<Application>("applications");
 
-            return collection.Find(FilterDefinition<Application>.Empty).ToList().
+            return collection.Find(FilterDefinition<Application>.Empty).ToList();
         }
 
         public Application GetApplicationByName(string name)
