@@ -15,8 +15,6 @@ namespace RegularApi.RabbitMq.Templates
         private readonly string _exchange;
         private readonly string _queue;
 
-//        private readonly IRabbitMqMessageListener _messageListener;
-
         public RabbitMqTemplate(IConnectionFactory connectionFactory, string exchange, string queue, ILogger<RabbitMqTemplate> logger)
         {
             _exchange = exchange;

@@ -32,7 +32,7 @@ namespace RegularApi.Tests
                 .Build();
         }
 
-        private IWebHostBuilder CreateHostBuilder()
+        private static IWebHostBuilder CreateHostBuilder()
         {
             AddEnvironmentVariables();
 
