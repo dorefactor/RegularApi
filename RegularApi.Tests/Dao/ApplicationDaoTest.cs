@@ -12,13 +12,15 @@ namespace RegularApi.Tests.Dao
         }
 
         [Test]
-        public void test()
+        public void TestGetApplications()
         {
             var dao = (IApplicationDao) ServiceProvider.GetService(typeof(IApplicationDao));
             
             Assert.NotNull(dao);
 
             var apps = dao.GetApplications();
+            
+            Assert.NotNull(apps);
         }
     }
 }
