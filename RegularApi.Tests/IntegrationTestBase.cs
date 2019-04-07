@@ -32,7 +32,7 @@ namespace RegularApi.Tests
                 .Build();
         }
 
-        private IWebHostBuilder CreateHostBuilder()
+        private static IWebHostBuilder CreateHostBuilder()
         {
             AddEnvironmentVariables();
 
@@ -48,6 +48,10 @@ namespace RegularApi.Tests
             Environment.SetEnvironmentVariable("RABBIT_HOST", "rabbitmq-host");
             Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
             Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
+            
+            Environment.SetEnvironmentVariable("MONGO_DATABASE", "regularOrchestrator");
+            Environment.SetEnvironmentVariable("MONGO_USER", "root");
+            Environment.SetEnvironmentVariable("MONGO_PASSWORD", "r00t");
         }
 
         private static IDictionary<string, string> AddInMemorySettings()
@@ -55,7 +59,9 @@ namespace RegularApi.Tests
             return new Dictionary<string, string>
             {
                 { "RabbitMq:Exchange", "regular-deployer-exchange" },
-                { "RabbitMq:CommandQueue", "com.dorefactor.deploy.command" }
+                { "RabbitMq:CommandQueue", "com.dorefactor.deploy.command" },
+                { "MongoDb:Server", "mongodb-host" },
+                { "MongoDb:Database", "regularOrchestrator" }
             };
         }
     }

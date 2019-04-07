@@ -1,7 +1,5 @@
-using System.Threading;
 using NUnit.Framework;
-using RegularApi.RabbitMq.Listeners;
-using RegularApi.RabbitMq.Templates;
+using RegularApi.RabbitMq.Listener;
 
 namespace RegularApi.Tests.RabbitMq.Listeners
 {
@@ -16,19 +14,10 @@ namespace RegularApi.Tests.RabbitMq.Listeners
         [Test]
         public void TestCommandListener()
         {
-            var rabbitTemplate = (IRabbitMqTemplate) ServiceProvider.GetService(typeof(IRabbitMqTemplate));
-
             var commandListener = (RabbiMqCommandQueueListener) ServiceProvider.GetService(typeof(RabbitMqMessageListener));
 
             Assert.NotNull(commandListener);
             Assert.IsNotEmpty(commandListener.GetConsumerTag());
-
-            const string message = "something in the wire";
-            rabbitTemplate.SendMessage(message);
-            
-            Thread.Sleep(500);
-            
-            Assert.AreEqual(message, commandListener.LastReceivedMessage);
         }
     }
 }

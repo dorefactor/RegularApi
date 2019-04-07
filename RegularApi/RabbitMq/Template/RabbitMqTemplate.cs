@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using RegularApi.RabbitMq.Listeners;
+using RegularApi.RabbitMq.Listener;
 
 namespace RegularApi.RabbitMq.Templates
 {
@@ -14,8 +14,6 @@ namespace RegularApi.RabbitMq.Templates
         private readonly IModel _channel;
         private readonly string _exchange;
         private readonly string _queue;
-
-//        private readonly IRabbitMqMessageListener _messageListener;
 
         public RabbitMqTemplate(IConnectionFactory connectionFactory, string exchange, string queue, ILogger<RabbitMqTemplate> logger)
         {
