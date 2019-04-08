@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RegularApi.Controllers.Deployment.Views;
+using RegularApi.Controllers.Validators;
 
 namespace RegularApi.Controllers.Deployment.Validators
 {
@@ -20,7 +21,7 @@ namespace RegularApi.Controllers.Deployment.Validators
                 errors.Add("Name is required");
             
             if (String.IsNullOrEmpty(request.Tag))
-                errors.Add("Ta is required");
+                errors.Add("Tag is required");
 
             return errors;
         }

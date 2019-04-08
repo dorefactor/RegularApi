@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace RegularApi.Controllers.Deployment.Validators
+namespace RegularApi.Controllers.Validators
 {
     public interface IRequestValidator<T>
     {
