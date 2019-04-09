@@ -7,16 +7,16 @@ namespace RegularApi.Controllers.Deployment
 {
     [ApiController]
     [Route("/[controller]")]
-    public class DeploymentsController : AbstractController
+    public class DeploymentController : AbstractController
     {
         private readonly DeploymentRequestValidator _deploymentRequestValidator;
-        private readonly ILogger<DeploymentsController> _logger;
+        private readonly ILogger<DeploymentController> _logger;
 
-        public DeploymentsController(DeploymentRequestValidator deploymentRequestValidator, 
+        public DeploymentController(DeploymentRequestValidator deploymentRequestValidator, 
             ILoggerFactory loggerFactory)
         {
             _deploymentRequestValidator = deploymentRequestValidator;
-            _logger = loggerFactory.CreateLogger<DeploymentsController>();
+            _logger = loggerFactory.CreateLogger<DeploymentController>();
         }
         
         [HttpPost]
@@ -26,16 +26,9 @@ namespace RegularApi.Controllers.Deployment
 
             if (!ModelState.IsValid)
             {
+                return BadRequest(ModelState.Values);
             }
-            
-            var errors = _deploymentRequestValidator.Validate(request);
 
-            if (errors.Count > 0)
-            {
-                var response = BuildErrorResponse(errors);
-                return BadRequest(response);
-            }
-                       
             return Ok();
         }
     }
