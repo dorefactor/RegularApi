@@ -9,6 +9,6 @@ namespace RegularApi.Controllers.Views
         public int Status { get; set; }
         public string TraceId { get; set; }
         public string Title { get; set; }
-        public IDictionary<string, IList<string>> Errors { get; set; }        
+        public IList<IDictionary<string, string>> Errors { get; set; }        
     }
 }

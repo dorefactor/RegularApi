@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RegularApi.Controllers.Deployment.Validators;
@@ -9,13 +10,10 @@ namespace RegularApi.Controllers.Deployment
     [Route("/[controller]")]
     public class DeploymentController : AbstractController
     {
-        private readonly DeploymentRequestValidator _deploymentRequestValidator;
         private readonly ILogger<DeploymentController> _logger;
 
-        public DeploymentController(DeploymentRequestValidator deploymentRequestValidator, 
-            ILoggerFactory loggerFactory)
+        public DeploymentController(ILoggerFactory loggerFactory)
         {
-            _deploymentRequestValidator = deploymentRequestValidator;
             _logger = loggerFactory.CreateLogger<DeploymentController>();
         }
         
@@ -26,7 +24,11 @@ namespace RegularApi.Controllers.Deployment
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState.Values);
+                var errors = from modelError in (from modelState in ModelState.Values
+                        select modelState.Errors).ToList()
+                    select modelError .ToList();                
+                
+                return BadRequest(errors);
             }
 
             return Ok();
