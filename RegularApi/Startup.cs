@@ -26,16 +26,13 @@ namespace RegularApi
         public void ConfigureServices(IServiceCollection services)
         {
             // RabbitMQ services
-            RabbitMqServiceConfig.AddConnectionFactory(services, Configuration);
-            RabbitMqServiceConfig.AddRabbitMqTemplate(services, Configuration, _loggerFactory.CreateLogger<RabbitMqTemplate>());
-            RabbitMqServiceConfig.AddCommandQueueListener(services, Configuration, _loggerFactory.CreateLogger<RabbiMqCommandQueueListener>());
+            // RabbitMqServiceConfig.AddConnectionFactory(services, Configuration);
+            // RabbitMqServiceConfig.AddRabbitMqTemplate(services, Configuration, _loggerFactory.CreateLogger<RabbitMqTemplate>());
+            // RabbitMqServiceConfig.AddCommandQueueListener(services, Configuration, _loggerFactory.CreateLogger<RabbiMqCommandQueueListener>());
             
             // MongoDb services
             MongoServiceConfig.AddMongoClient(services, Configuration);
             MongoServiceConfig.AddDaos(services, Configuration);
-            
-            // Controller validators
-            ValidatorServiceConfig.AddControllerValidators(services);
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

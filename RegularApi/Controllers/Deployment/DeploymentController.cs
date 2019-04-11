@@ -1,7 +1,5 @@
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RegularApi.Controllers.Deployment.Validators;
 using RegularApi.Controllers.Deployment.Views;
 
 namespace RegularApi.Controllers.Deployment
@@ -18,18 +16,9 @@ namespace RegularApi.Controllers.Deployment
         }
         
         [HttpPost]
-        public IActionResult NewDeployment([FromBody] ApplicationRequest request)
+        public IActionResult NewDeployment(ApplicationRequest request)
         {
             _logger.LogInformation("deployment request received: {0} - {1}", request.Name, request.Tag);
-
-            if (!ModelState.IsValid)
-            {
-                var errors = from modelError in (from modelState in ModelState.Values
-                        select modelState.Errors).ToList()
-                    select modelError .ToList();                
-                
-                return BadRequest(errors);
-            }
 
             return Ok();
         }
