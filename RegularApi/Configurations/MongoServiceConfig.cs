@@ -25,8 +25,9 @@ namespace RegularApi.Configurations
             var provider = services.BuildServiceProvider();
 
             var mongoClient = (IMongoClient) provider.GetService(typeof(IMongoClient));
+            var databaseName = configuration["MongoDb:Database"];
 
-            services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient));
+            services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient, databaseName, "applications"));
         }
     }
 }

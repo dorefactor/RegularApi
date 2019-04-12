@@ -34,6 +34,9 @@ namespace RegularApi
             MongoServiceConfig.AddMongoClient(services, Configuration);
             MongoServiceConfig.AddDaos(services, Configuration);
             
+            // Services
+            ServiceConfig.AddApplicationServices(services);
+            
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

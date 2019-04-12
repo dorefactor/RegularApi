@@ -27,7 +27,7 @@ namespace RegularApi.Tests.Controllers.Deployment
         {
             var applicationRequest = new ApplicationRequest();
 
-            var responseMessage = await performPostAsync<ApplicationRequest>(applicationRequest, DeploymentUri);
+            var responseMessage = await PerformPostAsync<ApplicationRequest>(applicationRequest, DeploymentUri);
 
             Assert.AreEqual(HttpStatusCode.BadRequest, responseMessage.StatusCode);            
         }
@@ -41,12 +41,12 @@ namespace RegularApi.Tests.Controllers.Deployment
                 Name = "SuperApplication"
             };
 
-            var responseMessage = await performPostAsync<ApplicationRequest>(applicationRequest, DeploymentUri);
+            var responseMessage = await PerformPostAsync(applicationRequest, DeploymentUri);
 
             Assert.AreEqual(HttpStatusCode.OK, responseMessage.StatusCode);
         }
 
-        private async Task<HttpResponseMessage> performPostAsync<T>(T request, string uri)
+        private async Task<HttpResponseMessage> PerformPostAsync<T>(T request, string uri)
         {
             var json = JsonConvert.SerializeObject(request);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
