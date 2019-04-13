@@ -46,7 +46,7 @@ namespace RegularApi.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError("Can't queue deployment request for app: {0} - ", appName, ex);
+                _logger.LogError(ex, "can't queue deployment request for app: {0}", appName);
                 return "Can't queue deployment request for app: " + appName;
             }
         }

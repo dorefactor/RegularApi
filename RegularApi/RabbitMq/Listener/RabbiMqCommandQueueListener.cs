@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
@@ -11,9 +10,9 @@ namespace RegularApi.RabbitMq.Listener
         public string LastReceivedMessage { get; set; }
         
         
-        public RabbiMqCommandQueueListener(IConnectionFactory connectionFactory, string queue, ILogger<RabbiMqCommandQueueListener> logger) : base(logger)
+        public RabbiMqCommandQueueListener(ILoggerFactory loggerFactory, IConnectionFactory connectionFactory, string queue) : base(loggerFactory)
         {
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<RabbiMqCommandQueueListener>();
             _channel = CreateConnection(connectionFactory); 
             ConsumerTag = AddQueueListener(_channel, queue);
         }

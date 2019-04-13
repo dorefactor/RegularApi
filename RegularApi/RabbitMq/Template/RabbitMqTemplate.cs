@@ -15,11 +15,11 @@ namespace RegularApi.RabbitMq.Templates
         private readonly string _exchange;
         private readonly string _queue;
 
-        public RabbitMqTemplate(IConnectionFactory connectionFactory, string exchange, string queue, ILogger<RabbitMqTemplate> logger)
+        public RabbitMqTemplate(ILoggerFactory loggerFactory, IConnectionFactory connectionFactory, string exchange, string queue)
         {
             _exchange = exchange;
             _queue = queue;
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger<RabbitMqTemplate>();
             _channel = CreateConnection(connectionFactory, exchange, queue);
         }
 
