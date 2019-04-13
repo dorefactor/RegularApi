@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using NUnit.Framework;
 using RegularApi.Dao;
@@ -79,7 +80,7 @@ namespace RegularApi.Tests.Dao
             return application;
         }
 
-        private async Task<long> DeleteApplication(string id)
+        private async Task<long> DeleteApplication(ObjectId id)
         {
             var collection = GetCollection<Application>("applications");
             var filter = new FilterDefinitionBuilder<Application>()

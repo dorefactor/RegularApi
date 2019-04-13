@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using LanguageExt;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using RegularApi.Dao;
@@ -101,7 +102,7 @@ namespace RegularApi.Tests.Services
             return new Application
             {
                 Description = "blah, blah",
-                Id = "13123123123",
+                Id = ObjectId.GenerateNewId(),
                 Name = AppName
             };
         }

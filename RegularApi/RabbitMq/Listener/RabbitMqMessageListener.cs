@@ -11,9 +11,9 @@ namespace RegularApi.RabbitMq.Listener
         
         protected string ConsumerTag;
 
-        protected RabbitMqMessageListener(ILogger<RabbitMqMessageListener> logger)
+        protected RabbitMqMessageListener(ILoggerFactory loggerFactory)
         {
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger(GetType());
         }
 
         public abstract void OnMessage(string message);
@@ -45,6 +45,5 @@ namespace RegularApi.RabbitMq.Listener
             var connection = connectionFactory.CreateConnection();
             return connection.CreateModel();
         }
-        
     }
 }
