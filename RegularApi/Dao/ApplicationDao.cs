@@ -8,10 +8,10 @@ namespace RegularApi.Dao
 {
     public class ApplicationDao : BaseDao, IApplicationDao
     {
-        public ApplicationDao(IMongoClient mongoClient, string databaseName, string collectionName): base(mongoClient, databaseName, collectionName)
+        public ApplicationDao(IMongoClient mongoClient, string databaseName, string collectionName) : base(mongoClient, databaseName, collectionName)
         {
         }
-        
+
         public async Task<IList<Application>> GetApplicationsAsync()
         {
             var collection = GetCollection<Application>();
@@ -27,6 +27,13 @@ namespace RegularApi.Dao
             var cursor = await collection.FindAsync(filter);
 
             return OfNullable(await cursor.FirstOrDefaultAsync());
+        }
+
+        public async Task<Option<Application>> SaveApplicationSetup(Application application)
+        {
+            var collection = GetCollection<Application>();
+            await collection.InsertOneAsync(application);
+            return OfNullable(application);
         }
     }
 }

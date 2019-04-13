@@ -25,18 +25,20 @@ namespace RegularApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+
             // RabbitMQ services
             // RabbitMqServiceConfig.AddConnectionFactory(services, Configuration);
             // RabbitMqServiceConfig.AddRabbitMqTemplate(services, Configuration, _loggerFactory.CreateLogger<RabbitMqTemplate>());
             // RabbitMqServiceConfig.AddCommandQueueListener(services, Configuration, _loggerFactory.CreateLogger<RabbiMqCommandQueueListener>());
-            
+
             // MongoDb services
             MongoServiceConfig.AddMongoClient(services, Configuration);
             MongoServiceConfig.AddDaos(services, Configuration);
-            
+
             // Services
             ServiceConfig.AddApplicationServices(services);
-            
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -53,6 +55,10 @@ namespace RegularApi
                 app.UseHsts();
             }
 
+            app.UseCors(builder =>
+                        {
+                            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                        });
             app.UseHttpsRedirection();
             app.UseMvc();
         }
