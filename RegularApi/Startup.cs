@@ -5,34 +5,32 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RegularApi.Configurations;
-using RegularApi.RabbitMq.Listener;
-using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
-        private readonly ILoggerFactory _loggerFactory;
-
-        public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            _loggerFactory = loggerFactory;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // RabbitMQ services
-            RabbitMqServiceConfig.AddConnectionFactory(services, Configuration);
-            RabbitMqServiceConfig.AddRabbitMqTemplate(services, Configuration, _loggerFactory.CreateLogger<RabbitMqTemplate>());
-            RabbitMqServiceConfig.AddCommandQueueListener(services, Configuration, _loggerFactory.CreateLogger<RabbiMqCommandQueueListener>());
+            RabbitMqServiceConfig.AddConnectionFactory(services);
+            RabbitMqServiceConfig.AddRabbitMqTemplate(services);
+            RabbitMqServiceConfig.AddCommandQueueListener(services);
             
             // MongoDb services
-            MongoServiceConfig.AddMongoClient(services, Configuration);
-            MongoServiceConfig.AddDaos(services, Configuration);
+            MongoServiceConfig.AddMongoClient(services);
+            MongoServiceConfig.AddDaos(services);
+            
+            // Services
+            ServiceConfig.AddApplicationServices(services);
             
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

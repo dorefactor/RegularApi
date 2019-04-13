@@ -7,8 +7,11 @@ namespace RegularApi.Configurations
 {
     public static class MongoServiceConfig
     {
-        public static void AddMongoClient(IServiceCollection services, IConfiguration configuration)
+        public static void AddMongoClient(IServiceCollection services)
         {
+            var provider = services.BuildServiceProvider();
+            var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
+
             var settings = new MongoClientSettings
             {
                 UseSsl = false,
@@ -20,13 +23,15 @@ namespace RegularApi.Configurations
             services.AddSingleton<IMongoClient>(new MongoClient(settings));
         }
 
-        public static void AddDaos(IServiceCollection services, IConfiguration configuration)
+        public static void AddDaos(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
+            var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
 
             var mongoClient = (IMongoClient) provider.GetService(typeof(IMongoClient));
+            var databaseName = configuration["MongoDb:Database"];
 
-            services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient));
+            services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient, databaseName, "applications"));
         }
     }
 }

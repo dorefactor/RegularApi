@@ -1,30 +1,32 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using LanguageExt;
 using MongoDB.Driver;
 using RegularApi.Dao.Model;
 
 namespace RegularApi.Dao
 {
-    public class ApplicationDao : IApplicationDao
+    public class ApplicationDao : BaseDao, IApplicationDao
     {
-        private readonly IMongoClient _mongoClient;
-
-        public ApplicationDao(IMongoClient mongoClient)
+        public ApplicationDao(IMongoClient mongoClient, string databaseName, string collectionName): base(mongoClient, databaseName, collectionName)
         {
-            _mongoClient = mongoClient;
         }
         
-        public IList<Application> GetApplications()
+        public async Task<IList<Application>> GetApplicationsAsync()
         {
-            var database = _mongoClient.GetDatabase("regularOrchestrator");
+            var collection = GetCollection<Application>();
+            var cursor = await collection.FindAsync(FilterDefinition<Application>.Empty);
 
-            var collection = database.GetCollection<Application>("applications");
-
-            return collection.Find(FilterDefinition<Application>.Empty).ToList();
+            return await cursor.ToListAsync();
         }
 
-        public Application GetApplicationByName(string name)
+        public async Task<Option<Application>> GetApplicationByNameAsync(string name)
         {
-            throw new System.NotImplementedException();
+            var collection = GetCollection<Application>();
+            var filter = new FilterDefinitionBuilder<Application>().Where(app => name.Equals(app.Name));
+            var cursor = await collection.FindAsync(filter);
+
+            return OfNullable(await cursor.FirstOrDefaultAsync());
         }
     }
 }

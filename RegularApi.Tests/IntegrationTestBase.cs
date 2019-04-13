@@ -45,7 +45,6 @@ namespace RegularApi.Tests
 
         private static void AddEnvironmentVariables()
         {
-            Environment.SetEnvironmentVariable("RABBIT_HOST", "rabbitmq-host");
             Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
             Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
             
@@ -58,6 +57,7 @@ namespace RegularApi.Tests
         {
             return new Dictionary<string, string>
             {
+                { "RabbitMq:Server", "rabbitmq-host" },
                 { "RabbitMq:Exchange", "regular-deployer-exchange" },
                 { "RabbitMq:CommandQueue", "com.dorefactor.deploy.command" },
                 { "MongoDb:Server", "mongodb-host" },
