@@ -22,17 +22,17 @@ namespace RegularApi.Tests.Dao
             var dao = GetDao<IApplicationDao>();
             Assert.NotNull(dao);
         }
-        
+
         [Test]
         public async Task TestGetApplications()
         {
             var application = await CreateApplication("super-application-2k");
-            
+
             var dao = GetDao<IApplicationDao>();
             var apps = await dao.GetApplicationsAsync();
 
             await DeleteApplication(application.Id);
-            
+
             Assert.NotNull(apps);
 
             var expected = apps.First(app => application.Id.Equals(app.Id));
@@ -45,7 +45,7 @@ namespace RegularApi.Tests.Dao
         {
             var dao = GetDao<IApplicationDao>();
             var appHolder = await dao.GetApplicationByNameAsync("non-existing-app");
-            
+
             Assert.NotNull(appHolder);
             Assert.True(appHolder.IsNone);
         }
@@ -56,12 +56,12 @@ namespace RegularApi.Tests.Dao
             var appName = "aka-aka-app";
 
             var application = await CreateApplication(appName);
-            
+
             var dao = GetDao<IApplicationDao>();
             var appHolder = await dao.GetApplicationByNameAsync(appName);
 
             await DeleteApplication(application.Id);
-            
+
             Assert.NotNull(appHolder);
             var result = appHolder.Match(app => app, () => new Application());
             Assert.AreEqual(application.Id, result.Id);
@@ -71,8 +71,7 @@ namespace RegularApi.Tests.Dao
         {
             var application = new Application
             {
-                Name = name,
-                Description = "blah, blah, blah"
+                Name = name
             };
 
             var collection = GetCollection<Application>("applications");

@@ -97,8 +97,7 @@ namespace RegularApi.Tests.Controllers.Deployment
             
             var application = new Application
             {
-                Name = name,
-                Description = "blah, blah"
+                Name = name
             };
 
             await collection.InsertOneAsync(application);
