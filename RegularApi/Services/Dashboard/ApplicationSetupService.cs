@@ -26,7 +26,9 @@ namespace RegularApi.Services.Dashboard
                 return "Application setup can't be stored now, please try again";
             }
 
-            return await applicationHolder.ToEither();
+            var value = applicationHolder.AsEnumerable().First();
+
+            return value;
             
             // MatchAsync(
             //     Some: applicationSetup => applicationSetup
