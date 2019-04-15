@@ -26,10 +26,12 @@ namespace RegularApi.Services.Dashboard
                 return "Application setup can't be stored now, please try again";
             }
 
-            return await applicationHolder.MatchAsync(
-                Some: applicationSetup => applicationSetup,
-                None: null
-            );
+            return await applicationHolder.ToEither();
+            
+            // MatchAsync(
+            //     Some: applicationSetup => applicationSetup
+            //     // None: null
+            // );
         }
     }
 }
