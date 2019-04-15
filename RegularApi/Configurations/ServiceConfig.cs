@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
 using RegularApi.RabbitMq.Templates;
 using RegularApi.Services;
-using RegularApi.Services.Dashboard;
 
 namespace RegularApi.Configurations
 {

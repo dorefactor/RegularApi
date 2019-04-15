@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
 using RegularApi.Dao.Model;
 
-namespace RegularApi.Services.Dashboard
+namespace RegularApi.Services
 {
     public class ApplicationSetupService
     {
@@ -29,11 +29,6 @@ namespace RegularApi.Services.Dashboard
             var value = applicationHolder.AsEnumerable().First();
 
             return value;
-            
-            // MatchAsync(
-            //     Some: applicationSetup => applicationSetup
-            //     // None: null
-            // );
         }
     }
 }

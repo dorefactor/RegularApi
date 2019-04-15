@@ -5,7 +5,7 @@ namespace RegularApi.Controllers.Dashboard.Models
     public class HostResource
     {
         [JsonProperty(PropertyName = "Value1")]
-        public string HostIp { get; set; }
+        public string Ip { get; set; }
 
         [JsonProperty(PropertyName = "Value2")]
         public string Username { get; set; }

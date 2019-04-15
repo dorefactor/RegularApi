@@ -6,9 +6,9 @@ using Moq;
 using NUnit.Framework;
 using RegularApi.Dao;
 using RegularApi.Dao.Model;
-using RegularApi.Services.Dashboard;
+using RegularApi.Services;
 
-namespace RegularApi.Tests.Services.Dashboard
+namespace RegularApi.Tests.Services
 {
     public class ApplicationSetupServiceTest
     {
@@ -26,10 +26,7 @@ namespace RegularApi.Tests.Services.Dashboard
         [Test]
         public async Task TestSaveApplicationSetupAsync()
         {
-            var expectedApplication = new Application() {
-                Id = ObjectId.GenerateNewId(),
-                Name = "a"
-            };
+            var expectedApplication = new Application();
             _applicationDao.Setup(dao => dao.SaveApplicationSetup(expectedApplication))
                 .ReturnsAsync(Option<Application>.Some(expectedApplication));
 
@@ -37,7 +34,7 @@ namespace RegularApi.Tests.Services.Dashboard
 
             Assert.False(actualApplicationStored.IsLeft);
             Assert.True(actualApplicationStored.IsRight);
-            // Assert.AreEqual(actualApplicationStored, expectedApplication);
+            Assert.AreEqual(actualApplicationStored, expectedApplication);
 
             _applicationDao.Verify(dao => dao.SaveApplicationSetup(expectedApplication));
             _applicationDao.VerifyNoOtherCalls();

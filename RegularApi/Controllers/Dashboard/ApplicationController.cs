@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RegularApi.Controllers.Dashboard.Models;
 using RegularApi.Dao.Model;
-using RegularApi.Services.Dashboard;
+using RegularApi.Services;
 using RegularApi.Services.Domain;
 
 namespace RegularApi.Controllers.Dashboard
@@ -38,7 +38,7 @@ namespace RegularApi.Controllers.Dashboard
                 },
                 Hosts = applicationResource.HostResources.Select(hostsConfigurationResource => new Host()
                 {
-                    HostIp = hostsConfigurationResource.HostIp,
+                    Ip = hostsConfigurationResource.Ip,
                     Username = hostsConfigurationResource.Username,
                     Password = hostsConfigurationResource.Password
                 }).ToList()
@@ -48,7 +48,7 @@ namespace RegularApi.Controllers.Dashboard
             
             return resultHolder.Match<IActionResult>(
                 right => Ok(),
-                left => UnprocessableEntity(left)
+                left => UnprocessableEntity(BuildErrorResponse(left))
             );
         }
     }

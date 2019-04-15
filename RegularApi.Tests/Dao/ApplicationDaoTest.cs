@@ -86,7 +86,7 @@ namespace RegularApi.Tests.Dao
                 {
                     new Host()
                     {
-                        HostIp = "192.168.99.1",
+                        Ip = "192.168.99.1",
                         Username = "root",
                         Password = "r00t"
                     },
