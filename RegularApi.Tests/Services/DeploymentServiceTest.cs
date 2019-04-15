@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using FluentAssertions;
 using LanguageExt;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -9,7 +10,6 @@ using RegularApi.Dao;
 using RegularApi.Dao.Model;
 using RegularApi.RabbitMq.Templates;
 using RegularApi.Services;
-using RegularApi.Services.Domain;
 
 namespace RegularApi.Tests.Services
 {
@@ -40,10 +40,9 @@ namespace RegularApi.Tests.Services
             var result = await _deploymentService.QueueDeploymentRequestAsync(AppName, Tag);
 
             var expectedError = "No application found with name: " + AppName;
-            var error = result.Match(right => "", left => left);
-            
-            Assert.True(result.IsLeft);
-            Assert.AreEqual(expectedError, error);
+
+            result.IsLeft.Should().BeTrue();
+            result.LeftAsEnumerable().First().Should().Be(expectedError);
             
             _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
             _applicationDao.VerifyNoOtherCalls();
@@ -61,7 +60,11 @@ namespace RegularApi.Tests.Services
             
             var result = await _deploymentService.QueueDeploymentRequestAsync(AppName, Tag);
             
-            Assert.True(result.IsRight);
+            result.IsRight.Should().BeTrue();
+
+            var value = result.RightAsEnumerable().First();
+            value.Name.Should().Be(AppName);
+            value.Tag.Should().Be(Tag);
 
             _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
             _rabbitMqTemplate.Verify(template => template.SendMessage(It.IsAny<string>()));
@@ -85,8 +88,8 @@ namespace RegularApi.Tests.Services
             var expectedError = "Can't queue deployment request for app: " + AppName;
             var error = result.Match(right => "", left => left);
             
-            Assert.True(result.IsLeft);
-            Assert.AreEqual(expectedError, error);
+            result.IsLeft.Should().BeTrue();
+            result.LeftAsEnumerable().First().Should().Be(expectedError);
 
             _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
             _rabbitMqTemplate.Verify(template => template.SendMessage(It.IsAny<string>()));

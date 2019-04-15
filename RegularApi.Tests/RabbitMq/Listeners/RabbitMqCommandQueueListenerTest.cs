@@ -1,3 +1,4 @@
+using FluentAssertions;
 using NUnit.Framework;
 using RegularApi.RabbitMq.Listener;
 
@@ -16,8 +17,8 @@ namespace RegularApi.Tests.RabbitMq.Listeners
         {
             var commandListener = (RabbiMqCommandQueueListener) ServiceProvider.GetService(typeof(RabbitMqMessageListener));
 
-            Assert.NotNull(commandListener);
-            Assert.IsNotEmpty(commandListener.GetConsumerTag());
+            commandListener.Should().NotBeNull();
+            commandListener.GetConsumerTag().Should().NotBeNullOrEmpty();
         }
     }
 }

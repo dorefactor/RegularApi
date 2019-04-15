@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -30,7 +31,8 @@ namespace RegularApi.Tests.Controllers.Deployment
 
             var responseMessage = await PerformPostAsync(applicationRequest, DeploymentUri);
 
-            Assert.AreEqual(HttpStatusCode.BadRequest, responseMessage.StatusCode);            
+            responseMessage.Should().NotBeNull();
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Test]
@@ -41,8 +43,10 @@ namespace RegularApi.Tests.Controllers.Deployment
             var responseMessage = await PerformPostAsync(applicationRequest, DeploymentUri);
             var response = await GetResponse<ErrorResponse>(responseMessage);
 
-            Assert.AreEqual(HttpStatusCode.UnprocessableEntity, responseMessage.StatusCode);
-            Assert.AreEqual("No application found with name: " + applicationRequest.Name, response.Error);
+            responseMessage.Should().NotBeNull();
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+
+            response.Error.Should().Be("No application found with name: " + applicationRequest.Name);
         }
 
         [Test]
@@ -57,12 +61,12 @@ namespace RegularApi.Tests.Controllers.Deployment
 
             await DeleteApplication(application.Id);
             
-            Assert.AreEqual(HttpStatusCode.OK, responseMessage.StatusCode);
+            responseMessage.Should().NotBeNull();
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            Assert.NotNull(response.DeploymentId);
-            Assert.NotNull(response.Received);
-            Assert.AreEqual(applicationRequest.Name, response.Name);
-            Assert.AreEqual(applicationRequest.Tag, response.Tag);
+            response.DeploymentId.Should().NotBeNullOrEmpty();
+            response.Name.Should().Be(applicationRequest.Name);
+            response.Tag.Should().Be(applicationRequest.Tag);
         }
 
         // ------------------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using NUnit.Framework;
@@ -20,7 +21,8 @@ namespace RegularApi.Tests.Dao
         public void TestDaoIsLoaded()
         {
             var dao = GetDao<IApplicationDao>();
-            Assert.NotNull(dao);
+
+            dao.Should().NotBeNull();
         }
         
         [Test]
@@ -32,12 +34,10 @@ namespace RegularApi.Tests.Dao
             var apps = await dao.GetApplicationsAsync();
 
             await DeleteApplication(application.Id);
-            
-            Assert.NotNull(apps);
 
-            var expected = apps.First(app => application.Id.Equals(app.Id));
+            apps.Should().NotBeNull();            
 
-            Assert.NotNull(expected);
+            apps.Should().ContainEquivalentOf(application);
         }
 
         [Test]
@@ -46,8 +46,8 @@ namespace RegularApi.Tests.Dao
             var dao = GetDao<IApplicationDao>();
             var appHolder = await dao.GetApplicationByNameAsync("non-existing-app");
             
-            Assert.NotNull(appHolder);
-            Assert.True(appHolder.IsNone);
+            appHolder.Should<Application>().NotBeNull();
+            appHolder.IsNone.Should().BeTrue();
         }
 
         [Test]
@@ -62,10 +62,14 @@ namespace RegularApi.Tests.Dao
 
             await DeleteApplication(application.Id);
             
-            Assert.NotNull(appHolder);
-            var result = appHolder.Match(app => app, () => new Application());
-            Assert.AreEqual(application.Id, result.Id);
+            appHolder.Should<Application>().NotBeNull();
+            appHolder.IsSome.Should().BeTrue();
+
+            var result = appHolder.AsEnumerable().First();
+            result.Should().BeEquivalentTo(application);
         }
+
+        // ------------------------------------------------------------------------------------
 
         private async Task<Application> CreateApplication(string name)
         {
