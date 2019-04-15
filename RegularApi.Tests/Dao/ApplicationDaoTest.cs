@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -65,6 +66,45 @@ namespace RegularApi.Tests.Dao
             Assert.NotNull(appHolder);
             var result = appHolder.Match(app => app, () => new Application());
             Assert.AreEqual(application.Id, result.Id);
+        }
+
+        [Test]
+        public async Task TestSaveApplicationSetup()
+        {
+            var expectedApplication = new Application()
+            {
+                Name = "test-app",
+                DockerSetup = new DockerSetup()
+                {
+                    ImageName = "image-name",
+                    RegistryUrl = "registry-url",
+                    EnvironmentVariables = new[] { new KeyValuePair<object, object>("key", "value") },
+                    Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
+
+                },
+                Hosts = new Host[]
+                {
+                    new Host()
+                    {
+                        HostIp = "192.168.99.1",
+                        Username = "root",
+                        Password = "r00t"
+                    },
+                }
+            };
+
+            var applicationDao = GetDao<IApplicationDao>();
+            var applicationSetupHolder = await applicationDao.SaveApplicationSetup(expectedApplication);
+
+            await DeleteApplication(expectedApplication.Id);
+
+            Assert.NotNull(applicationSetupHolder);
+            var actualApplication = applicationSetupHolder.Match(applicationSetupCreated => applicationSetupCreated, () => new Application());
+
+            Assert.NotNull(actualApplication.Id);
+            Assert.AreEqual(actualApplication.Name, expectedApplication.Name);
+            Assert.AreEqual(actualApplication.DockerSetup, expectedApplication.DockerSetup);
+            Assert.AreEqual(actualApplication.Hosts, expectedApplication.Hosts);
         }
 
         private async Task<Application> CreateApplication(string name)
