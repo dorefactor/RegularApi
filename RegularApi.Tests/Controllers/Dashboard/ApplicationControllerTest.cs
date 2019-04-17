@@ -13,6 +13,7 @@ using RegularApi.Controllers.Dashboard.Models;
 using RegularApi.Controllers.Deployment.Views;
 using RegularApi.Controllers.Views;
 using RegularApi.Dao.Model;
+using RegularApi.TestServers.Tests;
 
 namespace RegularApi.Tests.Controllers.Deployment
 {
@@ -23,6 +24,9 @@ namespace RegularApi.Tests.Controllers.Deployment
         [SetUp]
         public void SetUp()
         {
+            MongoServerTest<Application> MongoServerTest = new MongoServerTest<Application>();
+            MongoServerTest.CreateConnection();
+
             CreateTestServer();
         }
 
@@ -33,19 +37,7 @@ namespace RegularApi.Tests.Controllers.Deployment
 
             var responseMessage = await PerformPostAsync(applicationRequest, APPLICATION_URI);
 
-            Assert.AreEqual(HttpStatusCode.BadRequest, responseMessage.StatusCode);            
-        }
-
-        [Test]
-        public async Task TestDeployNotExistingAppReturnError()
-        {
-            var applicationRequest = CreateApplicationRequest();
-
-            var responseMessage = await PerformPostAsync(applicationRequest, APPLICATION_URI);
-            var response = await GetResponse<ErrorResponse>(responseMessage);
-
-            Assert.AreEqual(HttpStatusCode.UnprocessableEntity, responseMessage.StatusCode);
-            Assert.AreEqual("No application found with name: " + applicationRequest.Name, response.Error);
+            Assert.AreEqual(HttpStatusCode.BadRequest, responseMessage.StatusCode);
         }
 
         [Test]
@@ -77,7 +69,7 @@ namespace RegularApi.Tests.Controllers.Deployment
             var response = await GetResponse<IActionResult>(responseMessage);
 
             // await DeleteApplication(applicationR.Id);
-            
+
             Assert.AreEqual(HttpStatusCode.OK, responseMessage.StatusCode);
 
             // Assert.NotNull(response.DeploymentId);
@@ -87,7 +79,7 @@ namespace RegularApi.Tests.Controllers.Deployment
         }
 
         // ------------------------------------------------------------------------------------------------
-        
+
         private async Task<HttpResponseMessage> PerformPostAsync<T>(T request, string uri)
         {
             var json = JsonConvert.SerializeObject(request);
@@ -102,47 +94,5 @@ namespace RegularApi.Tests.Controllers.Deployment
             var content = await responseMessage.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(content);
         }
-
-        private IMongoCollection<Application> GetApplicationCollection()
-        {
-            var client = (IMongoClient) ServiceProvider.GetService(typeof(IMongoClient));
-            var configuration = (IConfiguration) ServiceProvider.GetService(typeof(IConfiguration));
-
-            var databaseName = configuration["MongoDb:Database"];
-            var dataBase = client.GetDatabase(databaseName);
-            return dataBase.GetCollection<Application>("applications");            
-        }
-        private async Task<Application> CreateApplication(string name)
-        {
-            var collection = GetApplicationCollection();
-            
-            var application = new Application
-            {
-                Name = name
-            };
-
-            await collection.InsertOneAsync(application);
-
-            return application;
-        }
-
-        private async Task DeleteApplication(ObjectId id)
-        {
-            var collection = GetApplicationCollection();
-
-            var filter = new FilterDefinitionBuilder<Application>()
-                .Where(app => app.Id.Equals(id));
-            
-            await collection.DeleteOneAsync(filter);
-        }
-                
-        private static ApplicationRequest CreateApplicationRequest()
-        {
-            return new ApplicationRequest
-            {
-                Tag = "1.1.1",
-                Name = "SuperApplication"
-            };
-        }               
     }
 }
