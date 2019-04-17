@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Logging;
 using RegularApi.RabbitMq.Listener;
 using RegularApi.RabbitMq.Templates;
 
@@ -11,12 +10,12 @@ namespace RegularApi.Configurations
 {
     public static class RabbitMqServiceConfig
     {
-        public static void AddConnectionFactory(IServiceCollection services)
+        public static IServiceCollection AddConnectionFactory(this IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
             var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
 
-            services.AddSingleton<IConnectionFactory>(option => new ConnectionFactory
+            services.AddTransient<IConnectionFactory>(option => new ConnectionFactory
             {
                 HostName = configuration["RabbitMq:Server"],
                 UserName = configuration["RABBIT_USER"],
@@ -24,9 +23,11 @@ namespace RegularApi.Configurations
                 AutomaticRecoveryEnabled = true,
                 NetworkRecoveryInterval = TimeSpan.FromSeconds(5)
             });
+
+            return services;
         }
 
-        public static void AddRabbitMqTemplate(IServiceCollection services)
+        public static IServiceCollection AddRabbitMqTemplate(this IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
             var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
@@ -36,10 +37,12 @@ namespace RegularApi.Configurations
             var exchange = configuration["RabbitMq:Exchange"];
             var queue = configuration["RabbitMq:CommandQueue"];
 
-            services.AddSingleton<IRabbitMqTemplate>(new RabbitMqTemplate(loggerFactory, connectionFactory, exchange, queue));
+            services.AddTransient<IRabbitMqTemplate>(rabbitMqTemplate => new RabbitMqTemplate(loggerFactory, connectionFactory, exchange, queue));
+
+            return services;
         }
 
-        public static void AddCommandQueueListener(IServiceCollection services)
+        public static IServiceCollection AddCommandQueueListener(this IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
             var connectionFactory = (IConnectionFactory) provider.GetService(typeof(IConnectionFactory));
@@ -47,7 +50,9 @@ namespace RegularApi.Configurations
             var loggerFactory = (ILoggerFactory) provider.GetService(typeof(ILoggerFactory));
             var queue = configuration["RabbitMq:CommandQueue"];
 
-            services.AddSingleton<RabbitMqMessageListener>(new RabbiMqCommandQueueListener(loggerFactory, connectionFactory, queue));
+            services.AddTransient<RabbitMqMessageListener>(rabbiMqCommandQueueListener => new RabbiMqCommandQueueListener(loggerFactory, connectionFactory, queue));
+
+            return services;
         }
     }
 }

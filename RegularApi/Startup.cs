@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using RegularApi.Configurations;
 
 namespace RegularApi
@@ -23,16 +22,16 @@ namespace RegularApi
             services.AddCors();
 
             // RabbitMQ services
-            RabbitMqServiceConfig.AddConnectionFactory(services);
-            RabbitMqServiceConfig.AddRabbitMqTemplate(services);
-            RabbitMqServiceConfig.AddCommandQueueListener(services);
-            
+            services.AddConnectionFactory();
+            services.AddRabbitMqTemplate();
+            services.AddCommandQueueListener();
+
             // MongoDb services
-            MongoServiceConfig.AddMongoClient(services);
-            MongoServiceConfig.AddDaos(services);
+            services.AddMongoClient();
+            services.AddDaos();
             
             // Services
-            ServiceConfig.AddApplicationServices(services);
+            services.AddApplicationServices();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

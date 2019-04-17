@@ -7,7 +7,7 @@ namespace RegularApi.Configurations
 {
     public static class MongoServiceConfig
     {
-        public static void AddMongoClient(IServiceCollection services)
+        public static IServiceCollection AddMongoClient(this IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
             var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
@@ -20,10 +20,12 @@ namespace RegularApi.Configurations
                     configuration["MONGO_USER"], configuration["MONGO_PASSWORD"])
             };
             
-            services.AddSingleton<IMongoClient>(new MongoClient(settings));
+            services.AddTransient<IMongoClient>(mongoClient => new MongoClient(settings));
+
+            return services;
         }
 
-        public static void AddDaos(IServiceCollection services)
+        public static IServiceCollection AddDaos(this IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
             var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
@@ -31,7 +33,9 @@ namespace RegularApi.Configurations
             var mongoClient = (IMongoClient) provider.GetService(typeof(IMongoClient));
             var databaseName = configuration["MongoDb:Database"];
 
-            services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient, databaseName, "applications"));
+            services.AddTransient<IApplicationDao>(applicationDao => new ApplicationDao(mongoClient, databaseName, "applications"));
+
+            return services;
         }
     }
 }
