@@ -1,5 +1,4 @@
 using LanguageExt;
-using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
 namespace RegularApi.Dao
@@ -9,7 +8,7 @@ namespace RegularApi.Dao
         private readonly string _databaseName;
         private readonly string _collectionName;
         private readonly IMongoClient _mongoClient;
-        
+
         protected BaseDao(IMongoClient mongoClient, string databaseName, string collectionName)
         {
             _databaseName = databaseName;
@@ -24,19 +23,10 @@ namespace RegularApi.Dao
 
         protected IMongoCollection<T> GetCollection<T>()
         {
-            return GetCollection<T>(_collectionName);
-        }
-        
-        protected IMongoCollection<T> GetCollection<T>(string collectionName)
-        {
-            return GetDatabase().GetCollection<T>(collectionName);
-        }
-        
-        private IMongoDatabase GetDatabase()
-        {
-            return _mongoClient.GetDatabase(_databaseName);
-        }
+            var database = _mongoClient.GetDatabase(_databaseName);
+            var collection = database.GetCollection<T>(_collectionName);
 
-        
+            return collection;
+        }
     }
 }

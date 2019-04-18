@@ -7,35 +7,32 @@ namespace RegularApi.Configurations
 {
     public static class MongoServiceConfig
     {
-        public static IServiceCollection AddMongoClient(this IServiceCollection services)
+        public static void AddMongoClient(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
-            var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
+            var configuration = (IConfiguration)provider.GetService(typeof(IConfiguration));
 
             var settings = new MongoClientSettings
             {
                 UseSsl = false,
                 Server = MongoServerAddress.Parse(configuration["MongoDb:Server"]),
-                Credential = MongoCredential.CreateCredential(configuration["MongoDb:Database"], 
+                Credential = MongoCredential.CreateCredential(configuration["MongoDb:Database"],
                     configuration["MONGO_USER"], configuration["MONGO_PASSWORD"])
             };
-            
-            services.AddTransient<IMongoClient>(mongoClient => new MongoClient(settings));
 
-            return services;
+
+            services.AddTransient<IMongoClient>(mongoClient => new MongoClient(settings));
         }
 
-        public static IServiceCollection AddDaos(this IServiceCollection services)
+        public static void AddDaos(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
-            var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
+            var configuration = (IConfiguration)provider.GetService(typeof(IConfiguration));
 
-            var mongoClient = (IMongoClient) provider.GetService(typeof(IMongoClient));
+            var mongoClient = (IMongoClient)provider.GetService(typeof(IMongoClient));
             var databaseName = configuration["MongoDb:Database"];
 
             services.AddTransient<IApplicationDao>(applicationDao => new ApplicationDao(mongoClient, databaseName, "applications"));
-
-            return services;
         }
     }
 }

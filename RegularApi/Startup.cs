@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -7,9 +8,9 @@ using RegularApi.Configurations;
 
 namespace RegularApi
 {
-    public class Startup
+    public class Startup : IStartup
     {
-        private IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; set; }
 
         public Startup(IConfiguration configuration)
         {
@@ -17,28 +18,32 @@ namespace RegularApi
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public virtual IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
 
             // RabbitMQ services
-            services.AddConnectionFactory();
-            services.AddRabbitMqTemplate();
-            services.AddCommandQueueListener();
+            RabbitMqServiceConfig.AddConnectionFactory(services);
+            RabbitMqServiceConfig.AddRabbitMqTemplate(services);
+            RabbitMqServiceConfig.AddCommandQueueListener(services);
 
             // MongoDb services
-            services.AddMongoClient();
-            services.AddDaos();
+            MongoServiceConfig.AddMongoClient(services);
+            MongoServiceConfig.AddDaos(services);
             
             // Services
-            services.AddApplicationServices();
+            ServiceConfig.AddApplicationServices(services);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            return services.BuildServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
+            var env = app.ApplicationServices.GetService<IHostingEnvironment>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

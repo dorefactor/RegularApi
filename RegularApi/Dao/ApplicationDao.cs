@@ -31,8 +31,8 @@ namespace RegularApi.Dao
 
         public async Task<Option<Application>> SaveApplicationSetup(Application application)
         {
-            var collection = GetCollection<Application>();
-            await collection.InsertOneAsync(application);
+            await GetCollection<Application>().InsertOneAsync(application);
+
             return OfNullable(application);
         }
     }
