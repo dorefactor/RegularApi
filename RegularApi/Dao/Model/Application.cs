@@ -8,7 +8,6 @@ namespace RegularApi.Dao.Model
     public class Application
     {
         [BsonId(IdGenerator = typeof(ObjectIdGenerator))]
-        //[BsonRepresentation(BsonType.ObjectId)]
         public ObjectId Id { get; set; }
         public string Name { get; set; }
         public DockerSetup DockerSetup { get; set; }
