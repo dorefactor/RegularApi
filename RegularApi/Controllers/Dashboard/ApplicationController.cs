@@ -25,7 +25,20 @@ namespace RegularApi.Controllers.Dashboard
         public async Task<IActionResult> NewApplicationSetupAsync([FromBody] ApplicationResource applicationResource)
         {
             _logger.LogInformation("application setup request received: {0}", applicationResource);
-            var application = new Application
+
+            var application = TransformApplicationResourceToApplication(applicationResource);
+
+            var resultHolder = await _applicationSetupService.SaveApplicationSetupAsync(application);
+
+            return resultHolder.Match<IActionResult>(
+                right => Ok(),
+                left => UnprocessableEntity(BuildErrorResponse(left))
+            );
+        }
+
+        private Application TransformApplicationResourceToApplication(ApplicationResource applicationResource)
+        {
+            return new Application
             {
                 Name = applicationResource.Name,
                 DockerSetup = new DockerSetup
@@ -42,13 +55,6 @@ namespace RegularApi.Controllers.Dashboard
                     Password = hostsConfigurationResource.Password
                 }).ToList()
             };
-
-            var resultHolder = await _applicationSetupService.SaveApplicationSetupAsync(application);
-
-            return resultHolder.Match<IActionResult>(
-                right => Ok(),
-                left => UnprocessableEntity(BuildErrorResponse(left))
-            );
         }
     }
 }
