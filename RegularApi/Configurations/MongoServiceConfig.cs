@@ -10,28 +10,29 @@ namespace RegularApi.Configurations
         public static void AddMongoClient(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
-            var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
+            var configuration = (IConfiguration)provider.GetService(typeof(IConfiguration));
 
             var settings = new MongoClientSettings
             {
                 UseSsl = false,
                 Server = MongoServerAddress.Parse(configuration["MongoDb:Server"]),
-                Credential = MongoCredential.CreateCredential(configuration["MongoDb:Database"], 
-                    configuration["MONGO_USER"], configuration["MONGO_PASSWORD"])
+                Credential = MongoCredential.CreateCredential(configuration["MongoDb:Database"],
+                    configuration["MongoDb:User"], configuration["MongoDb:Password"])
             };
-            
-            services.AddSingleton<IMongoClient>(new MongoClient(settings));
+
+
+            services.AddTransient<IMongoClient>(mongoClient => new MongoClient(settings));
         }
 
         public static void AddDaos(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
-            var configuration = (IConfiguration) provider.GetService(typeof(IConfiguration));
+            var configuration = (IConfiguration)provider.GetService(typeof(IConfiguration));
 
-            var mongoClient = (IMongoClient) provider.GetService(typeof(IMongoClient));
+            var mongoClient = (IMongoClient)provider.GetService(typeof(IMongoClient));
             var databaseName = configuration["MongoDb:Database"];
 
-            services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient, databaseName, "applications"));
+            services.AddTransient<IApplicationDao>(applicationDao => new ApplicationDao(mongoClient, databaseName, "applications"));
         }
     }
 }

@@ -9,5 +9,6 @@ namespace RegularApi.Dao
     {
         Task<IList<Application>> GetApplicationsAsync();
         Task<Option<Application>> GetApplicationByNameAsync(string name);
+        Task<Option<Application>> SaveApplicationSetup(Application application);
     }
 }

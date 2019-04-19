@@ -7,14 +7,9 @@ namespace RegularApi.RabbitMq.Listener
 {
     public abstract class RabbitMqMessageListener : IMessageListener
     {
-        private readonly ILogger _logger;
-        
         protected string ConsumerTag;
 
-        protected RabbitMqMessageListener(ILoggerFactory loggerFactory)
-        {
-            _logger = loggerFactory.CreateLogger(GetType());
-        }
+        private readonly ILogger _logger;
 
         public abstract void OnMessage(string message);
 
@@ -22,7 +17,12 @@ namespace RegularApi.RabbitMq.Listener
         {
             return ConsumerTag;
         }
-        
+
+        protected RabbitMqMessageListener(ILoggerFactory loggerFactory)
+        {
+            _logger = loggerFactory.CreateLogger(GetType());
+        }
+
         protected string AddQueueListener(IModel channel, string queue)
         {
             var consumer = new EventingBasicConsumer(channel);

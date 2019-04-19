@@ -66,6 +66,5 @@ namespace RegularApi.Services
         {
             return Guid.NewGuid().ToString();
         }
-        
     }
 }
