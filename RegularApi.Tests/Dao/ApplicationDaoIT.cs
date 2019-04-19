@@ -73,7 +73,22 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestSaveApplicationSetup()
         {
-            var expectedApplication = new Application()
+            var expectedApplication = CreateApplication();
+
+            var applicationSetupHolder = await _applicationDao.SaveApplicationSetup(expectedApplication);
+
+            Assert.NotNull(applicationSetupHolder);
+
+            var actualApplication = _daoFixture.GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
+
+            Assert.NotNull(actualApplication.Id);
+
+            actualApplication.Should().BeEquivalentTo(expectedApplication);
+        }
+
+        private Application CreateApplication()
+        {
+            return new Application()
             {
                 Name = "test-app",
                 DockerSetup = new DockerSetup()
@@ -91,19 +106,9 @@ namespace RegularApi.Tests.Dao
                         Ip = "192.168.99.1",
                         Username = "root",
                         Password = "r00t"
-                    },
+                    }
                 }
             };
-
-            var applicationSetupHolder = await _applicationDao.SaveApplicationSetup(expectedApplication);
-
-            Assert.NotNull(applicationSetupHolder);
-
-            var actualApplication = _daoFixture.GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
-
-            Assert.NotNull(actualApplication.Id);
-
-            actualApplication.Should().BeEquivalentTo(expectedApplication);
         }
     }
 }
