@@ -1,10 +1,6 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
-using RegularApi.RabbitMq.Listener;
 
 namespace RegularApi.RabbitMq.Templates
 {
@@ -32,7 +28,7 @@ namespace RegularApi.RabbitMq.Templates
             _channel.BasicPublish(_exchange,_queue, body: body);
         }
 
-        private static IModel CreateConnection(IConnectionFactory connectionFactory, string exchange, string queue)
+        private IModel CreateConnection(IConnectionFactory connectionFactory, string exchange, string queue)
         {
             var connection = connectionFactory.CreateConnection();
             var channel = connection.CreateModel();
@@ -41,7 +37,7 @@ namespace RegularApi.RabbitMq.Templates
             return channel;
         }
 
-        private static void ResourceDeclare(IModel channel, string exchange, string queue)
+        private void ResourceDeclare(IModel channel, string exchange, string queue)
         {
             channel.ExchangeDeclare(exchange, "direct", true);
             channel.QueueDeclare(queue, true,  false,  false);

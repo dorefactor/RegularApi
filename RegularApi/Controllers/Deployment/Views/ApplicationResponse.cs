@@ -1,4 +1,3 @@
-
 using System;
 
 namespace RegularApi.Controllers.Deployment.Views

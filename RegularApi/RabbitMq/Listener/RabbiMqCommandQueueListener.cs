@@ -5,11 +5,11 @@ namespace RegularApi.RabbitMq.Listener
 {
     public class RabbiMqCommandQueueListener : RabbitMqMessageListener
     {
+        public string LastReceivedMessage { get; set; }
+
         private readonly ILogger _logger;
         private readonly IModel _channel;
-        public string LastReceivedMessage { get; set; }
-        
-        
+
         public RabbiMqCommandQueueListener(ILoggerFactory loggerFactory, IConnectionFactory connectionFactory, string queue) : base(loggerFactory)
         {
             _logger = loggerFactory.CreateLogger<RabbiMqCommandQueueListener>();

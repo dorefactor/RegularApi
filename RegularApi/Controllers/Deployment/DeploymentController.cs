@@ -19,7 +19,7 @@ namespace RegularApi.Controllers.Deployment
             _logger = loggerFactory.CreateLogger<DeploymentController>();
             _deploymentService = deploymentService;
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> NewDeploymentAsync(ApplicationRequest request)
         {
@@ -29,8 +29,7 @@ namespace RegularApi.Controllers.Deployment
 
             var action = result.Match<IActionResult>(
                 right => Ok(BuildResponse(right)),
-                left => UnprocessableEntity(BuildErrorResponse(left))
-                );
+                left => UnprocessableEntity(BuildErrorResponse(left)));
 
             return action;
         }
