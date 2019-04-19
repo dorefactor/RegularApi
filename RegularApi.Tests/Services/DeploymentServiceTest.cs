@@ -9,7 +9,6 @@ using RegularApi.Dao;
 using RegularApi.Dao.Model;
 using RegularApi.RabbitMq.Templates;
 using RegularApi.Services;
-using RegularApi.Services.Domain;
 
 namespace RegularApi.Tests.Services
 {
@@ -94,8 +93,6 @@ namespace RegularApi.Tests.Services
             _applicationDao.VerifyNoOtherCalls();
             _rabbitMqTemplate.VerifyNoOtherCalls();
         }
-
-        // ----------------------------------------------------------------------------------------------------
 
         private static Application BuildApplication()
         {
