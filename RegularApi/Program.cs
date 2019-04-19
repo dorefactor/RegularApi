@@ -14,6 +14,7 @@ namespace RegularApi
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureLogging(conf => { conf.AddConsole(); })
+                .UseUrls("http://*:5000")
                 .UseStartup<Startup>();
     }
 }

@@ -17,7 +17,7 @@ namespace RegularApi.Configurations
                 UseSsl = false,
                 Server = MongoServerAddress.Parse(configuration["MongoDb:Server"]),
                 Credential = MongoCredential.CreateCredential(configuration["MongoDb:Database"],
-                    configuration["MONGO_USER"], configuration["MONGO_PASSWORD"])
+                    configuration["MongoDb:User"], configuration["MongoDb:Password"])
             };
 
 

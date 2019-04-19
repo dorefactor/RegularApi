@@ -10,7 +10,7 @@ namespace RegularApi
 {
     public class Startup : IStartup
     {
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
@@ -40,7 +40,7 @@ namespace RegularApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public virtual void Configure(IApplicationBuilder app)
         {
             var env = app.ApplicationServices.GetService<IHostingEnvironment>();
 

@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using NUnit.Framework;
 using RegularApi.Dao;
 using RegularApi.Dao.Model;
@@ -14,59 +17,54 @@ namespace RegularApi.Tests.Dao
         public void SetUp()
         {
             CreateTestServer();
+            DropCollection("applications");
             _applicationDao = GetDao<IApplicationDao>();
         }
 
-        //[Test]
-        //public void TestDaoIsLoaded()
-        //{
-        //    var dao = GetDao<IApplicationDao>();
-        //    Assert.NotNull(dao);
-        //}
+        [TearDown]
+        public void TearDown()
+        {
+            MongoDbRunner.Dispose();
+        }
 
-        //[Test]
-        //public async Task TestGetApplications()
-        //{
-        //    var application = await CreateApplication("super-application-2k");
+        [Test]
+        public async Task TestGetApplications()
+        {
+            var application = await CreateApplication("super-application-2k");
 
-        //    var dao = GetDao<IApplicationDao>();
-        //    var apps = await dao.GetApplicationsAsync();
+            var apps = await _applicationDao.GetApplicationsAsync();
 
-        //    await DeleteApplication(application.Id);
+            Assert.NotNull(apps);
 
-        //    Assert.NotNull(apps);
+            var expected = apps.First(app => application.Id.Equals(app.Id));
 
-        //    var expected = apps.First(app => application.Id.Equals(app.Id));
+            Assert.NotNull(expected);
+        }
 
-        //    Assert.NotNull(expected);
-        //}
+        [Test]
+        public async Task TestGetNonExistingApplication()
+        {
+            var appHolder = await _applicationDao.GetApplicationByNameAsync("non-existing-app");
 
-        //[Test]
-        //public async Task TestGetNonExistingApplication()
-        //{
-        //    var dao = GetDao<IApplicationDao>();
-        //    var appHolder = await dao.GetApplicationByNameAsync("non-existing-app");
+            Assert.NotNull(appHolder);
+            Assert.True(appHolder.IsNone);
+        }
 
-        //    Assert.NotNull(appHolder);
-        //    Assert.True(appHolder.IsNone);
-        //}
+        [Test]
+        public async Task TestGetApplicationByName()
+        {
+            var appName = "aka-aka-app";
 
-        //[Test]
-        //public async Task TestGetApplicationByName()
-        //{
-        //    var appName = "aka-aka-app";
+            var application = await CreateApplication(appName);
 
-        //    var application = await CreateApplication(appName);
+            var appHolder = await _applicationDao.GetApplicationByNameAsync(appName);
 
-        //    var dao = GetDao<IApplicationDao>();
-        //    var appHolder = await dao.GetApplicationByNameAsync(appName);
+            Assert.NotNull(appHolder);
 
-        //    await DeleteApplication(application.Id);
+            var result = appHolder.AsEnumerable().First();
 
-        //    Assert.NotNull(appHolder);
-        //    var result = appHolder.Match(app => app, () => new Application());
-        //    Assert.AreEqual(application.Id, result.Id);
-        //}
+            Assert.AreEqual(application.Id, result.Id);
+        }
 
         [Test]
         public async Task TestSaveApplicationSetup()
@@ -97,35 +95,33 @@ namespace RegularApi.Tests.Dao
 
             Assert.NotNull(applicationSetupHolder);
 
-            var actualApplication = applicationSetupHolder.Match(applicationSetupCreated => applicationSetupCreated, () => new Application());
+            var actualApplication = GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
 
             Assert.NotNull(actualApplication.Id);
             Assert.AreEqual(actualApplication.Name, expectedApplication.Name);
-            Assert.AreEqual(actualApplication.DockerSetup, expectedApplication.DockerSetup);
-            Assert.AreEqual(actualApplication.Hosts, expectedApplication.Hosts);
+            //Assert.AreEqual(actualApplication.DockerSetup.ImageName, expectedApplication.DockerSetup.ImageName);
+            //Assert.AreEqual(actualApplication.Hosts, expectedApplication.Hosts);
         }
 
-        //private async Task<Application> CreateApplication(string name)
-        //{
-        //    var application = new Application
-        //    {
-        //        Name = name
-        //    };
+        private async Task<Application> CreateApplication(string name)
+        {
+            var application = new Application
+            {
+                Name = name
+            };
 
-        //    var collection = GetCollection<Application>("applications");
-        //    await collection.InsertOneAsync(application);
-        //    return application;
-        //}
+            var collection = GetCollection<Application>("applications");
+            await collection.InsertOneAsync(application);
 
-        //private async Task<long> DeleteApplication(ObjectId id)
-        //{
-        //    var collection = GetCollection<Application>("applications");
-        //    var filter = new FilterDefinitionBuilder<Application>()
-        //        .Where(app => id.Equals(app.Id));
+            return application;
+        }
 
-        //    var deleteResult = await collection.DeleteOneAsync(filter);
+        public async Task<Application> GetApplicationById(ObjectId id)
+        {
+            var collection = GetCollection<Application>("applications");
+            var cursor = await collection.FindAsync(application => application.Id.Equals(id));
 
-        //    return deleteResult.DeletedCount;
-        //}
+            return await cursor.FirstOrDefaultAsync();
+        }
     }
 }

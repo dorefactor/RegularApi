@@ -1,24 +1,29 @@
-using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
 namespace RegularApi.Tests.Dao
 {
-    public abstract class BaseDaoIT : WebHostI
+    public abstract class BaseDaoIT : BaseIT
     {
-        //protected IMongoCollection<T> GetCollection<T>(string name)
-        //{
-        //    var configuration = (IConfiguration) ServiceProvider.GetService(typeof(IConfiguration));
-        //    var mongoClient = (IMongoClient) ServiceProvider.GetService(typeof(IMongoClient));
+        private static string _mongoDatabaseName = "regularOrchestrator";
 
-        //    var databaseName = configuration["MongoDb:Database"];
-        //    var database = mongoClient.GetDatabase(databaseName);
+        protected void DropCollection(string name)
+        {
+            GetDatabase().DropCollection(name);
+        }
 
-        //    return database.GetCollection<T>(name);
-        //}
+        protected IMongoCollection<T> GetCollection<T>(string name)
+        {
+            return GetDatabase().GetCollection<T>(name);
+        }
 
         protected T GetDao<T>()
         {
-            return (T) ServiceProvider.GetService(typeof(T));
+            return (T)ServiceProvider.GetService(typeof(T));
+        }
+
+        private IMongoDatabase GetDatabase()
+        {
+            return MongoClient.GetDatabase(_mongoDatabaseName);
         }
     }
 }

@@ -13,9 +13,9 @@ using RegularApi.Dao.Model;
 
 namespace RegularApi.Tests.Controllers.Deployment
 {
-    public class DeploymentControllerTest : IntegrationTestBase
+    public class DeploymentControllerTest : BaseIT
     {
-        private const string DeploymentUri = "https://localhost:5001/deployment";
+        private const string DeploymentUri = "http://192.168.99.1:5000/deployment";
 
         [SetUp]
         public void SetUp()
@@ -55,8 +55,6 @@ namespace RegularApi.Tests.Controllers.Deployment
             var responseMessage = await PerformPostAsync(applicationRequest, DeploymentUri);
             var response = await GetResponse<ApplicationResponse>(responseMessage);
 
-            await DeleteApplication(application.Id);
-            
             Assert.AreEqual(HttpStatusCode.OK, responseMessage.StatusCode);
 
             Assert.NotNull(response.DeploymentId);

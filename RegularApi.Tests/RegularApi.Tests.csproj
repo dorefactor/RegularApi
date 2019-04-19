@@ -4,16 +4,17 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.10.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="nunit" Version="3.11.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.11.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Mongo2Go" Version="2.2.9" />
+    <PackageReference Include="Moq" Version="4.10.1"/>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1"/>
+    <PackageReference Include="nunit" Version="3.11.0"/>
+    <PackageReference Include="NUnit3TestAdapter" Version="3.11.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.App"/>
+    <PackageReference Include="Mongo2Go" Version="2.2.9"/>
+    <PackageReference Include="Microsoft.NETCore.TestHost" Version="2.0.8"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RegularApi\RegularApi.csproj" />
+    <ProjectReference Include="..\RegularApi\RegularApi.csproj"/>
   </ItemGroup>
 </Project>

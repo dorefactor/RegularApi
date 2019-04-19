@@ -45,11 +45,17 @@ namespace RegularApi.Controllers.Dashboard
             };
 
             var resultHolder = await _applicationSetupService.SaveApplicationSetupAsync(application);
-            
+
             return resultHolder.Match<IActionResult>(
                 right => Ok(),
                 left => UnprocessableEntity(BuildErrorResponse(left))
             );
+        }
+
+        [HttpGet]
+        public IActionResult GetSomething()
+        {
+            return Ok();
         }
     }
 }

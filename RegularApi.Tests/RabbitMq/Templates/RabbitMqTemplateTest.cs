@@ -3,9 +3,8 @@ using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Tests.RabbitMq.Templates
 {
-    public class RabbitMqTemplateTest : IntegrationTestBase
+    public class RabbitMqTemplateTest : BaseIT
     {
-
         [SetUp]
         public void SetUp()
         {
