@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using MongoDB.Driver;
 using NUnit.Framework;
 using RegularApi.Dao;
@@ -101,9 +102,8 @@ namespace RegularApi.Tests.Dao
             var actualApplication = _daoFixture.GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
 
             Assert.NotNull(actualApplication.Id);
-            Assert.AreEqual(actualApplication.Name, expectedApplication.Name);
-            //Assert.AreEqual(actualApplication.DockerSetup.ImageName, expectedApplication.DockerSetup.ImageName);
-            //Assert.AreEqual(actualApplication.Hosts, expectedApplication.Hosts);
+
+            actualApplication.Should().BeEquivalentTo(expectedApplication);
         }
     }
 }
