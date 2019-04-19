@@ -30,7 +30,7 @@ namespace RegularApi
             // MongoDb services
             MongoServiceConfig.AddMongoClient(services);
             MongoServiceConfig.AddDaos(services);
-            
+
             // Services
             ServiceConfig.AddApplicationServices(services);
 

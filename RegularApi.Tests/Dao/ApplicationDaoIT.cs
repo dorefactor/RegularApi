@@ -1,36 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using NUnit.Framework;
 using RegularApi.Dao;
 using RegularApi.Dao.Model;
+using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Dao
 {
     public class ApplicationDaoIT : BaseDaoIT
     {
         private IApplicationDao _applicationDao;
+        private IDaoFixture _daoFixture;
 
         [SetUp]
         public void SetUp()
         {
             CreateTestServer();
             DropCollection("applications");
+
             _applicationDao = GetDao<IApplicationDao>();
+            _daoFixture = (IDaoFixture)ServiceProvider.GetService(typeof(IDaoFixture));
         }
 
         [TearDown]
         public void TearDown()
         {
-            MongoDbRunner.Dispose();
+            ReleaseMongoDb();
         }
 
         [Test]
         public async Task TestGetApplications()
         {
-            var application = await CreateApplication("super-application-2k");
+            var application = await _daoFixture.CreateApplication("super-application-2k");
 
             var apps = await _applicationDao.GetApplicationsAsync();
 
@@ -55,7 +58,7 @@ namespace RegularApi.Tests.Dao
         {
             var appName = "aka-aka-app";
 
-            var application = await CreateApplication(appName);
+            var application = await _daoFixture.CreateApplication(appName);
 
             var appHolder = await _applicationDao.GetApplicationByNameAsync(appName);
 
@@ -95,33 +98,12 @@ namespace RegularApi.Tests.Dao
 
             Assert.NotNull(applicationSetupHolder);
 
-            var actualApplication = GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
+            var actualApplication = _daoFixture.GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
 
             Assert.NotNull(actualApplication.Id);
             Assert.AreEqual(actualApplication.Name, expectedApplication.Name);
             //Assert.AreEqual(actualApplication.DockerSetup.ImageName, expectedApplication.DockerSetup.ImageName);
             //Assert.AreEqual(actualApplication.Hosts, expectedApplication.Hosts);
-        }
-
-        private async Task<Application> CreateApplication(string name)
-        {
-            var application = new Application
-            {
-                Name = name
-            };
-
-            var collection = GetCollection<Application>("applications");
-            await collection.InsertOneAsync(application);
-
-            return application;
-        }
-
-        public async Task<Application> GetApplicationById(ObjectId id)
-        {
-            var collection = GetCollection<Application>("applications");
-            var cursor = await collection.FindAsync(application => application.Id.Equals(id));
-
-            return await cursor.FirstOrDefaultAsync();
         }
     }
 }

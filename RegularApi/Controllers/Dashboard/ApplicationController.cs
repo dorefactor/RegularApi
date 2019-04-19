@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using RegularApi.Controllers.Dashboard.Models;
 using RegularApi.Dao.Model;
 using RegularApi.Services;
-using RegularApi.Services.Domain;
 
 namespace RegularApi.Controllers.Dashboard
 {
@@ -50,12 +49,6 @@ namespace RegularApi.Controllers.Dashboard
                 right => Ok(),
                 left => UnprocessableEntity(BuildErrorResponse(left))
             );
-        }
-
-        [HttpGet]
-        public IActionResult GetSomething()
-        {
-            return Ok();
         }
     }
 }
