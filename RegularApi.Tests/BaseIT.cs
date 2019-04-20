@@ -58,8 +58,8 @@ namespace RegularApi.Tests
                 .UseEnvironment("Development")
                 .ConfigureServices(services =>
                  {
-                     services.AddTransient(mongoClient => MongoClient);
-                     services.AddTransient<IDaoFixture>(daoFixture => new DaoFixture());
+                     services.AddSingleton<IMongoClient>(MongoClient);
+                     services.AddSingleton<IDaoFixture>(new DaoFixture());
                  })
                  .UseStartup<TestStartup>();
         }

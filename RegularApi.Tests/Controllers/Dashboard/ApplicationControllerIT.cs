@@ -16,6 +16,12 @@ namespace RegularApi.Tests.Controllers.Dashboard
             CreateTestServer();
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            ReleaseMongoDb();
+        }
+
         [Test]
         public async Task TestNewApplicationSetupAsync_Created()
         {
