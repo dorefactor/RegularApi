@@ -11,13 +11,14 @@ namespace RegularApi.Configurations
         public static void AddApplicationServices(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
-            
-            // Dependencies
-            var loggerFactory = (ILoggerFactory) provider.GetService(typeof(ILoggerFactory));
-            var applicationDao = (IApplicationDao) provider.GetService(typeof(IApplicationDao));
-            var rabbitTemplate = (IRabbitMqTemplate) provider.GetService(typeof(IRabbitMqTemplate));
 
-            services.AddSingleton(new DeploymentService(loggerFactory, applicationDao, rabbitTemplate));
+            // Dependencies
+            var loggerFactory = (ILoggerFactory)provider.GetService(typeof(ILoggerFactory));
+            var applicationDao = (IApplicationDao)provider.GetService(typeof(IApplicationDao));
+            var rabbitTemplate = (IRabbitMqTemplate)provider.GetService(typeof(IRabbitMqTemplate));
+
+            services.AddTransient(deploymentService => new DeploymentService(loggerFactory, applicationDao, rabbitTemplate));
+            services.AddSingleton(applicationSetupService => new ApplicationSetupService(loggerFactory, applicationDao));
         }
     }
 }

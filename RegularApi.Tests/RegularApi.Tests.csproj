@@ -11,9 +11,13 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0"/>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0"/>
     <PackageReference Include="Microsoft.AspNetCore.App"/>
+    <PackageReference Include="Mongo2Go" Version="2.2.9"/>
     <PackageReference Include="FluentAssertions" Version="5.6.0"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RegularApi\RegularApi.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Fixtures\"/>
   </ItemGroup>
 </Project>
