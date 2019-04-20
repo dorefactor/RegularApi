@@ -51,6 +51,8 @@ namespace RegularApi.Tests
 
         private static IWebHostBuilder CreateWebHostBuilder()
         {
+            AddEnvironmentVariables();
+
             return WebHost.CreateDefaultBuilder()
                 .UseConfiguration(CreateConfigurationBuilder())
                 .UseEnvironment("Development")
@@ -60,6 +62,15 @@ namespace RegularApi.Tests
                      services.AddTransient<IDaoFixture>(daoFixture => new DaoFixture());
                  })
                  .UseStartup<TestStartup>();
+        }
+
+        private static void AddEnvironmentVariables()
+        {
+            Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
+            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
+            
+            Environment.SetEnvironmentVariable("MONGO_USER", "root");
+            Environment.SetEnvironmentVariable("MONGO_PASSWORD", "r00t");
         }
 
         private static IDictionary<string, string> SetInMemorySettings()
