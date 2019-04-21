@@ -1,7 +1,8 @@
 language: csharp
 sudo: enabled
 mono: none
-dotnet: 2.2.203
+dist: xenial
+dotnet: 2.2
 solution: RegularApi.sln
 
 env:
