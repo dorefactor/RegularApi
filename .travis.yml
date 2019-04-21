@@ -16,11 +16,13 @@ addons:
 
 services:
   - docker 
-  - rabbitmq
 
 before_install:
   - sudo chmod +x Scripts/bash/*
   - ./Scripts/bash/prepare-build.sh
+
+after_script:
+  - ./Scripts/bash/cleanup-build.sh
 
 jobs:
   include:
