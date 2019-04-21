@@ -1,7 +1,7 @@
 #!/bin/sh
 
+echo "Build cleanup"
+
 docker stop rabbitmq
-
 docker rm -f rabbitmq
-
-dorker rmi -f rabbitmq:3.7
+docker rmi -f rabbitmq:3.7
