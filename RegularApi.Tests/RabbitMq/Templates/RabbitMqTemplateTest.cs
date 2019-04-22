@@ -1,3 +1,4 @@
+using FluentAssertions;
 using NUnit.Framework;
 using RegularApi.RabbitMq.Templates;
 
@@ -16,7 +17,7 @@ namespace RegularApi.Tests.RabbitMq.Templates
         {
             var rabbitTemplate = (IRabbitMqTemplate) ServiceProvider.GetService(typeof(IRabbitMqTemplate));
 
-            Assert.NotNull(rabbitTemplate);
+            rabbitTemplate.Should().NotBeNull();
             rabbitTemplate.SendMessage("test-message");
         }
     }

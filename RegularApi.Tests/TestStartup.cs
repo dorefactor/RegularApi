@@ -17,15 +17,15 @@ namespace RegularApi.Tests
             services.AddCors();
 
             // RabbitMQ services
-            RabbitMqServiceConfig.AddConnectionFactory(services);
-            RabbitMqServiceConfig.AddRabbitMqTemplate(services);
-            RabbitMqServiceConfig.AddCommandQueueListener(services);
+            services.AddConnectionFactory();
+            services.AddRabbitMqTemplate();
+            services.AddCommandQueueListener();
 
             // MongoDb services
-            MongoServiceConfig.AddDaos(services);
+            services.AddDaos();
 
             // Services
-            ServiceConfig.AddApplicationServices(services);
+            services.AddApplicationServices();
 
             services.AddMvc().AddApplicationPart(typeof(AbstractController).Assembly);
 

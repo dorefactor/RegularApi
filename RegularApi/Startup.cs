@@ -23,16 +23,16 @@ namespace RegularApi
             services.AddCors();
 
             // RabbitMQ services
-            RabbitMqServiceConfig.AddConnectionFactory(services);
-            RabbitMqServiceConfig.AddRabbitMqTemplate(services);
-            RabbitMqServiceConfig.AddCommandQueueListener(services);
+            services.AddConnectionFactory();
+            services.AddRabbitMqTemplate();
+            services.AddCommandQueueListener();
 
             // MongoDb services
-            MongoServiceConfig.AddMongoClient(services);
-            MongoServiceConfig.AddDaos(services);
+            services.AddMongoClient();
+            services.AddDaos();
 
             // Services
-            ServiceConfig.AddApplicationServices(services);
+            services.AddApplicationServices();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -54,10 +54,10 @@ namespace RegularApi
                 app.UseHsts();
             }
 
-            app.UseCors(builder =>
-                        {
-                            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                        });
+            app.UseCors(builder => {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            });
+
             app.UseHttpsRedirection();
             app.UseMvc();
         }

@@ -21,6 +21,12 @@ namespace RegularApi.Tests.Controllers.Deployment
             _daoFixture = (IDaoFixture)ServiceProvider.GetService(typeof(IDaoFixture));
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            ReleaseMongoDb();
+        }
+
         [Test]
         public async Task TestValidationErrors()
         {

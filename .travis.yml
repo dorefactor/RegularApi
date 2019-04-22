@@ -1,0 +1,31 @@
+language: csharp
+sudo: enabled
+mono: none
+dist: xenial
+dotnet: 2.2
+solution: RegularApi.sln
+
+env:
+  global:
+    - BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+    - IMAGE_TAG=$(echo $BRANCH | tr / _)
+
+addons:
+  hosts:
+    - rabbitmq-host
+
+services:
+  - docker 
+
+before_install:
+  - sudo chmod +x Scripts/bash/*
+  - ./Scripts/bash/prepare-build.sh
+
+after_script:
+  - ./Scripts/bash/cleanup-build.sh
+
+jobs:
+  include:
+  - stage: "Unit Tests"
+    script:
+      - ./Scripts/bash/unit-tests.sh
