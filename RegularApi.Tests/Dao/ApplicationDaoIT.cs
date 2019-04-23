@@ -18,6 +18,7 @@ namespace RegularApi.Tests.Dao
         [SetUp]
         public void SetUp()
         {
+            CreateMongoDbServer();
             CreateTestServer();
             DropCollection("applications");
 
@@ -28,7 +29,7 @@ namespace RegularApi.Tests.Dao
         [TearDown]
         public void TearDown()
         {
-            ReleaseMongoDb();
+            ReleaseMongoDbServer();
         }
 
         [Test]
@@ -99,15 +100,15 @@ namespace RegularApi.Tests.Dao
                     Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
 
                 },
-                Hosts = new Host[]
-                {
-                    new Host()
-                    {
-                        Ip = "192.168.99.1",
-                        Username = "root",
-                        Password = "r00t"
-                    }
-                }
+                //Hosts = new Host[]
+                //{
+                //    new Host()
+                //    {
+                //        Ip = "192.168.99.1",
+                //        Username = "root",
+                //        Password = "r00t"
+                //    }
+                //}
             };
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
 using RegularApi.RabbitMq.Templates;
 using RegularApi.Services;
+using RegularApi.Transformers;
 
 namespace RegularApi.Configurations
 {
@@ -19,6 +20,7 @@ namespace RegularApi.Configurations
 
             services.AddSingleton(deploymentService => new DeploymentService(loggerFactory, applicationDao, rabbitTemplate));
             services.AddSingleton(applicationSetupService => new ApplicationSetupService(loggerFactory, applicationDao));
+            services.AddSingleton<IApplicationTransformer>(applicationTransformer => new ApplicationTransformer());
 
             return services;
         }

@@ -16,6 +16,7 @@ namespace RegularApi.Tests.Controllers.Deployment
         [SetUp]
         public void SetUp()
         {
+            CreateMongoDbServer();
             CreateTestServer();
 
             _daoFixture = (IDaoFixture)ServiceProvider.GetService(typeof(IDaoFixture));
@@ -24,7 +25,7 @@ namespace RegularApi.Tests.Controllers.Deployment
         [TearDown]
         public void TearDown()
         {
-            ReleaseMongoDb();
+            ReleaseMongoDbServer();
         }
 
         [Test]

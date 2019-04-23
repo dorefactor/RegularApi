@@ -4,7 +4,7 @@ using RegularApi.RabbitMq.Listener;
 
 namespace RegularApi.Tests.RabbitMq.Listeners
 {
-    public class RabbitMqCommandQueueListenerTest : BaseIT
+    public class RabbitMqCommandQueueListenerIT : BaseIT
     {
         [SetUp]
         public void SetUp()

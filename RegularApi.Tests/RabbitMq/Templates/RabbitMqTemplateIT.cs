@@ -4,7 +4,7 @@ using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Tests.RabbitMq.Templates
 {
-    public class RabbitMqTemplateTest : BaseIT
+    public class RabbitMqTemplateIT : BaseIT
     {
         [SetUp]
         public void SetUp()

@@ -1,32 +1,38 @@
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using NUnit.Framework;
 using RegularApi.Controllers.Dashboard.Models;
+using RegularApi.Dao.Model;
+using RegularApi.Transformers;
 
-namespace RegularApi.Tests.Controllers.Dashboard
+namespace RegularApi.Tests.Transformers
 {
-    public class ApplicationControllerIT : BaseControllerIT
+    public class ApplicationTransformerTest
     {
-        private const string APPLICATION_URI = "/application";
+        private IApplicationTransformer _applicationTransformer;
 
         [SetUp]
         public void SetUp()
         {
-            CreateMongoDbServer();
-            CreateTestServer();
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            ReleaseMongoDbServer();
+            _applicationTransformer = new ApplicationTransformer();
         }
 
         [Test]
-        public async Task TestNewApplicationSetupAsync_Created()
+        public void TestTransformFromResource()
         {
-            var applicationResource = new ApplicationResource()
+            ApplicationResource applicationResource = buildApplicationResource();
+            Application application = _applicationTransformer.fromResource(applicationResource);
+
+            application.Name.Should().BeSameAs(applicationResource.Name);
+            application.DockerSetup.Should().BeEquivalentTo(applicationResource.DockerSetupResource);
+            application.HostsSetup[0].TagName.Should().BeEquivalentTo(applicationResource.HostsSetupResources[0].TagName);
+            application.HostsSetup[0].Hosts[0].Should().BeEquivalentTo(applicationResource.HostsSetupResources[0].HostsResource[0]);
+        }
+
+        private ApplicationResource buildApplicationResource()
+        {
+
+            return new ApplicationResource()
             {
                 Name = "test-app",
                 DockerSetupResource = new DockerSetupResource()
@@ -51,10 +57,6 @@ namespace RegularApi.Tests.Controllers.Dashboard
                     }
                 }
             };
-
-            var responseMessage = await PerformPostAsync(applicationResource, APPLICATION_URI);
-
-            Assert.AreEqual(HttpStatusCode.OK, responseMessage.StatusCode);
         }
     }
 }

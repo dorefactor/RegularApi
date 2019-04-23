@@ -11,6 +11,6 @@ namespace RegularApi.Dao.Model
         public ObjectId Id { get; set; }
         public string Name { get; set; }
         public DockerSetup DockerSetup { get; set; }
-        public IList<Host> Hosts { get; set; }
+        public IList<HostSetup> HostsSetup { get; set; }
     }
 }
