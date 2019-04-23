@@ -15,18 +15,21 @@ namespace RegularApi.Tests
 {
     public abstract class BaseIT
     {
-        protected static MongoDbRunner MongoDbRunner;
-        protected static IMongoClient MongoClient;
+        internal static MongoDbRunner MongoDbRunner;
+        internal static IMongoClient MongoClient;
 
         protected TestServer TestServer;
         protected HttpClient HttpClient;
         protected IServiceProvider ServiceProvider;
 
-        protected void CreateTestServer()
+        internal static void CreateMongoDbServer()
         {
             MongoDbRunner = MongoDbRunner.Start();
             MongoClient = new MongoClient(MongoDbRunner.ConnectionString);
+        }
 
+        protected void CreateTestServer()
+        {
             TestServer = new TestServer(CreateWebHostBuilder());
 
             ServiceProvider = TestServer.Host.Services;
@@ -36,7 +39,7 @@ namespace RegularApi.Tests
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        protected void ReleaseMongoDb()
+        protected void ReleaseMongoDbServer()
         {
             MongoDbRunner.Dispose();
         }
