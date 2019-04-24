@@ -17,17 +17,18 @@ namespace RegularApi.Transformers
                     ImageName = applicationResource.DockerSetupResource.ImageName,
                     EnvironmentVariables = applicationResource.DockerSetupResource.EnvironmentVariables,
                     Ports = applicationResource.DockerSetupResource.Ports
-                },
-                HostsSetup = applicationResource.HostsSetupResources?.Select(hostsSetupResource => new HostSetup()
-                {
-                    TagName = hostsSetupResource.TagName,
-                    Hosts = hostsSetupResource.HostsResource?.Select(hostResource => new Host()
-                    {
-                        Ip = hostResource.Ip,
-                        Username = hostResource.Username,
-                        Password = hostResource.Password
-                    }).ToList()
-                }).ToList()
+                }
+                // ,
+                // HostsSetup = applicationResource.HostsSetupResources?.Select(hostsSetupResource => new HostSetup()
+                // {
+                //     TagName = hostsSetupResource.TagName,
+                //     Hosts = hostsSetupResource.HostsResource?.Select(hostResource => new Host()
+                //     {
+                //         Ip = hostResource.Ip,
+                //         Username = hostResource.Username,
+                //         Password = hostResource.Password
+                //     }).ToList()
+                // }).ToList()
             };
         }
     }

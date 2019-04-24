@@ -36,20 +36,21 @@ namespace RegularApi.Tests.Controllers.Dashboard
                     EnvironmentVariables = new[] { new KeyValuePair<object, object>("key", "value") },
                     Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
 
-                },
-                HostsSetupResources = new HostSetupResource[] {
-                    new HostSetupResource {
-                        TagName = "TAG",
-                        HostsResource = new HostResource[] {
-                            new HostResource
-                            {
-                                Ip = "192.168.1.1",
-                                Username = "root",
-                                Password = "r00t"
-                            }
-                        }
-                    }
                 }
+                // ,
+                // HostsSetupResources = new HostSetupResource[] {
+                //     new HostSetupResource {
+                //         TagName = "TAG",
+                //         HostsResource = new HostResource[] {
+                //             new HostResource
+                //             {
+                //                 Ip = "192.168.1.1",
+                //                 Username = "root",
+                //                 Password = "r00t"
+                //             }
+                //         }
+                //     }
+                // }
             };
 
             var responseMessage = await PerformPostAsync(applicationResource, APPLICATION_URI);

@@ -10,7 +10,7 @@ namespace RegularApi.Controllers.Dashboard.Models
         [JsonProperty(PropertyName = "DockerSetup")]
         public DockerSetupResource DockerSetupResource { get; set; }
 
-        [JsonProperty(PropertyName = "HostsSetup")]
-        public IList<HostSetupResource> HostsSetupResources { get; set; }
+        // [JsonProperty(PropertyName = "HostsSetup")]
+        // public IList<HostSetupResource> HostsSetupResources { get; set; }
     }
 }
