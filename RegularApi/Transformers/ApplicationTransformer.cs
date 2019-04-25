@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using RegularApi.Controllers.Dashboard.Models;
+﻿using RegularApi.Controllers.Configuration.Models;
 using RegularApi.Dao.Model;
 
 namespace RegularApi.Transformers

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
-using RegularApi.Controllers.Dashboard.Models;
-using RegularApi.Dao.Model;
+using RegularApi.Controllers.Configuration.Models;
 using RegularApi.Transformers;
 
 namespace RegularApi.Tests.Transformers
@@ -20,8 +19,8 @@ namespace RegularApi.Tests.Transformers
         [Test]
         public void TestTransformFromResource()
         {
-            ApplicationResource applicationResource = buildApplicationResource();
-            Application application = _applicationTransformer.fromResource(applicationResource);
+            var applicationResource = buildApplicationResource();
+            var application = _applicationTransformer.fromResource(applicationResource);
 
             application.Name.Should().BeSameAs(applicationResource.Name);
             application.DockerSetup.Should().BeEquivalentTo(applicationResource.DockerSetupResource);

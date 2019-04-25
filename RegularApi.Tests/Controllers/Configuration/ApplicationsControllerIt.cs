@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using RegularApi.Controllers.Dashboard.Models;
+using RegularApi.Controllers.Configuration.Models;
 
-namespace RegularApi.Tests.Controllers.Dashboard
+namespace RegularApi.Tests.Controllers.Configuration
 {
-    public class ApplicationControllerIT : BaseControllerIT
+    public class ApplicationsControllerIt : BaseControllerIT
     {
-        private const string APPLICATION_URI = "/application";
+        private const string ApplicationUri = "/configuration/applications";
 
         [SetUp]
         public void SetUp()
@@ -26,10 +26,10 @@ namespace RegularApi.Tests.Controllers.Dashboard
         [Test]
         public async Task TestNewApplicationSetupAsync_Created()
         {
-            var applicationResource = new ApplicationResource()
+            var applicationResource = new ApplicationResource 
             {
                 Name = "test-app",
-                DockerSetupResource = new DockerSetupResource()
+                DockerSetupResource = new DockerSetupResource
                 {
                     ImageName = "image-name",
                     RegistryUrl = "registry-url",
@@ -53,7 +53,7 @@ namespace RegularApi.Tests.Controllers.Dashboard
                 // }
             };
 
-            var responseMessage = await PerformPostAsync(applicationResource, APPLICATION_URI);
+            var responseMessage = await PerformPostAsync(applicationResource, ApplicationUri);
 
             Assert.AreEqual(HttpStatusCode.OK, responseMessage.StatusCode);
         }

@@ -1,25 +1,24 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RegularApi.Controllers.Dashboard.Models;
+using RegularApi.Controllers.Configuration.Models;
 using RegularApi.Services;
 using RegularApi.Transformers;
 
-namespace RegularApi.Controllers.Dashboard
+namespace RegularApi.Controllers.Configuration
 {
     [ApiController]
-    [Route("/[controller]")]
-    public class ApplicationController : AbstractController
+    public class ApplicationsController : ConfigurationControllerBase
     {
-        private readonly ILogger<ApplicationController> _logger;
+        private readonly ILogger<ApplicationsController> _logger;
         private readonly ApplicationSetupService _applicationSetupService;
         private readonly IApplicationTransformer _applicationTransformer;
 
-        public ApplicationController(ILoggerFactory loggerFactory,
+        public ApplicationsController(ILoggerFactory loggerFactory,
                                      ApplicationSetupService applicationSetupService,
                                      IApplicationTransformer applicationTransformer)
         {
-            _logger = loggerFactory.CreateLogger<ApplicationController>();
+            _logger = loggerFactory.CreateLogger<ApplicationsController>();
             _applicationSetupService = applicationSetupService;
             _applicationTransformer = applicationTransformer;
         }

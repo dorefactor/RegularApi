@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace RegularApi.Controllers.Dashboard.Models
+namespace RegularApi.Controllers.Configuration.Models
 {
     public class HostSetupResource
     {
