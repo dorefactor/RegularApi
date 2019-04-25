@@ -24,11 +24,11 @@ namespace RegularApi.Controllers.Configuration
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewApplicationSetupAsync([FromBody] ApplicationResource applicationResource)
+        public async Task<IActionResult> NewApplicationSetupAsync([FromBody] ApplicationView applicationView)
         {
-            _logger.LogInformation("application setup request received: {0}", applicationResource);
+            _logger.LogInformation("application setup request received: {0}", applicationView);
 
-            var application = _applicationTransformer.fromResource(applicationResource);
+            var application = _applicationTransformer.fromResource(applicationView);
 
             var resultHolder = await _applicationSetupService.SaveApplicationSetupAsync(application);
 

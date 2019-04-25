@@ -1,6 +1,6 @@
 namespace RegularApi.Controllers.Configuration.Models
 {
-    public class HostResource
+    public class HostView
     {
         public string Ip { get; set; }
         public string Username { get; set; }

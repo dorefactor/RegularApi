@@ -26,10 +26,10 @@ namespace RegularApi.Tests.Controllers.Configuration
         [Test]
         public async Task TestNewApplicationSetupAsync_Created()
         {
-            var applicationResource = new ApplicationResource 
+            var applicationResource = new ApplicationView 
             {
                 Name = "test-app",
-                DockerSetupResource = new DockerSetupResource
+                DockerSetup = new DockerSetupView
                 {
                     ImageName = "image-name",
                     RegistryUrl = "registry-url",

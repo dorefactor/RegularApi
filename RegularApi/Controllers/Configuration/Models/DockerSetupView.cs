@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace RegularApi.Controllers.Configuration.Models
 {
-    public class DockerSetupResource
+    public class DockerSetupView
     {
         public string RegistryUrl { get; set; }
         public string ImageName { get; set; }

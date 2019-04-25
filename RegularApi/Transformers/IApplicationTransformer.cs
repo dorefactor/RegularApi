@@ -6,6 +6,6 @@ namespace RegularApi.Transformers
     public interface IApplicationTransformer
     {
 
-        Application fromResource(ApplicationResource applicationResource);
+        Application fromResource(ApplicationView applicationView);
     }
 }
