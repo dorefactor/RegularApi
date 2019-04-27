@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RegularApi.Domain.Views;
 
-namespace RegularApi.Domain
+namespace RegularApi.Controllers
 {
     public abstract class AbstractController : ControllerBase
     {

@@ -2,8 +2,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using RegularApi.Domain.Deployment.Views;
 using RegularApi.Domain.Views;
+using RegularApi.Services.Deployment.Views;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Controllers.Deployment

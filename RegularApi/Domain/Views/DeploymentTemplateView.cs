@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RegularApi.Domain.Views
 {
-    public class TemplateView
+    public class DeploymentTemplateView
     {
         [Required]
         public string Name { get; set; }
@@ -12,7 +12,7 @@ namespace RegularApi.Domain.Views
         public string ApplicationId { get; set; }
         
         [Required]
-        public IList<HostSetupView> HostsSetup { get; set; }
+        public HostSetupView HostsSetup { get; set; }
                 
         [Required]
         public IList<KeyValuePair<object, object>> Ports { get; set; }

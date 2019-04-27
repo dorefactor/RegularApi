@@ -9,7 +9,7 @@ using NUnit.Framework;
 using RegularApi.Dao;
 using RegularApi.Domain.Model;
 using RegularApi.RabbitMq.Templates;
-using RegularApi.Domain;
+using RegularApi.Services;
 
 namespace RegularApi.Tests.Services
 {

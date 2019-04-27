@@ -4,10 +4,10 @@ using LanguageExt;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RegularApi.Dao;
-using RegularApi.RabbitMq.Templates;
 using RegularApi.Domain.Services;
+using RegularApi.RabbitMq.Templates;
 
-namespace RegularApi.Domain
+namespace RegularApi.Services
 {
     public class DeploymentService
     {

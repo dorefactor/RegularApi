@@ -20,24 +20,36 @@ namespace RegularApi.Tests.Fixtures
                 { 
                     new KeyValuePair<object, object>("80", "80")
                 },
-                HostsSetup = new List<HostSetup>
+                HostsSetup = new HostSetup
                 {
-                    new HostSetup
+                    TagName = "latest",
+                    Hosts = new List<Host>
                     {
-                        TagName = "latest",
-                        Hosts = new List<Host>
+                        new Host
                         {
-                            new Host
-                            {
-                                Ip = "192.168.0.100",
-                                Username = "user",
-                                Password = "****"
-                            }
+                            Ip = "192.168.0.100",
+                            Username = "user",
+                            Password = "****"
                         }
                     }
                 }
             };
         }
-       
+         
+         public static Application CreateApplication()
+         {
+             return new Application()
+             {
+                 Name = "test-app",
+                 DockerSetup = new DockerSetup()
+                 {
+                     ImageName = "image-name",
+                     RegistryUrl = "registry-url",
+                     EnvironmentVariables = new[] { new KeyValuePair<object, object>("key", "value") },
+                     Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
+
+                 }
+             };
+         }
     }
 }

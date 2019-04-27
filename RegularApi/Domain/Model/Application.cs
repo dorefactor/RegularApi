@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
@@ -11,6 +10,5 @@ namespace RegularApi.Domain.Model
         public ObjectId Id { get; set; }
         public string Name { get; set; }
         public DockerSetup DockerSetup { get; set; }
-        // public IList<HostSetup> HostsSetup { get; set; }
     }
 }

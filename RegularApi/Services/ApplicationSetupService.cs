@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
 using RegularApi.Domain.Model;
 
-namespace RegularApi.Domain
+namespace RegularApi.Services
 {
     public class ApplicationSetupService
     {

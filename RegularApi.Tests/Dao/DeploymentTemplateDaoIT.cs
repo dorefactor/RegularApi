@@ -31,13 +31,10 @@ namespace RegularApi.Tests.Dao
         {
             var template = ModelFactory.BuildDeploymentTemplate("super-template");
 
-            var templateHolder = await _templateDao.NewAsync(template);
-
+            var storedTemplate = await _templateDao.NewAsync(template);
             var expectedTemplate = await GetDaoFixture().GetDeploymentTemplateByIdAsync(template.Id);
 
-            Assert.True(templateHolder.IsSome);
-            var storedTemplate = templateHolder.AsEnumerable().First();
-
+            storedTemplate.Should().NotBeNull();
             expectedTemplate.Should().BeEquivalentTo(storedTemplate);
         }
 

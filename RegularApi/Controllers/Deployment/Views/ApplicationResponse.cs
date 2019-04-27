@@ -1,6 +1,6 @@
 using System;
 
-namespace RegularApi.Domain.Deployment.Views
+namespace RegularApi.Services.Deployment.Views
 {
     public class ApplicationResponse
     {

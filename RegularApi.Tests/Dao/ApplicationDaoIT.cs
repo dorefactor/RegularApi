@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
 using NUnit.Framework;
 using RegularApi.Dao;
 using RegularApi.Domain.Model;
@@ -57,7 +55,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestGetApplicationByName()
         {
-            var appName = "aka-aka-app";
+            const string appName = "aka-aka-app";
 
             var application = await GetDaoFixture().CreateApplication(appName);
 
@@ -73,7 +71,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestSaveApplicationSetup()
         {
-            var expectedApplication = CreateApplication();
+            var expectedApplication = ModelFactory.CreateApplication();
 
             var applicationSetupHolder = await _applicationDao.SaveApplicationSetup(expectedApplication);
 
@@ -84,31 +82,6 @@ namespace RegularApi.Tests.Dao
             Assert.NotNull(actualApplication.Id);
 
             actualApplication.Should().BeEquivalentTo(expectedApplication);
-        }
-
-        private Application CreateApplication()
-        {
-            return new Application()
-            {
-                Name = "test-app",
-                DockerSetup = new DockerSetup()
-                {
-                    ImageName = "image-name",
-                    RegistryUrl = "registry-url",
-                    EnvironmentVariables = new[] { new KeyValuePair<object, object>("key", "value") },
-                    Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
-
-                },
-                //Hosts = new Host[]
-                //{
-                //    new Host()
-                //    {
-                //        Ip = "192.168.99.1",
-                //        Username = "root",
-                //        Password = "r00t"
-                //    }
-                //}
-            };
         }
     }
 }

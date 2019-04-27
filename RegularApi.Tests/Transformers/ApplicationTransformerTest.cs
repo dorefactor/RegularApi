@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
-using RegularApi.Domain.Views;
+using RegularApi.Tests.Fixtures;
 using RegularApi.Transformers;
 
 namespace RegularApi.Tests.Transformers
@@ -19,44 +18,13 @@ namespace RegularApi.Tests.Transformers
         [Test]
         public void TestTransformFromResource()
         {
-            var applicationResource = buildApplicationResource();
-            var application = _applicationTransformer.fromResource(applicationResource);
+            var applicationResource = ViewFactory.BuildApplicationView();
+            var application = _applicationTransformer.FromResource(applicationResource);
 
             application.Name.Should().BeSameAs(applicationResource.Name);
             application.DockerSetup.Should().BeEquivalentTo(applicationResource.DockerSetup);
             // application.HostsSetup[0].TagName.Should().BeEquivalentTo(applicationResource.HostsSetupResources[0].TagName);
             // application.HostsSetup[0].Hosts[0].Should().BeEquivalentTo(applicationResource.HostsSetupResources[0].HostsResource[0]);
-        }
-
-        private ApplicationView buildApplicationResource()
-        {
-
-            return new ApplicationView
-            {
-                Name = "test-app",
-                DockerSetup = new DockerSetupView
-                {
-                    ImageName = "image-name",
-                    RegistryUrl = "registry-url",
-                    EnvironmentVariables = new[] { new KeyValuePair<object, object>("key", "value") },
-                    Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
-
-                }
-                // ,
-                // HostsSetupResources = new HostSetupResource[] {
-                //     new HostSetupResource {
-                //         TagName = "TAG",
-                //         HostsResource = new HostResource[] {
-                //             new HostResource
-                //             {
-                //                 Ip = "192.168.1.1",
-                //                 Username = "root",
-                //                 Password = "r00t"
-                //             }
-                //         }
-                //     }
-                // }
-            };
         }
     }
 }

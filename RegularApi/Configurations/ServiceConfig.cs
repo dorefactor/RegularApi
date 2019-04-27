@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
 using RegularApi.RabbitMq.Templates;
-using RegularApi.Domain;
+using RegularApi.Services;
 using RegularApi.Transformers;
 
 namespace RegularApi.Configurations

@@ -15,11 +15,11 @@ namespace RegularApi.Dao
             _collection = GetCollection<DeploymentTemplate>();
         }
 
-        public async Task<Option<DeploymentTemplate>> NewAsync(DeploymentTemplate template)
+        public async Task<DeploymentTemplate> NewAsync(DeploymentTemplate template)
         {
             await _collection.InsertOneAsync(template);
 
-            return OfNullable(template);
+            return template;
         }
 
         public async Task<Option<DeploymentTemplate>> GetByNameAsync(string templateName)

@@ -1,11 +1,11 @@
-﻿using RegularApi.Domain.Views;
-using RegularApi.Domain.Model;
+﻿using RegularApi.Domain.Model;
+using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
     public class ApplicationTransformer : IApplicationTransformer
     {
-        public Application fromResource(ApplicationView applicationView)
+        public Application FromResource(ApplicationView applicationView)
         {
             return new Application
             {
@@ -17,17 +17,6 @@ namespace RegularApi.Transformers
                     EnvironmentVariables = applicationView.DockerSetup.EnvironmentVariables,
                     Ports = applicationView.DockerSetup.Ports
                 }
-                // ,
-                // HostsSetup = applicationResource.HostsSetupResources?.Select(hostsSetupResource => new HostSetup()
-                // {
-                //     TagName = hostsSetupResource.TagName,
-                //     Hosts = hostsSetupResource.HostsResource?.Select(hostResource => new Host()
-                //     {
-                //         Ip = hostResource.Ip,
-                //         Username = hostResource.Username,
-                //         Password = hostResource.Password
-                //     }).ToList()
-                // }).ToList()
             };
         }
     }

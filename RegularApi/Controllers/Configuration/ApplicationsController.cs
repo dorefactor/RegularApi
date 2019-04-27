@@ -2,10 +2,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RegularApi.Domain.Views;
-using RegularApi.Domain;
+using RegularApi.Services;
 using RegularApi.Transformers;
 
-namespace RegularApi.Domain.Configuration
+namespace RegularApi.Controllers.Configuration
 {
     [ApiController]
     public class ApplicationsController : ConfigurationControllerBase
@@ -28,7 +28,7 @@ namespace RegularApi.Domain.Configuration
         {
             _logger.LogInformation("application setup request received: {0}", applicationView);
 
-            var application = _applicationTransformer.fromResource(applicationView);
+            var application = _applicationTransformer.FromResource(applicationView);
 
             var resultHolder = await _applicationSetupService.SaveApplicationSetupAsync(application);
 
