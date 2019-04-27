@@ -6,13 +6,13 @@ using RegularApi.Tests.Dao;
 
 namespace RegularApi.Tests.Fixtures
 {
-    public class DaoFixture : BaseDaoIT, IDaoFixture
+    public class DaoFixture : BaseDaoIT
     {
         public async Task<Application> CreateApplication(string name)
         {
             var collection = GetCollection<Application>("applications");
 
-            var application = new Application()
+            var application = new Application
             {
                 Name = name
             };
@@ -30,6 +30,28 @@ namespace RegularApi.Tests.Fixtures
             var cursor = await collection.FindAsync(filter);
 
             return await cursor.FirstOrDefaultAsync();
+        }
+
+        public async Task<DeploymentTemplate> GetDeploymentTemplateByIdAsync(ObjectId id)
+        {
+            var collection = GetCollection<DeploymentTemplate>("deploymentTemplates");
+
+            var filter = new FilterDefinitionBuilder<DeploymentTemplate>()
+                .Where(deploymentTemplate => deploymentTemplate.Id.Equals(id));
+
+            var cursor = await collection.FindAsync(filter);
+
+            return await cursor.FirstOrDefaultAsync();                
+        }
+
+        public async Task<DeploymentTemplate> CreateDeploymentTemplateAsync(string name)
+        {
+            var collection = GetCollection<DeploymentTemplate>("deploymentTemplates");
+            var template = ModelFactory.BuildDeploymentTemplate(name);
+           
+            await collection.InsertOneAsync(template);
+
+            return template;
         }
     }
 }

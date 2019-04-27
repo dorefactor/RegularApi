@@ -1,5 +1,6 @@
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RegularApi.Domain.Deployment.Views;
 using RegularApi.Domain.Views;
@@ -11,7 +12,7 @@ namespace RegularApi.Tests.Controllers.Deployment
     {
         private const string DEPLOYMENT_URI = "/deployment";
 
-        private IDaoFixture _daoFixture;
+        private DaoFixture _daoFixture;
 
         [SetUp]
         public void SetUp()
@@ -19,7 +20,7 @@ namespace RegularApi.Tests.Controllers.Deployment
             CreateMongoDbServer();
             CreateTestServer();
 
-            _daoFixture = (IDaoFixture)ServiceProvider.GetService(typeof(IDaoFixture));
+            _daoFixture = ServiceProvider.GetRequiredService<DaoFixture>();
         }
 
         [TearDown]

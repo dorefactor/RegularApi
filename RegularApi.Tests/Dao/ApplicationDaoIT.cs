@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using NUnit.Framework;
 using RegularApi.Dao;
@@ -13,7 +14,6 @@ namespace RegularApi.Tests.Dao
     public class ApplicationDaoIT : BaseDaoIT
     {
         private IApplicationDao _applicationDao;
-        private IDaoFixture _daoFixture;
 
         [SetUp]
         public void SetUp()
@@ -23,7 +23,6 @@ namespace RegularApi.Tests.Dao
             DropCollection("applications");
 
             _applicationDao = GetDao<IApplicationDao>();
-            _daoFixture = (IDaoFixture)ServiceProvider.GetService(typeof(IDaoFixture));
         }
 
         [TearDown]
@@ -35,7 +34,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestGetApplications()
         {
-            var application = await _daoFixture.CreateApplication("super-application-2k");
+            var application = await GetDaoFixture().CreateApplication("super-application-2k");
 
             var apps = await _applicationDao.GetApplicationsAsync();
 
@@ -60,7 +59,7 @@ namespace RegularApi.Tests.Dao
         {
             var appName = "aka-aka-app";
 
-            var application = await _daoFixture.CreateApplication(appName);
+            var application = await GetDaoFixture().CreateApplication(appName);
 
             var appHolder = await _applicationDao.GetApplicationByNameAsync(appName);
 
@@ -80,7 +79,7 @@ namespace RegularApi.Tests.Dao
 
             Assert.NotNull(applicationSetupHolder);
 
-            var actualApplication = _daoFixture.GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
+            var actualApplication = GetDaoFixture().GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
 
             Assert.NotNull(actualApplication.Id);
 

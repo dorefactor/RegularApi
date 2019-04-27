@@ -62,7 +62,7 @@ namespace RegularApi.Tests
                 .ConfigureServices(services =>
                  {
                      services.AddSingleton<IMongoClient>(MongoClient);
-                     services.AddSingleton<IDaoFixture>(new DaoFixture());
+                     services.AddSingleton<DaoFixture, DaoFixture>();
                  })
                  .UseStartup<TestStartup>();
         }

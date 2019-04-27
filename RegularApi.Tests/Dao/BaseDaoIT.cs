@@ -1,10 +1,12 @@
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Dao
 {
     public abstract class BaseDaoIT : BaseIT
     {
-        private static string _mongoDatabaseName = "regularOrchestrator";
+        private const string MongoDatabaseName = "regularOrchestrator";
 
         protected void DropCollection(string name)
         {
@@ -18,12 +20,19 @@ namespace RegularApi.Tests.Dao
 
         protected T GetDao<T>()
         {
-            return (T)ServiceProvider.GetService(typeof(T));
+            return ServiceProvider.GetRequiredService<T>();
         }
+
+        protected DaoFixture GetDaoFixture()
+        {
+            return GetDao<DaoFixture>();
+        }
+
+        // ------------------------------------------------------------------------------------
 
         private IMongoDatabase GetDatabase()
         {
-            return MongoClient.GetDatabase(_mongoDatabaseName);
+            return MongoClient.GetDatabase(MongoDatabaseName);
         }
     }
 }

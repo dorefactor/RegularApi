@@ -1,4 +1,0 @@
-namespace RegularApi.Dao
-{
-
-}
