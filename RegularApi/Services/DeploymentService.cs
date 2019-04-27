@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RegularApi.Dao;
 using RegularApi.RabbitMq.Templates;
-using RegularApi.Services.Domain;
+using RegularApi.Domain.Services;
 
-namespace RegularApi.Services
+namespace RegularApi.Domain
 {
     public class DeploymentService
     {

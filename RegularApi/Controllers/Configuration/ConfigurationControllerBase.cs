@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace RegularApi.Controllers.Configuration
+namespace RegularApi.Domain.Configuration
 {
     [Route("/configuration/[controller]")]
     public abstract class ConfigurationControllerBase : AbstractController

@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.IdGenerators;
 
-namespace RegularApi.Dao.Model
+namespace RegularApi.Domain.Model
 {
     public class Application
     {

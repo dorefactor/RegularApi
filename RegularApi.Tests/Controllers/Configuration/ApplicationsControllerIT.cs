@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using RegularApi.Controllers.Configuration.Models;
+using RegularApi.Domain.Views;
 
 namespace RegularApi.Tests.Controllers.Configuration
 {
-    public class ApplicationsControllerIt : BaseControllerIT
+    public class ApplicationsControllerIT : BaseControllerIT
     {
         private const string ApplicationUri = "/configuration/applications";
 

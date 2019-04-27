@@ -5,7 +5,7 @@ using FluentAssertions;
 using MongoDB.Driver;
 using NUnit.Framework;
 using RegularApi.Dao;
-using RegularApi.Dao.Model;
+using RegularApi.Domain.Model;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Dao

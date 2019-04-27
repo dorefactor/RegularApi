@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
-using RegularApi.Controllers.Views;
+using RegularApi.Domain.Views;
 
-namespace RegularApi.Controllers
+namespace RegularApi.Domain
 {
     public abstract class AbstractController : ControllerBase
     {
-        protected ErrorResponse BuildErrorResponse(string error)
+        protected ErrorResponseView BuildErrorResponse(string error)
         {
-            return new ErrorResponse
+            return new ErrorResponseView
             {
                 Error = error
             };

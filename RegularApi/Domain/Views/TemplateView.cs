@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace RegularApi.Controllers.Configuration.Models
+namespace RegularApi.Domain.Views
 {
     public class TemplateView
     {

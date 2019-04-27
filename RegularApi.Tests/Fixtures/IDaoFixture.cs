@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using MongoDB.Bson;
-using RegularApi.Dao.Model;
+using RegularApi.Domain.Model;
 
 namespace RegularApi.Tests.Fixtures
 {

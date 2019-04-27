@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RegularApi.Controllers.Deployment.Views;
-using RegularApi.Services;
-using RegularApi.Services.Domain;
+using RegularApi.Domain.Deployment.Views;
+using RegularApi.Domain;
+using RegularApi.Domain.Services;
 
-namespace RegularApi.Controllers.Deployment
+namespace RegularApi.Domain.Deployment
 {
     [ApiController]
     [Route("/[controller]")]

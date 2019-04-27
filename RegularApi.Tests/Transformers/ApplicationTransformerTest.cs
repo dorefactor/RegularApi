@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using NUnit.Framework;
-using RegularApi.Controllers.Configuration.Models;
+using RegularApi.Domain.Views;
 using RegularApi.Transformers;
 
 namespace RegularApi.Tests.Transformers

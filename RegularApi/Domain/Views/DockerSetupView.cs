@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace RegularApi.Dao.Model
+namespace RegularApi.Domain.Views
 {
-    public class DockerSetup
+    public class DockerSetupView
     {
         public string RegistryUrl { get; set; }
         public string ImageName { get; set; }

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using RegularApi.Dao.Model;
+using RegularApi.Domain.Model;
 using RegularApi.Tests.Dao;
 
 namespace RegularApi.Tests.Fixtures

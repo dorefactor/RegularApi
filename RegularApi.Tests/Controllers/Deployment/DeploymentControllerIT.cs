@@ -1,8 +1,8 @@
 using System.Net;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using RegularApi.Controllers.Deployment.Views;
-using RegularApi.Controllers.Views;
+using RegularApi.Domain.Deployment.Views;
+using RegularApi.Domain.Views;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Controllers.Deployment
@@ -44,7 +44,7 @@ namespace RegularApi.Tests.Controllers.Deployment
             var applicationRequest = CreateApplicationRequest("test");
 
             var responseMessage = await PerformPostAsync(applicationRequest, DEPLOYMENT_URI);
-            var response = await GetResponse<ErrorResponse>(responseMessage);
+            var response = await GetResponse<ErrorResponseView>(responseMessage);
 
             Assert.AreEqual(HttpStatusCode.UnprocessableEntity, responseMessage.StatusCode);
             Assert.AreEqual("No application found with name: " + applicationRequest.Name, response.Error);

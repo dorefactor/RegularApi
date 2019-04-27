@@ -1,5 +1,5 @@
-﻿using RegularApi.Controllers.Configuration.Models;
-using RegularApi.Dao.Model;
+﻿using RegularApi.Domain.Views;
+using RegularApi.Domain.Model;
 
 namespace RegularApi.Transformers
 {

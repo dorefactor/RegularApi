@@ -7,9 +7,9 @@ using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
 using RegularApi.Dao;
-using RegularApi.Dao.Model;
+using RegularApi.Domain.Model;
 using RegularApi.RabbitMq.Templates;
-using RegularApi.Services;
+using RegularApi.Domain;
 
 namespace RegularApi.Tests.Services
 {

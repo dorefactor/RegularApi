@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LanguageExt;
-using RegularApi.Dao.Model;
+using RegularApi.Domain.Model;
 
 namespace RegularApi.Dao
 {

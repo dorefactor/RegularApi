@@ -2,7 +2,7 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RegularApi.Configurations;
-using RegularApi.Controllers;
+using RegularApi.Domain;
 
 namespace RegularApi.Tests
 {

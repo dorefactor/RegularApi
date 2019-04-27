@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RegularApi.Controllers.Configuration.Models;
-using RegularApi.Services;
+using RegularApi.Domain.Views;
+using RegularApi.Domain;
 using RegularApi.Transformers;
 
-namespace RegularApi.Controllers.Configuration
+namespace RegularApi.Domain.Configuration
 {
     [ApiController]
     public class ApplicationsController : ConfigurationControllerBase
@@ -24,7 +24,7 @@ namespace RegularApi.Controllers.Configuration
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewApplicationSetupAsync([FromBody] ApplicationView applicationView)
+        public async Task<IActionResult> NewApplicationSetupAsync(ApplicationView applicationView)
         {
             _logger.LogInformation("application setup request received: {0}", applicationView);
 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace RegularApi.Controllers.Configuration.Models
+namespace RegularApi.Domain.Views
 {
     public class HostSetupView
     {

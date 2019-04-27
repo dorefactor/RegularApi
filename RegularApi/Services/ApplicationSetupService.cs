@@ -2,9 +2,9 @@ using System.Threading.Tasks;
 using LanguageExt;
 using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
-using RegularApi.Dao.Model;
+using RegularApi.Domain.Model;
 
-namespace RegularApi.Services
+namespace RegularApi.Domain
 {
     public class ApplicationSetupService
     {

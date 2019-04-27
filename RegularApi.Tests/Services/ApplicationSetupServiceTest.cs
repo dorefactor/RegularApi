@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using RegularApi.Dao;
-using RegularApi.Dao.Model;
-using RegularApi.Services;
+using RegularApi.Domain.Model;
+using RegularApi.Domain;
 
 namespace RegularApi.Tests.Services
 {
