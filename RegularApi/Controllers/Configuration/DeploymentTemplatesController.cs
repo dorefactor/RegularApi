@@ -8,15 +8,15 @@ using RegularApi.Transformers;
 namespace RegularApi.Controllers.Configuration
 {
     [ApiController]
-    public class TemplatesController : ConfigurationControllerBase
+    public class DeploymentTemplatesController : ConfigurationControllerBase
     {
-        private readonly ILogger<TemplatesController> _logger;
+        private readonly ILogger<DeploymentTemplatesController> _logger;
         private readonly IDeploymentTemplateTransformer _transformer;
         private readonly DeploymentTemplateService _deploymentTemplateService;
 
-        public TemplatesController(ILoggerFactory loggerFactory, IDeploymentTemplateTransformer transformer, DeploymentTemplateService deploymentTemplateService)
+        public DeploymentTemplatesController(ILoggerFactory loggerFactory, IDeploymentTemplateTransformer transformer, DeploymentTemplateService deploymentTemplateService)
         {
-            _logger = loggerFactory.CreateLogger<TemplatesController>();
+            _logger = loggerFactory.CreateLogger<DeploymentTemplatesController>();
             _transformer = transformer;
             _deploymentTemplateService = deploymentTemplateService;
         }
@@ -29,7 +29,7 @@ namespace RegularApi.Controllers.Configuration
             var result = await _deploymentTemplateService.AddDeploymentTemplateAsync(template);
 
             return result.Match<IActionResult>(
-                right => Ok(BuildNewResourceResponseView("/configuration/templates", right.Name)),
+                right => Ok(BuildNewResourceResponseView("/configuration/deploymentTemplates", right.Name)),
                 left => UnprocessableEntity(BuildErrorResponse(left))
             );
         }

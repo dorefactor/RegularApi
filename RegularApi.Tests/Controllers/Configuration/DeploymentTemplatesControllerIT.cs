@@ -5,10 +5,11 @@ using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Controllers.Configuration
 {
-    public class TemplatesControllerIT : BaseControllerIT
+    public class DeploymentTemplatesControllerIT : BaseControllerIT
     {
-        private const string TemplatesUri = "/configuration/templates";
-        
+        private const string TemplatesUri = "/configuration/deploymentTemplates";
+
+        [SetUp]        
         public void SetUp()
         {
             CreateMongoDbServer();

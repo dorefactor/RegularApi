@@ -15,7 +15,7 @@ namespace RegularApi.Configurations
             var provider = services.BuildServiceProvider();
             var configuration = provider.GetRequiredService<IConfiguration>();
 
-            services.AddTransient<IConnectionFactory>(option => new ConnectionFactory
+            services.AddSingleton<IConnectionFactory>(new ConnectionFactory
             {
                 HostName = configuration["RabbitMq:Server"],
                 UserName = configuration["RABBIT_USER"],
@@ -37,7 +37,7 @@ namespace RegularApi.Configurations
             var exchange = configuration["RabbitMq:Exchange"];
             var queue = configuration["RabbitMq:CommandQueue"];
 
-            services.AddTransient<IRabbitMqTemplate>(rabbitMqTemplate => new RabbitMqTemplate(loggerFactory, connectionFactory, exchange, queue));
+            services.AddSingleton<IRabbitMqTemplate>(new RabbitMqTemplate(loggerFactory, connectionFactory, exchange, queue));
 
             return services;
         }
@@ -50,7 +50,7 @@ namespace RegularApi.Configurations
             var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
             var queue = configuration["RabbitMq:CommandQueue"];
 
-            services.AddTransient<RabbitMqMessageListener>(rabbiMqCommandQueueListener => new RabbiMqCommandQueueListener(loggerFactory, connectionFactory, queue));
+            services.AddSingleton<RabbitMqMessageListener>(new RabbiMqCommandQueueListener(loggerFactory, connectionFactory, queue));
 
             return services;
         }
