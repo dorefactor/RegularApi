@@ -19,20 +19,37 @@ namespace RegularApi.Tests.Fixtures
                     Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
 
                 }
-                // ,
-                // HostsSetupResources = new HostSetupResource[] {
-                //     new HostSetupResource {
-                //         TagName = "TAG",
-                //         HostsResource = new HostResource[] {
-                //             new HostResource
-                //             {
-                //                 Ip = "192.168.1.1",
-                //                 Username = "root",
-                //                 Password = "r00t"
-                //             }
-                //         }
-                //     }
-                // }
+            };
+        }
+
+        public static DeploymentTemplateView BuildDeploymentTemplateView(string name)
+        {
+            return new DeploymentTemplateView
+            {
+                Name = name,
+                ApplicationId = "123123123",
+                EnvironmentVariables = new List<KeyValuePair<object, object>>
+                {
+                    new KeyValuePair<object, object>("VARIABLE", "VALUE")
+                },
+                HostsSetup = new HostSetupView
+                {
+                    TagName = "feature/awesome-thing",
+                    Hosts = new List<HostView>
+                    {
+                        new HostView
+                        {
+                            Ip = "10.10.10.1",
+                            Username = "username",
+                            Password = "****"
+
+                        }
+                    }
+                },
+                Ports = new List<KeyValuePair<object, object>>
+                {
+                    new KeyValuePair<object, object>("8080", "80")
+                }
             };
         }
         

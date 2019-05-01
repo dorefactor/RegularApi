@@ -12,5 +12,14 @@ namespace RegularApi.Controllers
                 Error = error
             };
         }
+        
+        protected NewResourceResponseView BuildNewResourceResponseView(string resourceUri, string resourceName)
+        {
+            return new NewResourceResponseView
+            {
+                Link = resourceUri + "/" + resourceName
+            };
+        }
+        
     }
 }
