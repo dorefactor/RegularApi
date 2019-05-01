@@ -27,7 +27,7 @@ namespace RegularApi.Tests.Fixtures
             return new DeploymentTemplateView
             {
                 Name = name,
-                ApplicationId = "123123123",
+                ApplicationId = "01234567890123456789ABCD",
                 EnvironmentVariables = new List<KeyValuePair<object, object>>
                 {
                     new KeyValuePair<object, object>("VARIABLE", "VALUE")
@@ -50,6 +50,14 @@ namespace RegularApi.Tests.Fixtures
                 {
                     new KeyValuePair<object, object>("8080", "80")
                 }
+            };
+        }
+
+        public static NewResourceResponseView BuildDeploymentTemplateCreationResponse(string name)
+        {
+            return new NewResourceResponseView
+            {
+                Link = "/configuration/deploymentTemplates/" + name
             };
         }
         

@@ -33,5 +33,21 @@ namespace RegularApi.Controllers.Configuration
                 left => UnprocessableEntity(BuildErrorResponse(left))
             );
         }
+
+        [Route("{templateName}")]
+        public async Task<IActionResult> GetAsync([FromRoute] string templateName)
+        {
+            _logger.LogInformation("Get deployment template: {0}", templateName);
+
+            var result = await _deploymentTemplateService.GetDeploymentTemplateByNameAsync(templateName);
+
+            return result.Match<IActionResult>(
+                right => {
+                    var view = _transformer.ToResource(right);
+                    return Ok(view);
+                },
+                left => UnprocessableEntity(BuildErrorResponse(left))
+            );
+        }
     }
 }
