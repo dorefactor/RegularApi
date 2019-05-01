@@ -42,12 +42,25 @@ namespace RegularApi.Controllers.Configuration
             var result = await _deploymentTemplateService.GetDeploymentTemplateByNameAsync(templateName);
 
             return result.Match<IActionResult>(
-                right => {
+                right => 
+                {
                     var view = _transformer.ToResource(right);
                     return Ok(view);
                 },
-                left => UnprocessableEntity(BuildErrorResponse(left))
-            );
+                left => 
+                {
+                    if (NotFoundResponse(templateName).Equals(left))
+                    {
+                        return NotFound();
+                    }
+
+                    return UnprocessableEntity(BuildErrorResponse(left));
+                });
+        }
+
+        private string NotFoundResponse(string templateName)
+        {
+            return "Deployment template: " + templateName + " not found";
         }
     }
 }

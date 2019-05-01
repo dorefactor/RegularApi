@@ -24,6 +24,11 @@ namespace RegularApi.Tests
             return await HttpClient.PostAsync(uri, content);
         }
 
+        protected async Task<HttpResponseMessage> PerformGetAsync(string uri)
+        {
+            return await HttpClient.GetAsync(uri);
+        }
+
         protected async Task<T> GetResponse<T>(HttpResponseMessage responseMessage)
         {
             var content = await responseMessage.Content.ReadAsStringAsync();

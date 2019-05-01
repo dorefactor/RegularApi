@@ -15,7 +15,7 @@ namespace RegularApi.Transformers
         }
 
         [Test]
-        public void TestDeploymentTemplateTransform()
+        public void TestTransformFromResource()
         {
             var deploymentTemplateView = ViewFactory.BuildDeploymentTemplateView("super-template");
 
@@ -23,6 +23,17 @@ namespace RegularApi.Transformers
 
             deploymentTemplate.Should().NotBeNull();
             deploymentTemplate.Name.Should().Be("super-template");
+        }
+
+        [Test]
+        public void TestTransformToResource()
+        {
+            var deploymentTemplate = ModelFactory.BuildDeploymentTemplate("super-template");
+
+            var deploymentTemplateView = _transformer.ToResource(deploymentTemplate);
+
+            deploymentTemplateView.Should().NotBeNull();
+            deploymentTemplateView.Name.Should().Be("super-template");
         }
     }
 }
