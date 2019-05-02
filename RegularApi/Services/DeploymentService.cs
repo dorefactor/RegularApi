@@ -4,8 +4,8 @@ using LanguageExt;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RegularApi.Dao;
+using RegularApi.Domain.Services;
 using RegularApi.RabbitMq.Templates;
-using RegularApi.Services.Domain;
 
 namespace RegularApi.Services
 {

@@ -1,8 +1,9 @@
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using RegularApi.Controllers.Deployment.Views;
-using RegularApi.Controllers.Views;
+using RegularApi.Domain.Views;
+using RegularApi.Services.Deployment.Views;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Controllers.Deployment
@@ -11,7 +12,7 @@ namespace RegularApi.Tests.Controllers.Deployment
     {
         private const string DEPLOYMENT_URI = "/deployment";
 
-        private IDaoFixture _daoFixture;
+        private DaoFixture _daoFixture;
 
         [SetUp]
         public void SetUp()
@@ -19,7 +20,7 @@ namespace RegularApi.Tests.Controllers.Deployment
             CreateMongoDbServer();
             CreateTestServer();
 
-            _daoFixture = (IDaoFixture)ServiceProvider.GetService(typeof(IDaoFixture));
+            _daoFixture = ServiceProvider.GetRequiredService<DaoFixture>();
         }
 
         [TearDown]
@@ -44,7 +45,7 @@ namespace RegularApi.Tests.Controllers.Deployment
             var applicationRequest = CreateApplicationRequest("test");
 
             var responseMessage = await PerformPostAsync(applicationRequest, DEPLOYMENT_URI);
-            var response = await GetResponse<ErrorResponse>(responseMessage);
+            var response = await GetResponse<ErrorResponseView>(responseMessage);
 
             Assert.AreEqual(HttpStatusCode.UnprocessableEntity, responseMessage.StatusCode);
             Assert.AreEqual("No application found with name: " + applicationRequest.Name, response.Error);

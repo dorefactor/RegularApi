@@ -2,10 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using MongoDB.Driver;
 using NUnit.Framework;
 using RegularApi.Dao;
-using RegularApi.Dao.Model;
+using RegularApi.Domain.Model;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Dao
@@ -13,7 +12,6 @@ namespace RegularApi.Tests.Dao
     public class ApplicationDaoIT : BaseDaoIT
     {
         private IApplicationDao _applicationDao;
-        private IDaoFixture _daoFixture;
 
         [SetUp]
         public void SetUp()
@@ -23,7 +21,6 @@ namespace RegularApi.Tests.Dao
             DropCollection("applications");
 
             _applicationDao = GetDao<IApplicationDao>();
-            _daoFixture = (IDaoFixture)ServiceProvider.GetService(typeof(IDaoFixture));
         }
 
         [TearDown]
@@ -35,7 +32,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestGetApplications()
         {
-            var application = await _daoFixture.CreateApplication("super-application-2k");
+            var application = await GetDaoFixture().CreateApplication("super-application-2k");
 
             var apps = await _applicationDao.GetApplicationsAsync();
 
@@ -58,9 +55,9 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestGetApplicationByName()
         {
-            var appName = "aka-aka-app";
+            const string appName = "aka-aka-app";
 
-            var application = await _daoFixture.CreateApplication(appName);
+            var application = await GetDaoFixture().CreateApplication(appName);
 
             var appHolder = await _applicationDao.GetApplicationByNameAsync(appName);
 
@@ -74,42 +71,17 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestSaveApplicationSetup()
         {
-            var expectedApplication = CreateApplication();
+            var expectedApplication = ModelFixture.CreateApplication();
 
             var applicationSetupHolder = await _applicationDao.SaveApplicationSetup(expectedApplication);
 
             Assert.NotNull(applicationSetupHolder);
 
-            var actualApplication = _daoFixture.GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
+            var actualApplication = GetDaoFixture().GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
 
             Assert.NotNull(actualApplication.Id);
 
             actualApplication.Should().BeEquivalentTo(expectedApplication);
-        }
-
-        private Application CreateApplication()
-        {
-            return new Application()
-            {
-                Name = "test-app",
-                DockerSetup = new DockerSetup()
-                {
-                    ImageName = "image-name",
-                    RegistryUrl = "registry-url",
-                    EnvironmentVariables = new[] { new KeyValuePair<object, object>("key", "value") },
-                    Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
-
-                },
-                //Hosts = new Host[]
-                //{
-                //    new Host()
-                //    {
-                //        Ip = "192.168.99.1",
-                //        Username = "root",
-                //        Password = "r00t"
-                //    }
-                //}
-            };
         }
     }
 }

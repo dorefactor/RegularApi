@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using LanguageExt;
 using MongoDB.Driver;
-using RegularApi.Dao.Model;
+using RegularApi.Domain.Model;
 
 namespace RegularApi.Dao
 {

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace RegularApi.Controllers.Dashboard.Models
+namespace RegularApi.Domain.Views
 {
-    public class DockerSetupResource
+    public class DockerSetupView
     {
         public string RegistryUrl { get; set; }
         public string ImageName { get; set; }

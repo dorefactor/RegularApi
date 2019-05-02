@@ -1,5 +1,5 @@
 
-namespace RegularApi.Dao.Model
+namespace RegularApi.Domain.Model
 {
     public class Host
     {

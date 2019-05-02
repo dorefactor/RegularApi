@@ -1,33 +1,22 @@
-﻿using System.Linq;
-using RegularApi.Controllers.Dashboard.Models;
-using RegularApi.Dao.Model;
+﻿using RegularApi.Domain.Model;
+using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
     public class ApplicationTransformer : IApplicationTransformer
     {
-        public Application fromResource(ApplicationResource applicationResource)
+        public Application FromView(ApplicationView applicationView)
         {
             return new Application
             {
-                Name = applicationResource.Name,
+                Name = applicationView.Name,
                 DockerSetup = new DockerSetup
                 {
-                    RegistryUrl = applicationResource.DockerSetupResource.RegistryUrl,
-                    ImageName = applicationResource.DockerSetupResource.ImageName,
-                    EnvironmentVariables = applicationResource.DockerSetupResource.EnvironmentVariables,
-                    Ports = applicationResource.DockerSetupResource.Ports
-                },
-                HostsSetup = applicationResource.HostsSetupResources?.Select(hostsSetupResource => new HostSetup()
-                {
-                    TagName = hostsSetupResource.TagName,
-                    Hosts = hostsSetupResource.HostsResource?.Select(hostResource => new Host()
-                    {
-                        Ip = hostResource.Ip,
-                        Username = hostResource.Username,
-                        Password = hostResource.Password
-                    }).ToList()
-                }).ToList()
+                    RegistryUrl = applicationView.DockerSetup.RegistryUrl,
+                    ImageName = applicationView.DockerSetup.ImageName,
+                    EnvironmentVariables = applicationView.DockerSetup.EnvironmentVariables,
+                    Ports = applicationView.DockerSetup.Ports
+                }
             };
         }
     }

@@ -1,6 +1,6 @@
 using System;
 
-namespace RegularApi.Services.Domain
+namespace RegularApi.Domain.Services
 {
     public class DeploymentRequest
     {

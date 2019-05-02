@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace RegularApi.Dao.Model
+namespace RegularApi.Domain.Model
 {
     public class DockerSetup
     {

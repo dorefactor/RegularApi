@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace RegularApi.Controllers.Deployment.Views
+namespace RegularApi.Services.Deployment.Views
 {
     public class ApplicationRequest
     {

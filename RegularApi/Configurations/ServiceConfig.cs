@@ -15,12 +15,21 @@ namespace RegularApi.Configurations
 
             // Dependencies
             var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
-            var applicationDao = provider.GetRequiredService<IApplicationDao>();
             var rabbitTemplate = provider.GetRequiredService<IRabbitMqTemplate>();
 
-            services.AddSingleton(deploymentService => new DeploymentService(loggerFactory, applicationDao, rabbitTemplate));
-            services.AddSingleton(applicationSetupService => new ApplicationSetupService(loggerFactory, applicationDao));
-            services.AddSingleton<IApplicationTransformer>(applicationTransformer => new ApplicationTransformer());
+            var applicationDao = provider.GetRequiredService<IApplicationDao>();
+            var deploymentTemplateDao = provider.GetRequiredService<IDeploymentTemplateDao>();
+
+            // Transformers
+            services.AddTransient<IApplicationTransformer>(applicationTransformer => new ApplicationTransformer());
+            services.AddTransient<IDeploymentTemplateTransformer>(deploymentTemplateTransformer =>
+                new DeploymentTemplateTransformer());
+            
+            // Services
+            services.AddTransient(deploymentService => new DeploymentService(loggerFactory, applicationDao, rabbitTemplate));
+            services.AddTransient(applicationSetupService => new ApplicationSetupService(loggerFactory, applicationDao));
+            services.AddTransient(deploymentTemplateService =>
+                new DeploymentTemplateService(loggerFactory, deploymentTemplateDao));
 
             return services;
         }

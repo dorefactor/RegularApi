@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using RegularApi.Controllers.Deployment.Views;
+using RegularApi.Domain.Services;
 using RegularApi.Services;
-using RegularApi.Services.Domain;
+using RegularApi.Services.Deployment.Views;
 
 namespace RegularApi.Controllers.Deployment
 {

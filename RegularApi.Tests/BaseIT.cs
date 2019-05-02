@@ -62,7 +62,7 @@ namespace RegularApi.Tests
                 .ConfigureServices(services =>
                  {
                      services.AddSingleton<IMongoClient>(MongoClient);
-                     services.AddSingleton<IDaoFixture>(new DaoFixture());
+                     services.AddSingleton<DaoFixture, DaoFixture>();
                  })
                  .UseStartup<TestStartup>();
         }
@@ -83,8 +83,6 @@ namespace RegularApi.Tests
                 { "RabbitMq:Server", "rabbitmq-host" },
                 { "RabbitMq:Exchange", "regular-deployer-exchange" },
                 { "RabbitMq:CommandQueue", "com.dorefactor.deploy.command" },
-                { "RabbitMq:User", "guest" },
-                { "RabbitMq:Password", "guest" },
                 { "MongoDb:Database", "regularOrchestrator" }
             };
         }

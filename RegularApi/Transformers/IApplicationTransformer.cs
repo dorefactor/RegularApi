@@ -1,11 +1,11 @@
-﻿using RegularApi.Controllers.Dashboard.Models;
-using RegularApi.Dao.Model;
+﻿using RegularApi.Domain.Views;
+using RegularApi.Domain.Model;
 
 namespace RegularApi.Transformers
 {
     public interface IApplicationTransformer
     {
 
-        Application fromResource(ApplicationResource applicationResource);
+        Application FromView(ApplicationView applicationView);
     }
 }

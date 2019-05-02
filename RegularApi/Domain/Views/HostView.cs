@@ -1,6 +1,6 @@
-namespace RegularApi.Controllers.Dashboard.Models
+namespace RegularApi.Domain.Views
 {
-    public class HostResource
+    public class HostView
     {
         public string Ip { get; set; }
         public string Username { get; set; }
