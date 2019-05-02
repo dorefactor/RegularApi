@@ -29,7 +29,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task AddNewTemplateTest()
         {
-            var template = ModelFactory.BuildDeploymentTemplate("super-template");
+            var template = ModelFixture.BuildDeploymentTemplate("super-template");
 
             var storedTemplate = await _templateDao.NewAsync(template);
             var expectedTemplate = await GetDaoFixture().GetDeploymentTemplateByIdAsync(template.Id);

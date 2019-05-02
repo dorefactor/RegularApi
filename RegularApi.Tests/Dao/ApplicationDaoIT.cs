@@ -71,7 +71,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestSaveApplicationSetup()
         {
-            var expectedApplication = ModelFactory.CreateApplication();
+            var expectedApplication = ModelFixture.CreateApplication();
 
             var applicationSetupHolder = await _applicationDao.SaveApplicationSetup(expectedApplication);
 

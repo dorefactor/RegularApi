@@ -5,7 +5,7 @@ namespace RegularApi.Transformers
 {
     public class ApplicationTransformer : IApplicationTransformer
     {
-        public Application FromResource(ApplicationView applicationView)
+        public Application FromView(ApplicationView applicationView)
         {
             return new Application
             {

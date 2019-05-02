@@ -3,7 +3,7 @@ using RegularApi.Domain.Views;
 
 namespace RegularApi.Tests.Fixtures
 {
-    public static class ViewFactory
+    public static class ViewFixture
     {
         public static ApplicationView BuildApplicationView()
         {
@@ -32,17 +32,20 @@ namespace RegularApi.Tests.Fixtures
                 {
                     new KeyValuePair<object, object>("VARIABLE", "VALUE")
                 },
-                HostsSetup = new HostSetupView
+                HostsSetup = new List<HostSetupView>
                 {
-                    TagName = "feature/awesome-thing",
-                    Hosts = new List<HostView>
+                    new HostSetupView
                     {
-                        new HostView
+                        TagName = "feature/awesome-thing",
+                        Hosts = new List<HostView>
                         {
-                            Ip = "10.10.10.1",
-                            Username = "username",
-                            Password = "****"
+                            new HostView
+                            {
+                                Ip = "10.10.10.1",
+                                Username = "username",
+                                Password = "****"
 
+                            }
                         }
                     }
                 },

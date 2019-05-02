@@ -47,7 +47,7 @@ namespace RegularApi.Tests.Fixtures
         public async Task<DeploymentTemplate> CreateDeploymentTemplateAsync(string name)
         {
             var collection = GetCollection<DeploymentTemplate>("deploymentTemplates");
-            var template = ModelFactory.BuildDeploymentTemplate(name);
+            var template = ModelFixture.BuildDeploymentTemplate(name);
            
             await collection.InsertOneAsync(template);
 

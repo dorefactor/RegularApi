@@ -28,7 +28,7 @@ namespace RegularApi.Controllers.Configuration
         {
             _logger.LogInformation("application setup request received: {0}", applicationView);
 
-            var application = _applicationTransformer.FromResource(applicationView);
+            var application = _applicationTransformer.FromView(applicationView);
 
             var resultHolder = await _applicationSetupService.SaveApplicationSetupAsync(application);
 

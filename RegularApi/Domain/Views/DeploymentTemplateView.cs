@@ -12,7 +12,7 @@ namespace RegularApi.Domain.Views
         public string ApplicationId { get; set; }
         
         [Required]
-        public HostSetupView HostsSetup { get; set; }
+        public IList<HostSetupView> HostsSetup { get; set; }
                 
         [Required]
         public IList<KeyValuePair<object, object>> Ports { get; set; }

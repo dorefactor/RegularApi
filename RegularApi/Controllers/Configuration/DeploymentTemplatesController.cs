@@ -8,6 +8,7 @@ using RegularApi.Transformers;
 namespace RegularApi.Controllers.Configuration
 {
     [ApiController]
+    [Route("/configuration/deployment-templates")]
     public class DeploymentTemplatesController : ConfigurationControllerBase
     {
         private readonly ILogger<DeploymentTemplatesController> _logger;
@@ -24,12 +25,12 @@ namespace RegularApi.Controllers.Configuration
         public async Task<IActionResult> NewAsync(DeploymentTemplateView deploymentTemplateView)
         {
             _logger.LogInformation("New deployment template request received: {0}", deploymentTemplateView);
-            var template = _transformer.FromResource(deploymentTemplateView);
+            var template = _transformer.FromView(deploymentTemplateView);
 
             var result = await _deploymentTemplateService.AddDeploymentTemplateAsync(template);
 
             return result.Match<IActionResult>(
-                right => Ok(BuildNewResourceResponseView("/configuration/deploymentTemplates", right.Name)),
+                right => Ok(BuildNewResourceResponseView("/configuration/deployment-templates", right.Name)),
                 left => UnprocessableEntity(BuildErrorResponse(left))
             );
         }
@@ -44,7 +45,7 @@ namespace RegularApi.Controllers.Configuration
             return result.Match<IActionResult>(
                 right => 
                 {
-                    var view = _transformer.ToResource(right);
+                    var view = _transformer.ToView(right);
                     return Ok(view);
                 },
                 left => 

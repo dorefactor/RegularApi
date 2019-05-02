@@ -18,8 +18,8 @@ namespace RegularApi.Tests.Transformers
         [Test]
         public void TestTransformFromResource()
         {
-            var applicationResource = ViewFactory.BuildApplicationView();
-            var application = _applicationTransformer.FromResource(applicationResource);
+            var applicationResource = ViewFixture.BuildApplicationView();
+            var application = _applicationTransformer.FromView(applicationResource);
 
             application.Name.Should().BeSameAs(applicationResource.Name);
             application.DockerSetup.Should().BeEquivalentTo(applicationResource.DockerSetup);

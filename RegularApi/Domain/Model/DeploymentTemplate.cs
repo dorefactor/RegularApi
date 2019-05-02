@@ -17,6 +17,6 @@ namespace RegularApi.Domain.Model
 
         public IList<KeyValuePair<object, object>> Ports { get; set; }
 
-        public HostSetup HostsSetup { get; set; }
+        public IList<HostSetup> HostsSetup { get; set; }
     }
 }

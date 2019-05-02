@@ -4,7 +4,7 @@ using RegularApi.Domain.Model;
 
 namespace RegularApi.Tests.Fixtures
 {
-    public static class ModelFactory
+    public static class ModelFixture
     {
          public static DeploymentTemplate BuildDeploymentTemplate(string templateName)
         {
@@ -20,16 +20,21 @@ namespace RegularApi.Tests.Fixtures
                 { 
                     new KeyValuePair<object, object>("80", "80")
                 },
-                HostsSetup = new HostSetup
+                HostsSetup = new List<HostSetup>
                 {
-                    TagName = "latest",
-                    Hosts = new List<Host>
                     {
-                        new Host
+                        new HostSetup
                         {
-                            Ip = "192.168.0.100",
-                            Username = "user",
-                            Password = "****"
+                            TagName = "latest",
+                            Hosts = new List<Host>
+                            {
+                                new Host
+                                {
+                                    Ip = "192.168.0.100",
+                                    Username = "user",
+                                    Password = "****"
+                                }
+                            }
                         }
                     }
                 }

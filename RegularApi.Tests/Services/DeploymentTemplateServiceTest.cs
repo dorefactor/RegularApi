@@ -28,10 +28,16 @@ namespace RegularApi.Tests.Services
             _service = new DeploymentTemplateService(new LoggerFactory(), _deploymentTemplateDaoMock.Object);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _deploymentTemplateDaoMock.VerifyNoOtherCalls();
+        }
+
         [Test]
         public async Task GetDeploymentTemplateByNameTest()
         {
-            var template = ModelFactory.BuildDeploymentTemplate(TemplateName);
+            var template = ModelFixture.BuildDeploymentTemplate(TemplateName);
 
             _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
                 .ReturnsAsync(Option<DeploymentTemplate>.Some(template));
@@ -44,7 +50,6 @@ namespace RegularApi.Tests.Services
             storedTemplate.Should().BeEquivalentTo(template);
             
             _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-            _deploymentTemplateDaoMock.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -61,7 +66,6 @@ namespace RegularApi.Tests.Services
             expectedError.Should().Be("Deployment template: " + TemplateName + " not found");
 
             _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-            _deploymentTemplateDaoMock.VerifyNoOtherCalls();
         }
 
         [Test]
@@ -78,13 +82,12 @@ namespace RegularApi.Tests.Services
             expectedError.Should().Be("Can't get deployment template: " + TemplateName);
 
             _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-            _deploymentTemplateDaoMock.VerifyNoOtherCalls();            
         }
 
         [Test]
         public async Task NewDeploymentTemplateTest()
         {
-            var template = ModelFactory.BuildDeploymentTemplate(TemplateName);
+            var template = ModelFixture.BuildDeploymentTemplate(TemplateName);
 
             _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
                 .ReturnsAsync(Option<DeploymentTemplate>.None);
@@ -101,13 +104,12 @@ namespace RegularApi.Tests.Services
 
             _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
             _deploymentTemplateDaoMock.Verify(dao => dao.NewAsync(template));
-            _deploymentTemplateDaoMock.VerifyNoOtherCalls();            
         }
 
         [Test]
         public async Task AddExistingDeploymentTemplateTest()
         {
-            var template = ModelFactory.BuildDeploymentTemplate(TemplateName);
+            var template = ModelFixture.BuildDeploymentTemplate(TemplateName);
 
             _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
                 .ReturnsAsync(Option<DeploymentTemplate>.Some(template));
@@ -120,13 +122,12 @@ namespace RegularApi.Tests.Services
             expectedError.Should().BeEquivalentTo("Deployment template: " + TemplateName + " already exists");
 
             _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-            _deploymentTemplateDaoMock.VerifyNoOtherCalls();                        
         }
 
         [Test]
         public async Task AddDeploymentTemplateThrowsExceptionTest()
         {
-            var template = ModelFactory.BuildDeploymentTemplate(TemplateName);
+            var template = ModelFixture.BuildDeploymentTemplate(TemplateName);
 
             _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
                 .ReturnsAsync(Option<DeploymentTemplate>.None);
@@ -143,7 +144,6 @@ namespace RegularApi.Tests.Services
 
             _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
             _deploymentTemplateDaoMock.Verify(dao => dao.NewAsync(template));
-            _deploymentTemplateDaoMock.VerifyNoOtherCalls();                        
         }
     }
 }

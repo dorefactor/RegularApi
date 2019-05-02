@@ -11,7 +11,7 @@ namespace RegularApi.Tests.Controllers.Configuration
 {
     public class DeploymentTemplatesControllerIT : BaseControllerIT
     {
-        private const string TemplatesUri = "/configuration/deploymentTemplates";
+        private const string TemplatesUri = "/configuration/deployment-templates";
         private DaoFixture _daoFixture;
 
         private IDeploymentTemplateTransformer _transformer;
@@ -36,14 +36,14 @@ namespace RegularApi.Tests.Controllers.Configuration
         public async Task CreateDeploymentTemplateTest()
         {
             var templateName = "super-template";
-            var deploymentTemplateView = ViewFactory.BuildDeploymentTemplateView(templateName);
+            var deploymentTemplateView = ViewFixture.BuildDeploymentTemplateView(templateName);
 
             var response = await PerformPostAsync(deploymentTemplateView, TemplatesUri);
             
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var expectedResponse = await GetResponse<NewResourceResponseView>(response);
 
-            expectedResponse.Link.Should().Be("/configuration/deploymentTemplates/" + templateName);
+            expectedResponse.Link.Should().Be(TemplatesUri + "/" + templateName);
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace RegularApi.Tests.Controllers.Configuration
         {
             var templateName = "super-template";
             var deploymentTemplate = await _daoFixture.CreateDeploymentTemplateAsync(templateName);
-            var expectedView = _transformer.ToResource(deploymentTemplate);
+            var expectedView = _transformer.ToView(deploymentTemplate);
 
             var uri = TemplatesUri + "/" + templateName;
             var response = await PerformGetAsync(uri);
