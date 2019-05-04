@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using LanguageExt;
+using MongoDB.Bson;
 using RegularApi.Domain.Model;
 
 namespace RegularApi.Dao
@@ -8,5 +9,6 @@ namespace RegularApi.Dao
     {
         Task<DeploymentTemplate> NewAsync(DeploymentTemplate template);
         Task<Option<DeploymentTemplate>> GetByNameAsync(string templateName);
+        Task<Option<DeploymentTemplate>> GetByIdAsync(ObjectId id);
     }
 }

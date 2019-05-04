@@ -14,25 +14,17 @@ namespace RegularApi.Transformers
                 Name = deploymentTemplateView.Name,
                 ApplicationId = new ObjectId(deploymentTemplateView.ApplicationId),
                 EnvironmentVariables = deploymentTemplateView.EnvironmentVariables,
-                HostsSetup = FromResource(deploymentTemplateView.HostsSetup),
-                Ports = deploymentTemplateView.Ports
-            };
-        }
-
-        private HostSetup FromResource(HostSetupView hostsSetupView)
-        {
-            var hosts = from host in hostsSetupView.Hosts
-                select new Host
+                HostsSetup = deploymentTemplateView.HostsSetupViews?.Select(hostSetupView => new HostSetup // Change to HostViews
                 {
-                    Ip = host.Ip,
-                    Username = host.Username,
-                    Password = host.Password
-                };
-            
-            return new HostSetup
-            {
-                TagName = hostsSetupView.TagName,
-                Hosts = hosts.ToList()
+                    TagName = hostSetupView.TagName,
+                    Hosts = hostSetupView.Hosts?.Select(hostView => new Host
+                    {
+                        Ip = hostView.Ip,
+                        Username = hostView.Username,
+                        Password = hostView.Password
+                    }).ToList()
+                }).ToList(),
+                Ports = deploymentTemplateView.Ports
             };
         }
     }

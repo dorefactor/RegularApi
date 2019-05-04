@@ -34,8 +34,9 @@ namespace RegularApi.Configurations
             var mongoClient = provider.GetRequiredService<IMongoClient>();
             var databaseName = configuration["MongoDb:Database"];
 
-            services.AddTransient<IApplicationDao>(applicationDao => new ApplicationDao(mongoClient, databaseName, "applications"));
+            services.AddTransient<IApplicationDao>(applicationDao => new ApplicationDao(mongoClient, databaseName));
             services.AddTransient<IDeploymentTemplateDao>(deploymentTemplateDao => new DeploymentTemplateDao(mongoClient, databaseName));
+            services.AddTransient<IDeploymentOrderDao>(deploymentOrderDao => new DeploymentOrderDao(mongoClient, databaseName));
 
             return services;
         }

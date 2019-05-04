@@ -32,7 +32,7 @@ namespace RegularApi.Tests.Fixtures
                 {
                     new KeyValuePair<object, object>("VARIABLE", "VALUE")
                 },
-                HostsSetup = new HostSetupView
+                HostsSetupViews = new HostSetupView
                 {
                     TagName = "feature/awesome-thing",
                     Hosts = new List<HostView>

@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
+using RegularApi.Domain.Model;
 
 namespace RegularApi.RabbitMq.Listener
 {
     public class RabbiMqCommandQueueListener : RabbitMqMessageListener
     {
-        public string LastReceivedMessage { get; set; }
-
         private readonly ILogger _logger;
         private readonly IModel _channel;
 
@@ -19,7 +19,9 @@ namespace RegularApi.RabbitMq.Listener
 
         public override void OnMessage(string message)
         {
-            LastReceivedMessage = message;
+            var deploymentOrder = JsonConvert.DeserializeObject<DeploymentOrder>(message);
+
+
             _logger.LogInformation("message received: {0}", message);
         }
     }
