@@ -27,7 +27,7 @@ namespace RegularApi.Tests.Controllers.Configuration
         [Test]
         public async Task TestNewApplicationSetupAsync_Created()
         {
-            var applicationResource = ViewFactory.BuildApplicationView();
+            var applicationResource = ViewFixture.BuildApplicationView();
             var responseMessage = await PerformPostAsync(applicationResource, ApplicationUri);
 
             Assert.AreEqual(HttpStatusCode.OK, responseMessage.StatusCode);

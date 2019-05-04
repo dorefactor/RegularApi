@@ -3,7 +3,7 @@ using RegularApi.Domain.Views;
 
 namespace RegularApi.Tests.Fixtures
 {
-    public static class ViewFactory
+    public static class ViewFixture
     {
         public static ApplicationView BuildApplicationView()
         {
@@ -27,22 +27,25 @@ namespace RegularApi.Tests.Fixtures
             return new DeploymentTemplateView
             {
                 Name = name,
-                ApplicationId = "123123123",
+                ApplicationId = "01234567890123456789ABCD",
                 EnvironmentVariables = new List<KeyValuePair<object, object>>
                 {
                     new KeyValuePair<object, object>("VARIABLE", "VALUE")
                 },
-                HostsSetupViews = new HostSetupView
+                HostsSetup = new List<HostSetupView>
                 {
-                    TagName = "feature/awesome-thing",
-                    Hosts = new List<HostView>
+                    new HostSetupView
                     {
-                        new HostView
+                        TagName = "feature/awesome-thing",
+                        Hosts = new List<HostView>
                         {
-                            Ip = "10.10.10.1",
-                            Username = "username",
-                            Password = "****"
+                            new HostView
+                            {
+                                Ip = "10.10.10.1",
+                                Username = "username",
+                                Password = "****"
 
+                            }
                         }
                     }
                 },
@@ -50,6 +53,14 @@ namespace RegularApi.Tests.Fixtures
                 {
                     new KeyValuePair<object, object>("8080", "80")
                 }
+            };
+        }
+
+        public static NewResourceResponseView BuildDeploymentTemplateCreationResponse(string name)
+        {
+            return new NewResourceResponseView
+            {
+                Link = "/configuration/deploymentTemplates/" + name
             };
         }
         

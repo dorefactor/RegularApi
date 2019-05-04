@@ -5,6 +5,7 @@ namespace RegularApi.Transformers
 {
     public interface IDeploymentTemplateTransformer
     {
-        DeploymentTemplate FromResource(DeploymentTemplateView deploymentTemplateView);
+        DeploymentTemplate FromView(DeploymentTemplateView deploymentTemplateView);
+        DeploymentTemplateView ToView(DeploymentTemplate DeploymentTemplate);
     }
 }

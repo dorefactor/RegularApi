@@ -14,7 +14,7 @@ namespace RegularApi.Domain.Views
         
         [Required]
         [JsonProperty(PropertyName = "HostsSetup")]
-        public IList<HostSetupView> HostsSetupViews { get; set; }
+        public IList<HostSetupView> HostSetupViews { get; set; }
                 
         [Required]
         public IList<KeyValuePair<object, object>> Ports { get; set; }

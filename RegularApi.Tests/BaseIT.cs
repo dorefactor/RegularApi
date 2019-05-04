@@ -69,8 +69,8 @@ namespace RegularApi.Tests
 
         private static void AddEnvironmentVariables()
         {
-            Environment.SetEnvironmentVariable("RABBIT_USER", "xoom");
-            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "xoom123");
+            Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
+            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
             
             Environment.SetEnvironmentVariable("MONGO_USER", "root");
             Environment.SetEnvironmentVariable("MONGO_PASSWORD", "r00t");

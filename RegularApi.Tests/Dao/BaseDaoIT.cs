@@ -28,8 +28,6 @@ namespace RegularApi.Tests.Dao
             return GetDao<DaoFixture>();
         }
 
-        // ------------------------------------------------------------------------------------
-
         private IMongoDatabase GetDatabase()
         {
             return MongoClient.GetDatabase(MongoDatabaseName);
