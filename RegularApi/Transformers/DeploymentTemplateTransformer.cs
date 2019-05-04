@@ -6,9 +6,9 @@ using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
-    public class DeploymentTemplateTransformer : IDeploymentTemplateTransformer
+    public class DeploymentTemplateTransformer : ITransformer<DeploymentTemplateView, DeploymentTemplate>
     {
-        public DeploymentTemplate FromView(DeploymentTemplateView deploymentTemplateView)
+        public DeploymentTemplate Transform(DeploymentTemplateView deploymentTemplateView)
         {
             return new DeploymentTemplate
             {
@@ -20,7 +20,7 @@ namespace RegularApi.Transformers
             };
         }
 
-        public DeploymentTemplateView ToView(DeploymentTemplate deploymentTemplate)
+        public DeploymentTemplateView Transform(DeploymentTemplate deploymentTemplate)
         {
             return new DeploymentTemplateView
             {
@@ -28,18 +28,17 @@ namespace RegularApi.Transformers
                 ApplicationId = deploymentTemplate.ApplicationId.ToString(),
                 EnvironmentVariables = deploymentTemplate.EnvironmentVariables,
                 Ports = deploymentTemplate.Ports,
-                // HostsSetup = ToResource(deploymentTemplate.HostsSetup)
             };
         }
 
         private IList<HostSetup> FromView(IList<HostSetupView> hostsSetupView)
         {
             var hostsSetup = from hostSetupView in hostsSetupView
-                select new HostSetup
-                {
-                    TagName = hostSetupView.TagName,
-                    Hosts = FromView(hostSetupView.Hosts)
-                };
+                             select new HostSetup
+                             {
+                                 TagName = hostSetupView.TagName,
+                                 Hosts = FromView(hostSetupView.Hosts)
+                             };
 
             return hostsSetup.ToList();
         }
@@ -47,39 +46,14 @@ namespace RegularApi.Transformers
         private IList<Host> FromView(IList<HostView> hostsView)
         {
             var hosts = from hostView in hostsView
-                select new Host
-                {
-                    Ip = hostView.Ip,
-                    Username = hostView.Username,
-                    Password = hostView.Password
-                };
+                        select new Host
+                        {
+                            Ip = hostView.Ip,
+                            Username = hostView.Username,
+                            Password = hostView.Password
+                        };
 
             return hosts.ToList();
-        }
-
-        private IList<HostSetupView> ToView(IList<HostSetup> hostsSetup)
-        {
-            var hostsSetupView = from hostSetup in hostsSetup
-                select new HostSetupView
-                {
-                    TagName = hostSetup.TagName,
-                    Hosts = ToView(hostSetup.Hosts)
-                };
-
-            return hostsSetupView.ToList();
-        }
-
-        private IList<HostView> ToView(IList<Host> hosts)
-        {
-            var hostsView = from host in hosts
-                select new HostView
-                {
-                    Ip = host.Ip,
-                    Username = host.Username,
-                    Password = host.Password
-                };
-
-            return hostsView.ToList();
         }
     }
 }

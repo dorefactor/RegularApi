@@ -34,7 +34,7 @@ namespace RegularApi.Tests.Services
         [Test]
         public async Task TestWhenNoApplicationExistsReturnsError()
         {
-            _applicationDao.Setup(dao => dao.GetApplicationByNameAsync(AppName))
+            _applicationDao.Setup(dao => dao.GetByNameAsync(AppName))
                 .ReturnsAsync(Option<Application>.None);
 
             var result = await _deploymentService.QueueDeploymentRequestAsync(AppName, Tag);
@@ -44,7 +44,7 @@ namespace RegularApi.Tests.Services
             result.IsLeft.Should().BeTrue();
             result.LeftAsEnumerable().First().Should().Be(expectedError);
             
-            _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
+            _applicationDao.Verify(dao => dao.GetByNameAsync(AppName));
             _applicationDao.VerifyNoOtherCalls();
             _rabbitMqTemplate.VerifyNoOtherCalls();
         }
@@ -53,7 +53,7 @@ namespace RegularApi.Tests.Services
         public async Task TestSuccessApplicationDeploymentQueued()
         {
             var application = BuildApplication();
-            _applicationDao.Setup(dao => dao.GetApplicationByNameAsync(AppName))
+            _applicationDao.Setup(dao => dao.GetByNameAsync(AppName))
                 .ReturnsAsync(Option<Application>.Some(application));
 
             _rabbitMqTemplate.Setup(template => template.SendMessage(It.IsAny<string>()));
@@ -66,7 +66,7 @@ namespace RegularApi.Tests.Services
             value.Name.Should().Be(AppName);
             value.Tag.Should().Be(Tag);
 
-            _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
+            _applicationDao.Verify(dao => dao.GetByNameAsync(AppName));
             _rabbitMqTemplate.Verify(template => template.SendMessage(It.IsAny<string>()));
 
             _applicationDao.VerifyNoOtherCalls();
@@ -77,7 +77,7 @@ namespace RegularApi.Tests.Services
         public async Task TestWhenExceptionReturnError()
         {
             var application = BuildApplication();
-            _applicationDao.Setup(dao => dao.GetApplicationByNameAsync(AppName))
+            _applicationDao.Setup(dao => dao.GetByNameAsync(AppName))
                 .ReturnsAsync(Option<Application>.Some(application));
 
             _rabbitMqTemplate.Setup(template => template.SendMessage(It.IsAny<string>()))
@@ -91,7 +91,7 @@ namespace RegularApi.Tests.Services
             result.IsLeft.Should().BeTrue();
             result.LeftAsEnumerable().First().Should().Be(expectedError);
 
-            _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
+            _applicationDao.Verify(dao => dao.GetByNameAsync(AppName));
             _rabbitMqTemplate.Verify(template => template.SendMessage(It.IsAny<string>()));
 
             _applicationDao.VerifyNoOtherCalls();

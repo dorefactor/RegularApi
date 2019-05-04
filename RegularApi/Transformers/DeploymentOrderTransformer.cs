@@ -25,5 +25,10 @@ namespace RegularApi.Transformers
                 }).ToList()
             };
         }
+
+        public DeploymentOrderView Transform(DeploymentOrder model)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

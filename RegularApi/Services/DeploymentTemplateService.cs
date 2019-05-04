@@ -34,7 +34,7 @@ namespace RegularApi.Services
                 }
 
                 _logger.LogInformation("deployment template: {0} created successfully", name);
-                var template = await _deploymentTemplateDao.NewAsync(deploymentTemplate);
+                var template = await _deploymentTemplateDao.SaveAsync(deploymentTemplate);
 
                 return template;
             }

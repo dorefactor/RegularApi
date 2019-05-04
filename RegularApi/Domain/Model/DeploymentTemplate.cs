@@ -9,9 +9,10 @@ namespace RegularApi.Domain.Model
     {
         [BsonId(IdGenerator = typeof(ObjectIdGenerator))]
         public ObjectId Id;
+
         public string Name { get; set; }
-        
-        public ObjectId ApplicationId { get; set;}
+
+        public ObjectId ApplicationId { get; set; }
 
         public IList<KeyValuePair<object, object>> EnvironmentVariables { get; set; }
 

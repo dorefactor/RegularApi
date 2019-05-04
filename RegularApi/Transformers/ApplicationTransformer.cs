@@ -3,9 +3,9 @@ using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
-    public class ApplicationTransformer : IApplicationTransformer
+    public class ApplicationTransformer : ITransformer<ApplicationView, Application>
     {
-        public Application FromView(ApplicationView applicationView)
+        public Application Transform(ApplicationView applicationView)
         {
             return new Application
             {
@@ -18,6 +18,11 @@ namespace RegularApi.Transformers
                     Ports = applicationView.DockerSetup.Ports
                 }
             };
+        }
+
+        public ApplicationView Transform(Application view)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

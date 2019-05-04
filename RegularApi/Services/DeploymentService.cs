@@ -31,11 +31,12 @@ namespace RegularApi.Services
             _rabbitMqTemplate = rabbitMqTemplate;
         }
 
-        public async Task<Either<string, DeploymentRequest>> QueueDeploymentRequestAsync(DeploymentOrder deploymentOrder)
+        public async Task<Either<string, DeploymentRequest>> QueueDeploymentOrderAsync(DeploymentOrder deploymentOrder)
         {
             try
             {
                 _logger.LogInformation("Deployment request for template_id: {0} version: {1}", deploymentOrder.DeploymentTemplateId, deploymentOrder.ApplicationVersion);
+
                 var deploymentTemplateHolder = await _deploymentTemplateDao.GetByIdAsync(deploymentOrder.DeploymentTemplateId);
 
                 if (deploymentTemplateHolder.IsNone)
@@ -43,7 +44,7 @@ namespace RegularApi.Services
                     return "No deployment template_id found: " + deploymentOrder.DeploymentTemplateId;
                 }
 
-                var deploymentOrderHolder = await _deploymentOrderDao.Save(deploymentOrder);
+                var deploymentOrderHolder = await _deploymentOrderDao.SaveAsync(deploymentOrder);
 
                 var deploymentOrderRequest = BuildDeploymentRequest(deploymentOrder.RequestId);
                 var payload = JsonConvert.SerializeObject(deploymentOrderRequest);
@@ -61,15 +62,49 @@ namespace RegularApi.Services
             }
         }
 
-        public async Task<Either<string, JenkinsDeploymentOrder>> GetByRequestIdAsync(string id)
+        public async Task<Either<string, DeploymentOrderSummarized>> GetDeploymentOrderSummarizedByRequestIdAsync(string id)
         {
 
-            var deploymentOrderDetailHolder = await _deploymentOrderDao.GetDeploymentOrderDetailByRequestIdAsync(id);
+            var deploymentOrderVoHolder = await _deploymentOrderDao.GetDeploymentOrderVoByRequestIdAsync(id);
 
-            var deploymentOrderDetail = deploymentOrderDetailHolder.FirstOrDefault();
+            if (deploymentOrderVoHolder.IsNone)
+            {
+                return "No deployment order found with request_id found: " + id;
+            }
 
+            var deploymentOrderVo = deploymentOrderVoHolder.FirstOrDefault();
+
+            var deploymentOrderSummarized = new DeploymentOrderSummarized
+            {
+                AnsibleSetup = new AnsibleSetup
+                {
+                    AnsibleGroups = new List<AnsibleGroup>() { BuildAnsibleGroup(deploymentOrderVo) }
+                }
+            };
+
+            var settings = new JsonSerializerSettings();
+            settings.Formatting = Formatting.Indented;
+
+            Console.WriteLine(JsonConvert.SerializeObject(deploymentOrderSummarized, settings));
+
+            return deploymentOrderSummarized;
+
+        }
+
+        private DeploymentRequest BuildDeploymentRequest(string requestId)
+        {
+            return new DeploymentRequest
+            {
+                RequestId = requestId,
+                Created = DateTime.UtcNow,
+            };
+        }
+
+        private List<AnsibleHost> GetAnsibleHosts(DeploymentOrderVo deploymentOrderVo)
+        {
             var ansibleHosts = new List<AnsibleHost>();
-            foreach (HostSetup hostSetup in deploymentOrderDetail.HostsSetup)
+
+            foreach (HostSetup hostSetup in deploymentOrderVo.HostsSetup)
             {
                 foreach (Host host in hostSetup.Hosts)
                 {
@@ -86,61 +121,46 @@ namespace RegularApi.Services
                 }
             }
 
-            var ports = (from port in deploymentOrderDetail.DockerSetup.Ports
-                         select new
-                         {
-                             PortMapping = port.Key + ":" + port.Value
+            return ansibleHosts;
+        }
 
-                         }).ToList();
+        private IList<string> BuildPorts(DeploymentOrderVo deploymentOrderVo)
+        {
+            return (IList<string>)(from port in deploymentOrderVo.DockerSetup.Ports
+                                   select new string
+                                   (
+                                       port.Key + ":" + port.Value
 
+                                   )).ToList();
+        }
 
-            var environmentVariables = (from environmentVariable in deploymentOrderDetail.DockerSetup.EnvironmentVariables
-                                        select new
-                                        {
-                                            EnvironmentVariableMapping = environmentVariable.Key + ":" + environmentVariable.Value
+        private IList<string> BuildEnvironmentVariables(DeploymentOrderVo deploymentOrderVo)
+        {
+            return (IList<string>)(from environmentVariable in deploymentOrderVo.DockerSetup.EnvironmentVariables
+                                   select new string
+                                   (
+                                       environmentVariable.Key + ": " + environmentVariable.Value
 
-                                        }).ToList();
+                                   )).ToList();
+        }
 
-            var ansibleGroup = new AnsibleGroup
+        public AnsibleGroup BuildAnsibleGroup(DeploymentOrderVo deploymentOrderVo)
+        {
+            return new AnsibleGroup
             {
-                AnsibleHosts = ansibleHosts,
+                AnsibleHosts = GetAnsibleHosts(deploymentOrderVo),
                 ApplicationSetup = new ApplicationSetup
                 {
-                    Name = deploymentOrderDetail.ApplicationName,
+                    Name = deploymentOrderVo.ApplicationName,
                     DockerSetup = new Domain.Views.Jenkins.DockerSetup
                     {
-                        Image = deploymentOrderDetail.DockerSetup.ImageName + ":" + deploymentOrderDetail.ApplicationVersion,
-                        Ports = ports.Select(portMapping => portMapping.PortMapping).ToList(),
-                        EnvironmentVariables = environmentVariables.Select(environmentVariablesMapping => environmentVariablesMapping.EnvironmentVariableMapping).ToList()
+                        Image = deploymentOrderVo.DockerSetup.ImageName + ":" + deploymentOrderVo.ApplicationVersion,
+                        Ports = BuildPorts(deploymentOrderVo).Select(portMapping => portMapping).ToList(),
+                        EnvironmentVariables = BuildEnvironmentVariables(deploymentOrderVo).Select(environmentVariablesMapping => environmentVariablesMapping).ToList()
                     }
                 }
             };
-
-            var jenkinsDeploymentOrder = new JenkinsDeploymentOrder
-            {
-                AnsibleSetup = new AnsibleSetup
-                {
-                    AnsibleGroups = new List<AnsibleGroup>() { ansibleGroup }
-                }
-            };
-
-
-            var settings = new JsonSerializerSettings();
-            settings.Formatting = Formatting.Indented;
-
-            Console.WriteLine(JsonConvert.SerializeObject(jenkinsDeploymentOrder, settings));
-
-            return jenkinsDeploymentOrder;
-
         }
 
-        private DeploymentRequest BuildDeploymentRequest(string requestId)
-        {
-            return new DeploymentRequest
-            {
-                RequestId = requestId,
-                Created = DateTime.UtcNow,
-            };
-        }
     }
 }

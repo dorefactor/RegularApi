@@ -92,7 +92,7 @@ namespace RegularApi.Tests.Services
             _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
                 .ReturnsAsync(Option<DeploymentTemplate>.None);
 
-            _deploymentTemplateDaoMock.Setup(dao => dao.NewAsync(template))
+            _deploymentTemplateDaoMock.Setup(dao => dao.SaveAsync(template))
                 .ReturnsAsync(template);
             
             var result = await _service.AddDeploymentTemplateAsync(template);
@@ -103,7 +103,7 @@ namespace RegularApi.Tests.Services
             expectedTemplate.Should().BeEquivalentTo(template);
 
             _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-            _deploymentTemplateDaoMock.Verify(dao => dao.NewAsync(template));
+            _deploymentTemplateDaoMock.Verify(dao => dao.SaveAsync(template));
         }
 
         [Test]
@@ -132,7 +132,7 @@ namespace RegularApi.Tests.Services
             _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
                 .ReturnsAsync(Option<DeploymentTemplate>.None);
 
-            _deploymentTemplateDaoMock.Setup(dao => dao.NewAsync(template))
+            _deploymentTemplateDaoMock.Setup(dao => dao.SaveAsync(template))
                 .Throws<Exception>();
             
             var result = await _service.AddDeploymentTemplateAsync(template);
@@ -143,7 +143,7 @@ namespace RegularApi.Tests.Services
             expectedError.Should().BeEquivalentTo("Can't create deployment template: " + TemplateName);
 
             _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-            _deploymentTemplateDaoMock.Verify(dao => dao.NewAsync(template));
+            _deploymentTemplateDaoMock.Verify(dao => dao.SaveAsync(template));
         }
     }
 }

@@ -7,8 +7,9 @@ namespace RegularApi.Domain.Views.Jenkins
     {
         public string Name { get; } = "all";
 
-        [JsonProperty(PropertyName = "Hosts")]
+        [JsonProperty(PropertyName = "hosts")]
         public IList<AnsibleHost> AnsibleHosts { get; set; }
+
         public ApplicationSetup ApplicationSetup { get; set; }
     }
 }

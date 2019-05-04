@@ -34,7 +34,7 @@ namespace RegularApi.Tests.Dao
         {
             var application = await GetDaoFixture().CreateApplication("super-application-2k");
 
-            var apps = await _applicationDao.GetApplicationsAsync();
+            var apps = await _applicationDao.GetAllAsync();
 
             Assert.NotNull(apps);
 
@@ -46,7 +46,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestGetNonExistingApplication()
         {
-            var appHolder = await _applicationDao.GetApplicationByNameAsync("non-existing-app");
+            var appHolder = await _applicationDao.GetByNameAsync("non-existing-app");
 
             Assert.NotNull(appHolder);
             Assert.True(appHolder.IsNone);
@@ -59,7 +59,7 @@ namespace RegularApi.Tests.Dao
 
             var application = await GetDaoFixture().CreateApplication(appName);
 
-            var appHolder = await _applicationDao.GetApplicationByNameAsync(appName);
+            var appHolder = await _applicationDao.GetByNameAsync(appName);
 
             Assert.NotNull(appHolder);
 
@@ -73,7 +73,7 @@ namespace RegularApi.Tests.Dao
         {
             var expectedApplication = ModelFixture.CreateApplication();
 
-            var applicationSetupHolder = await _applicationDao.SaveApplicationSetup(expectedApplication);
+            var applicationSetupHolder = await _applicationDao.SaveAsync(expectedApplication);
 
             Assert.NotNull(applicationSetupHolder);
 

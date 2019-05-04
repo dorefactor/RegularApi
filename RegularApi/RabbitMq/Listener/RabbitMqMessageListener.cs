@@ -8,7 +8,6 @@ namespace RegularApi.RabbitMq.Listener
     public abstract class RabbitMqMessageListener : IMessageListener
     {
         protected string ConsumerTag;
-
         private readonly ILogger _logger;
 
         public abstract void OnMessage(string message);
@@ -37,10 +36,10 @@ namespace RegularApi.RabbitMq.Listener
                 channel.BasicAck(ea.DeliveryTag, false);
             };
                             
-            return channel.BasicConsume(queue, false, consumer);            
-        }     
-        
-        protected static IModel CreateConnection(IConnectionFactory connectionFactory)
+            return channel.BasicConsume(queue, false, consumer);
+        }
+
+        protected IModel CreateConnection(IConnectionFactory connectionFactory)
         {
             var connection = connectionFactory.CreateConnection();
             return connection.CreateModel();

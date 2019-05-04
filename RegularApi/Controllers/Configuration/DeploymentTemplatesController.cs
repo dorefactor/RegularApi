@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
 using RegularApi.Services;
 using RegularApi.Transformers;
@@ -12,20 +13,23 @@ namespace RegularApi.Controllers.Configuration
     public class DeploymentTemplatesController : ConfigurationControllerBase
     {
         private readonly ILogger<DeploymentTemplatesController> _logger;
-        private readonly IDeploymentTemplateTransformer _transformer;
+        private readonly ITransformer<DeploymentTemplateView, DeploymentTemplate> _deploymentTemplateTransformer;
         private readonly DeploymentTemplateService _deploymentTemplateService;
 
-        public DeploymentTemplatesController(ILoggerFactory loggerFactory, IDeploymentTemplateTransformer transformer, DeploymentTemplateService deploymentTemplateService)
+        public DeploymentTemplatesController(ILoggerFactory loggerFactory,
+                                             ITransformer<DeploymentTemplateView, DeploymentTemplate> deploymentTemplateTransformer,
+                                             DeploymentTemplateService deploymentTemplateService)
         {
             _logger = loggerFactory.CreateLogger<DeploymentTemplatesController>();
-            _transformer = transformer;
+            _deploymentTemplateTransformer = deploymentTemplateTransformer;
             _deploymentTemplateService = deploymentTemplateService;
         }
-        
+
         public async Task<IActionResult> NewAsync(DeploymentTemplateView deploymentTemplateView)
         {
             _logger.LogInformation("New deployment template request received: {0}", deploymentTemplateView);
-            var template = _transformer.FromView(deploymentTemplateView);
+            
+            var template = _deploymentTemplateTransformer.Transform(deploymentTemplateView);
 
             var result = await _deploymentTemplateService.AddDeploymentTemplateAsync(template);
 
@@ -43,12 +47,12 @@ namespace RegularApi.Controllers.Configuration
             var result = await _deploymentTemplateService.GetDeploymentTemplateByNameAsync(templateName);
 
             return result.Match<IActionResult>(
-                right => 
+                right =>
                 {
-                    var view = _transformer.ToView(right);
+                    var view = _deploymentTemplateTransformer.Transform(right);
                     return Ok(view);
                 },
-                left => 
+                left =>
                 {
                     if (NotFoundResponse(templateName).Equals(left))
                     {

@@ -10,9 +10,13 @@ namespace RegularApi.Domain.Model
     {
         [BsonId(IdGenerator = typeof(ObjectIdGenerator))]
         public ObjectId Id { get; set; }
+
         public string RequestId { get; set; } = Guid.NewGuid().ToString();
+
         public ObjectId DeploymentTemplateId { get; set; }
+
         public string ApplicationVersion { get; set; }
+
         public IList<HostSetup> HostsSetup { get; set; }
     }
 }

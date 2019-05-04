@@ -7,7 +7,7 @@ namespace RegularApi.Dao
 {
     public interface IDeploymentTemplateDao
     {
-        Task<DeploymentTemplate> NewAsync(DeploymentTemplate template);
+        Task<DeploymentTemplate> SaveAsync(DeploymentTemplate template);
         Task<Option<DeploymentTemplate>> GetByNameAsync(string templateName);
         Task<Option<DeploymentTemplate>> GetByIdAsync(ObjectId id);
     }

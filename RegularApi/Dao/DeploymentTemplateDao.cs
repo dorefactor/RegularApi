@@ -8,7 +8,7 @@ namespace RegularApi.Dao
 {
     public class DeploymentTemplateDao : BaseDao, IDeploymentTemplateDao
     {
-        public static readonly string DeploymentTemplateCollectionName = "deployments.templates";
+        public static readonly string DeploymentTemplateCollectionName = "deploymentsTemplates";
 
         private readonly IMongoCollection<DeploymentTemplate> _collection;
         
@@ -18,7 +18,7 @@ namespace RegularApi.Dao
             _collection = GetCollection<DeploymentTemplate>();
         }
 
-        public async Task<DeploymentTemplate> NewAsync(DeploymentTemplate template)
+        public async Task<DeploymentTemplate> SaveAsync(DeploymentTemplate template)
         {
             await _collection.InsertOneAsync(template);
 

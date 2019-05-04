@@ -5,7 +5,7 @@ namespace RegularApi.Domain.Views.Jenkins
 {
     public class AnsibleSetup
     {
-        [JsonProperty(PropertyName = "Groups")]
+        [JsonProperty(PropertyName = "groups")]
         public IList<AnsibleGroup> AnsibleGroups { get; set; }
     }
 }

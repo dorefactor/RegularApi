@@ -31,7 +31,7 @@ namespace RegularApi.Tests.Dao
         {
             var template = ModelFixture.BuildDeploymentTemplate("super-template");
 
-            var storedTemplate = await _templateDao.NewAsync(template);
+            var storedTemplate = await _templateDao.SaveAsync(template);
             var expectedTemplate = await GetDaoFixture().GetDeploymentTemplateByIdAsync(template.Id);
 
             storedTemplate.Should().NotBeNull();

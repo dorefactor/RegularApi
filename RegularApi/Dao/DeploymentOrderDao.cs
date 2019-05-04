@@ -9,7 +9,7 @@ namespace RegularApi.Dao
 {
     public class DeploymentOrderDao : BaseDao, IDeploymentOrderDao
     {
-        public static readonly string DeploymentOrderCollectionName = "deployments.orders";
+        public static readonly string DeploymentOrderCollectionName = "deploymentsOrders";
 
         private readonly IMongoCollection<DeploymentOrder> _collection;
 
@@ -19,14 +19,14 @@ namespace RegularApi.Dao
             _collection = GetCollection<DeploymentOrder>();
         }
 
-        public async Task<Option<DeploymentOrder>> Save(DeploymentOrder deploymentOrder)
+        public async Task<Option<DeploymentOrder>> SaveAsync(DeploymentOrder deploymentOrder)
         {
             await _collection.InsertOneAsync(deploymentOrder);
 
             return OfNullable(deploymentOrder);
         }
 
-        public async Task<Option<DeploymentOrderDetailVo>> GetDeploymentOrderDetailByRequestIdAsync(string id)
+        public async Task<Option<DeploymentOrderVo>> GetDeploymentOrderVoByRequestIdAsync(string id)
         {
             var deploymentTemplatesCollection = GetCollection<DeploymentTemplate>(DeploymentTemplateDao.DeploymentTemplateCollectionName);
             var applicationsCollection = GetCollection<Application>(ApplicationDao.ApplicationCollectionName);
@@ -35,7 +35,7 @@ namespace RegularApi.Dao
                          join deploymentTemplate in deploymentTemplatesCollection.AsQueryable() on deploymentOrder.DeploymentTemplateId equals deploymentTemplate.Id
                          join application in applicationsCollection.AsQueryable() on deploymentTemplate.ApplicationId equals application.Id
                          where deploymentOrder.RequestId.Equals(id)
-                         select new DeploymentOrderDetailVo
+                         select new DeploymentOrderVo
                          {
                              ApplicationName = application.Name,
                              ApplicationVersion = deploymentOrder.ApplicationVersion,
