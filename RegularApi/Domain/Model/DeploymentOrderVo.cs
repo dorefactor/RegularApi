@@ -8,7 +8,7 @@ namespace RegularApi.Domain.Model
 
         public string ApplicationVersion { get; set; }
 
-        public DockerSetup DockerSetup { get; set; }
+        //public DockerSetup DockerSetup { get; set; }
 
         public IList<HostSetup> HostsSetup { get; set; }
     }

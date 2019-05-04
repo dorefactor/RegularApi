@@ -39,12 +39,12 @@ namespace RegularApi.Dao
                          {
                              ApplicationName = application.Name,
                              ApplicationVersion = deploymentOrder.ApplicationVersion,
-                             DockerSetup = new DockerSetup
-                             {
-                                 ImageName = application.DockerSetup.ImageName,
-                                 EnvironmentVariables = deploymentTemplate.EnvironmentVariables,
-                                 Ports = application.DockerSetup.Ports
-                             },
+                             //DockerSetup = new DockerSetup
+                             //{
+                             //    ImageName = application.DockerSetup.ImageName,
+                             //    EnvironmentVariables = deploymentTemplate.EnvironmentVariables,
+                             //    Ports = application.DockerSetup.Ports
+                             //},
                              HostsSetup = deploymentOrder.HostsSetup
                          }).ToAsyncEnumerable();
 

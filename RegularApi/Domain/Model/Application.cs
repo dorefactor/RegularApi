@@ -11,6 +11,6 @@ namespace RegularApi.Domain.Model
 
         public string Name { get; set; }
 
-        public DockerSetup DockerSetup { get; set; }
+        public ApplicationSetup ApplicationSetup { get; set; }
     }
 }

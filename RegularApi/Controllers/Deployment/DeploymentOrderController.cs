@@ -13,11 +13,11 @@ namespace RegularApi.Controllers.Deployment
     public class DeploymentOrderController : AbstractController
     {
         private readonly ILogger<DeploymentOrderController> _logger;
-        private readonly ITransformer<DeploymentOrderView, DeploymentOrder> _deploymentOrderTransformer;
+        private readonly ITransformer<DeploymentOrderRequestView, DeploymentOrder> _deploymentOrderTransformer;
         private readonly DeploymentService _deploymentService;
 
         public DeploymentOrderController(ILoggerFactory loggerFactory,
-                                         ITransformer<DeploymentOrderView, DeploymentOrder> deploymentOrderTransformer,
+                                         ITransformer<DeploymentOrderRequestView, DeploymentOrder> deploymentOrderTransformer,
                                          DeploymentService deploymentService)
         {
             _logger = loggerFactory.CreateLogger<DeploymentOrderController>();
@@ -26,11 +26,11 @@ namespace RegularApi.Controllers.Deployment
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewAsync(DeploymentOrderView deploymentOrderView)
+        public async Task<IActionResult> NewAsync(DeploymentOrderRequestView deploymentOrderRequestView)
         {
-            _logger.LogInformation("deployment request received: {0} - {1}", deploymentOrderView.DeploymentTemplateId, deploymentOrderView.Version);
+            _logger.LogInformation("deployment request received: {0} - {1}", deploymentOrderRequestView.DeploymentTemplateId, deploymentOrderRequestView.Version);
 
-            var deploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrderView);
+            var deploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrderRequestView);
 
             var result = await _deploymentService.QueueDeploymentOrderAsync(deploymentOrder);
 

@@ -26,7 +26,7 @@ namespace RegularApi.Configurations
             // Transformers
             services.AddTransient<ITransformer<ApplicationView, Application>>(applicationTransformer => new ApplicationTransformer());
             services.AddTransient<ITransformer<DeploymentTemplateView, DeploymentTemplate>>(deploymentTemplateTransformer => new DeploymentTemplateTransformer());
-            services.AddTransient<ITransformer<DeploymentOrderView, DeploymentOrder>>(transformer => new DeploymentOrderTransformer());
+            services.AddTransient<ITransformer<DeploymentOrderRequestView, DeploymentOrder>>(deploymentOrdertransformer => new DeploymentOrderTransformer());
 
             // Services
             services.AddTransient(deploymentService => new DeploymentService(loggerFactory, deploymentTemplateDao, deploymentOrderDao, rabbitTemplate));

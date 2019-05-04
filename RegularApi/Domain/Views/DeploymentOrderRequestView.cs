@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace RegularApi.Domain.Views
 {
-    public class DeploymentOrderView
+    public class DeploymentOrderRequestView
     {
         [Required]
         public string DeploymentTemplateId { get; set; }

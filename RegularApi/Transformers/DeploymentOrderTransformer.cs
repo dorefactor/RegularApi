@@ -5,9 +5,9 @@ using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
-    public class DeploymentOrderTransformer : ITransformer<DeploymentOrderView, DeploymentOrder>
+    public class DeploymentOrderTransformer : ITransformer<DeploymentOrderRequestView, DeploymentOrder>
     {
-        public DeploymentOrder Transform(DeploymentOrderView deploymentOrderView)
+        public DeploymentOrder Transform(DeploymentOrderRequestView deploymentOrderView)
         {
             return new DeploymentOrder
             {
@@ -26,7 +26,7 @@ namespace RegularApi.Transformers
             };
         }
 
-        public DeploymentOrderView Transform(DeploymentOrder model)
+        public DeploymentOrderRequestView Transform(DeploymentOrder model)
         {
             throw new System.NotImplementedException();
         }

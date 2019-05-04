@@ -73,19 +73,20 @@ namespace RegularApi.Services
             }
 
             var deploymentOrderVo = deploymentOrderVoHolder.FirstOrDefault();
+            var deploymentOrderSummarized = new DeploymentOrderSummarized();
+            //var deploymentOrderSummarized = new DeploymentOrderSummarized
+            //{
+            //AnsibleSetup = new AnsibleSetup()
+            //AnsibleSetup = new AnsibleSetup
+            //{
+            //    AnsibleGroups = new List<AnsibleGroup>() { BuildAnsibleGroup(deploymentOrderVo) }
+            //}
+            //};
 
-            var deploymentOrderSummarized = new DeploymentOrderSummarized
-            {
-                AnsibleSetup = new AnsibleSetup
-                {
-                    AnsibleGroups = new List<AnsibleGroup>() { BuildAnsibleGroup(deploymentOrderVo) }
-                }
-            };
+            //var settings = new JsonSerializerSettings();
+            //settings.Formatting = Formatting.Indented;
 
-            var settings = new JsonSerializerSettings();
-            settings.Formatting = Formatting.Indented;
-
-            Console.WriteLine(JsonConvert.SerializeObject(deploymentOrderSummarized, settings));
+            //Console.WriteLine(JsonConvert.SerializeObject(deploymentOrderSummarized, settings));
 
             return deploymentOrderSummarized;
 
@@ -124,43 +125,43 @@ namespace RegularApi.Services
             return ansibleHosts;
         }
 
-        private IList<string> BuildPorts(DeploymentOrderVo deploymentOrderVo)
-        {
-            return (IList<string>)(from port in deploymentOrderVo.DockerSetup.Ports
-                                   select new string
-                                   (
-                                       port.Key + ":" + port.Value
+        //private IList<string> BuildPorts(DeploymentOrderVo deploymentOrderVo)
+        //{
+        //    return (IList<string>)(from port in deploymentOrderVo.DockerSetup.Ports
+        //                           select new string
+        //                           (
+        //                               port.Key + ":" + port.Value
 
-                                   )).ToList();
-        }
+        //                           )).ToList();
+        //}
 
-        private IList<string> BuildEnvironmentVariables(DeploymentOrderVo deploymentOrderVo)
-        {
-            return (IList<string>)(from environmentVariable in deploymentOrderVo.DockerSetup.EnvironmentVariables
-                                   select new string
-                                   (
-                                       environmentVariable.Key + ": " + environmentVariable.Value
+        //private IList<string> BuildEnvironmentVariables(DeploymentOrderVo deploymentOrderVo)
+        //{
+        //    return (IList<string>)(from environmentVariable in deploymentOrderVo.DockerSetup.EnvironmentVariables
+        //                           select new string
+        //                           (
+        //                               environmentVariable.Key + ": " + environmentVariable.Value
 
-                                   )).ToList();
-        }
+        //                           )).ToList();
+        //}
 
-        public AnsibleGroup BuildAnsibleGroup(DeploymentOrderVo deploymentOrderVo)
-        {
-            return new AnsibleGroup
-            {
-                AnsibleHosts = GetAnsibleHosts(deploymentOrderVo),
-                ApplicationSetup = new ApplicationSetup
-                {
-                    Name = deploymentOrderVo.ApplicationName,
-                    DockerSetup = new Domain.Views.Jenkins.DockerSetup
-                    {
-                        Image = deploymentOrderVo.DockerSetup.ImageName + ":" + deploymentOrderVo.ApplicationVersion,
-                        Ports = BuildPorts(deploymentOrderVo).Select(portMapping => portMapping).ToList(),
-                        EnvironmentVariables = BuildEnvironmentVariables(deploymentOrderVo).Select(environmentVariablesMapping => environmentVariablesMapping).ToList()
-                    }
-                }
-            };
-        }
+        //public AnsibleGroup BuildAnsibleGroup(DeploymentOrderVo deploymentOrderVo)
+        //{
+        //    return new AnsibleGroup
+        //    {
+        //        AnsibleHosts = GetAnsibleHosts(deploymentOrderVo),
+        //        ApplicationSetup = new ApplicationSetup
+        //        {
+        //            Name = deploymentOrderVo.ApplicationName,
+        //            DockerSetup = new Domain.Views.Jenkins.DockerSetup
+        //            {
+        //                Image = deploymentOrderVo.DockerSetup.ImageName + ":" + deploymentOrderVo.ApplicationVersion,
+        //                Ports = BuildPorts(deploymentOrderVo).Select(portMapping => portMapping).ToList(),
+        //                EnvironmentVariables = BuildEnvironmentVariables(deploymentOrderVo).Select(environmentVariablesMapping => environmentVariablesMapping).ToList()
+        //            }
+        //        }
+        //    };
+        //}
 
     }
 }
