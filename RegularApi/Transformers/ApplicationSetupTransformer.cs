@@ -16,35 +16,34 @@ namespace RegularApi.Transformers
             {
                 case Enums.ApplicationType.Docker:
                     {
-
-                        var dockerSetupView = (DockerSetupView)applicationSetupView;
+                        var dockerApplicationSetupView = (DockerApplicationSetupView)applicationSetupView;
 
                         var dockerApplicationSetup = new DockerApplicationSetup
                         {
                             ApplicationType = applicationType,
-                            Ports = dockerSetupView.Ports,
-                            EnvironmentVariables = dockerSetupView.EnvironmentVariables
+                            Ports = dockerApplicationSetupView.Ports,
+                            EnvironmentVariables = dockerApplicationSetupView.EnvironmentVariables
                         };
 
                         // RegistryView
-                        if (dockerSetupView.RegistryView != null)
+                        if (dockerApplicationSetupView.RegistryView != null)
                         {
                             dockerApplicationSetup.Registry = new Registry
                             {
-                                IsPrivate = dockerSetupView.RegistryView.IsPrivate,
-                                Url = dockerSetupView.RegistryView.Url,
-                                Username = dockerSetupView.RegistryView.Username,
-                                Password = dockerSetupView.RegistryView.Password
+                                IsPrivate = dockerApplicationSetupView.RegistryView.IsPrivate,
+                                Url = dockerApplicationSetupView.RegistryView.Url,
+                                Username = dockerApplicationSetupView.RegistryView.Username,
+                                Password = dockerApplicationSetupView.RegistryView.Password
                             };
                         }
 
                         // ImageView
-                        if (dockerSetupView.ImageView != null)
+                        if (dockerApplicationSetupView.ImageView != null)
                         {
                             dockerApplicationSetup.Image = new Image
                             {
-                                Name = dockerSetupView.ImageView.Name,
-                                Tag = dockerSetupView.ImageView.Tag
+                                Name = dockerApplicationSetupView.ImageView.Name,
+                                Tag = dockerApplicationSetupView.ImageView.Tag
                             };
                         }
 
@@ -56,9 +55,49 @@ namespace RegularApi.Transformers
             }
         }
 
-        public ApplicationSetupView Transform(ApplicationSetup model)
+        public ApplicationSetupView Transform(ApplicationSetup applicationSetup)
         {
-            throw new NotImplementedException();
+            switch (applicationSetup.ApplicationType)
+            {
+                case Enums.ApplicationType.Docker:
+                    {
+                        var dockerApplicationSetup = (DockerApplicationSetup)applicationSetup;
+
+                        var dockerApplicationSetupView = new DockerApplicationSetupView
+                        {
+                            Type = Enums.ApplicationType.Docker.ToString(),
+                            Ports = dockerApplicationSetup.Ports,
+                            EnvironmentVariables = dockerApplicationSetup.EnvironmentVariables
+                        };
+
+                        // Registry
+                        if (dockerApplicationSetup.Registry != null)
+                        {
+                            dockerApplicationSetupView.RegistryView = new RegistryView
+                            {
+                                IsPrivate = dockerApplicationSetup.Registry.IsPrivate,
+                                Url = dockerApplicationSetup.Registry.Url,
+                                Username = dockerApplicationSetup.Registry.Username,
+                                Password = dockerApplicationSetup.Registry.Password
+                            };
+                        }
+
+                        // Image
+                        if (dockerApplicationSetup.Image != null)
+                        {
+                            dockerApplicationSetupView.ImageView = new ImageView
+                            {
+                                Name = dockerApplicationSetup.Image.Name,
+                                Tag = dockerApplicationSetup.Image.Tag
+                            };
+                        }
+
+                        return dockerApplicationSetupView;
+                    }
+
+                default:
+                    return null;
+            }
         }
     }
 }

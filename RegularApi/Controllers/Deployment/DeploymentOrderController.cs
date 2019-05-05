@@ -13,11 +13,11 @@ namespace RegularApi.Controllers.Deployment
     public class DeploymentOrderController : AbstractController
     {
         private readonly ILogger<DeploymentOrderController> _logger;
-        private readonly ITransformer<DeploymentOrderRequestView, DeploymentOrder> _deploymentOrderTransformer;
+        private readonly ITransformer<DeploymentOrderView, DeploymentOrder> _deploymentOrderTransformer;
         private readonly DeploymentService _deploymentService;
 
         public DeploymentOrderController(ILoggerFactory loggerFactory,
-                                         ITransformer<DeploymentOrderRequestView, DeploymentOrder> deploymentOrderTransformer,
+                                         ITransformer<DeploymentOrderView, DeploymentOrder> deploymentOrderTransformer,
                                          DeploymentService deploymentService)
         {
             _logger = loggerFactory.CreateLogger<DeploymentOrderController>();
@@ -26,7 +26,7 @@ namespace RegularApi.Controllers.Deployment
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewAsync(DeploymentOrderRequestView deploymentOrderRequestView)
+        public async Task<IActionResult> NewAsync(DeploymentOrderView deploymentOrderRequestView)
         {
             _logger.LogInformation("deployment request received: {0}", deploymentOrderRequestView.DeploymentTemplateId);
 
@@ -41,14 +41,14 @@ namespace RegularApi.Controllers.Deployment
             return action;
         }
 
-        [HttpGet("{id}/summarized")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetDeploymentOrderByRequestIdAsync([FromRoute] string id)
         {
-            var deploymentOrderSummarizedHolder = await _deploymentService.GetDeploymentOrderSummarizedByRequestIdAsync(id);
+            var deploymentOrderHolder = await _deploymentService.GetDeploymentOrderByRequestIdAsync(id);
 
-            return deploymentOrderSummarizedHolder.Match<IActionResult>(
-                left => UnprocessableEntity(left),
-                right => Ok(right));
+            return deploymentOrderHolder.Match<IActionResult>(
+                right => Ok(_deploymentOrderTransformer.Transform(right)),
+                left => UnprocessableEntity(left));
         }
     }
 }

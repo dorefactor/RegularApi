@@ -4,16 +4,17 @@ using Newtonsoft.Json;
 
 namespace RegularApi.Domain.Views
 {
-    public class DeploymentOrderRequestView
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
+    public class DeploymentOrderView
     {
         [Required]
         public string DeploymentTemplateId { get; set; }
 
-        [JsonProperty(PropertyName = "ApplicationSetup")]
+        [JsonProperty(PropertyName = "applicationSetup")]
         public ApplicationSetupView ApplicationSetupView { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "HostsSetup")]
+        [JsonProperty(PropertyName = "hostsSetup")]
         public IList<HostSetupView> HostSetupViews { get; set; }
     }
 }

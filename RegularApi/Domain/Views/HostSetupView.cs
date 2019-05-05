@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace RegularApi.Domain.Views
 {
@@ -6,6 +7,7 @@ namespace RegularApi.Domain.Views
     {
         public string Tag { get; set; }
 
-        public IList<HostView> Hosts { get; set; }
+        [JsonProperty(PropertyName = "hosts")]
+        public IList<HostView> HostViews { get; set; }
     }
 }

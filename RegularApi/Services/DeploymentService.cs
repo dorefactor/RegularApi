@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RegularApi.Dao;
 using RegularApi.Domain.Model;
+using RegularApi.Domain.Model.Docker;
 using RegularApi.Domain.Services;
-using RegularApi.Domain.Views.Jenkins;
 using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Services
@@ -62,7 +62,7 @@ namespace RegularApi.Services
             }
         }
 
-        public async Task<Either<string, DeploymentOrderSummarized>> GetDeploymentOrderSummarizedByRequestIdAsync(string id)
+        public async Task<Either<string, DeploymentOrder>> GetDeploymentOrderByRequestIdAsync(string id)
         {
 
             var deploymentOrderVoHolder = await _deploymentOrderDao.GetDeploymentOrderVoByRequestIdAsync(id);
@@ -73,23 +73,75 @@ namespace RegularApi.Services
             }
 
             var deploymentOrderVo = deploymentOrderVoHolder.FirstOrDefault();
-            var deploymentOrderSummarized = new DeploymentOrderSummarized();
-            //var deploymentOrderSummarized = new DeploymentOrderSummarized
-            //{
-            //AnsibleSetup = new AnsibleSetup()
-            //AnsibleSetup = new AnsibleSetup
-            //{
-            //    AnsibleGroups = new List<AnsibleGroup>() { BuildAnsibleGroup(deploymentOrderVo) }
-            //}
-            //};
 
-            //var settings = new JsonSerializerSettings();
-            //settings.Formatting = Formatting.Indented;
+            return new DeploymentOrder
+            {
+                Id = deploymentOrderVo.Id,
+                RequestId = deploymentOrderVo.RequestId,
+                ApplicationSetup = GetApplicationSetup(deploymentOrderVo),
+                HostsSetup = GetHostsSetup(deploymentOrderVo)
+            };
+        }
 
-            //Console.WriteLine(JsonConvert.SerializeObject(deploymentOrderSummarized, settings));
+        private ApplicationSetup GetApplicationSetup(DeploymentOrderVo deploymentOrderVo)
+        {
+            var applicationSetupFromApplication = deploymentOrderVo.ApplicationSetupFromApplication;
 
-            return deploymentOrderSummarized;
+            switch (applicationSetupFromApplication.ApplicationType)
+            {
+                case Enums.ApplicationType.Docker:
+                    {
+                        var dockerApplicationSetupFromApplication = (DockerApplicationSetup)deploymentOrderVo.ApplicationSetupFromApplication;
+                        var dockerApplicationSetupFromDeploymentTemplate = (DockerApplicationSetup)deploymentOrderVo.ApplicationSetupFromDeploymentTemplate;
+                        var dockerApplicationSetupFromDeploymentOrder = (DockerApplicationSetup)deploymentOrderVo.ApplicationSetupFromDeploymentOrder;
 
+                        return new DockerApplicationSetup
+                        {
+                            ApplicationType = Enums.ApplicationType.Docker,
+                            Registry = dockerApplicationSetupFromApplication.Registry,
+                            Image = new Image
+                            {
+                                Name = dockerApplicationSetupFromApplication.Image.Name,
+                                Tag = dockerApplicationSetupFromDeploymentOrder.Image?.Tag
+                            },
+                            Ports = dockerApplicationSetupFromApplication.Ports,
+                            EnvironmentVariables = dockerApplicationSetupFromDeploymentTemplate.EnvironmentVariables
+                        };
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        private IList<HostSetup> GetHostsSetup(DeploymentOrderVo deploymentOrderVo)
+        {
+            var hostsSetupFromDeploymentTemplate = deploymentOrderVo.HostsSetupFromDeploymentTemplate;
+            var hostsSetupFromDeploymentOrder = deploymentOrderVo.HostsSetupFromDeploymentOrder;
+
+            var hostsSetup = new List<HostSetup>();
+            foreach (HostSetup hostSetupFromDeploymentOrder in hostsSetupFromDeploymentOrder)
+            {
+                var hostSetup = (from hostSetupFromDeploymentTemplate in hostsSetupFromDeploymentTemplate
+                                 where hostSetupFromDeploymentTemplate.Tag.Equals(hostSetupFromDeploymentOrder.Tag)
+                                 select new HostSetup
+                                 {
+                                     Tag = hostSetupFromDeploymentOrder.Tag,
+                                     Hosts = (from hostFromDeploymentOrder in hostSetupFromDeploymentOrder.Hosts
+                                              join hostFromDeploymentTemplate in hostSetupFromDeploymentTemplate.Hosts
+                                                                                on hostFromDeploymentOrder.Ip equals hostFromDeploymentTemplate.Ip
+                                              select new Host
+                                              {
+                                                  Ip = hostFromDeploymentTemplate.Ip,
+                                                  Username = hostFromDeploymentTemplate.Username,
+                                                  Password = hostFromDeploymentTemplate.Password
+                                              }).ToList()
+
+                                 }).SingleOrDefault();
+
+                hostsSetup.Add(hostSetup);
+            }
+
+            return hostsSetup;
         }
 
         private DeploymentRequest BuildDeploymentRequest(string requestId)
@@ -100,68 +152,5 @@ namespace RegularApi.Services
                 Created = DateTime.UtcNow,
             };
         }
-
-        private List<AnsibleHost> GetAnsibleHosts(DeploymentOrderVo deploymentOrderVo)
-        {
-            var ansibleHosts = new List<AnsibleHost>();
-
-            foreach (HostSetup hostSetup in deploymentOrderVo.HostsSetup)
-            {
-                foreach (Host host in hostSetup.Hosts)
-                {
-                    ansibleHosts.Add(new AnsibleHost
-                    {
-                        PublicIp = host.Ip,
-                        Variables = new Dictionary<string, string>()
-                        {
-                            { "ansible_ssh_user", host.Username },
-                            { "ansible_user", host.Username },
-                            { "ansible_password", host.Password }
-                        }
-                    });
-                }
-            }
-
-            return ansibleHosts;
-        }
-
-        //private IList<string> BuildPorts(DeploymentOrderVo deploymentOrderVo)
-        //{
-        //    return (IList<string>)(from port in deploymentOrderVo.DockerSetup.Ports
-        //                           select new string
-        //                           (
-        //                               port.Key + ":" + port.Value
-
-        //                           )).ToList();
-        //}
-
-        //private IList<string> BuildEnvironmentVariables(DeploymentOrderVo deploymentOrderVo)
-        //{
-        //    return (IList<string>)(from environmentVariable in deploymentOrderVo.DockerSetup.EnvironmentVariables
-        //                           select new string
-        //                           (
-        //                               environmentVariable.Key + ": " + environmentVariable.Value
-
-        //                           )).ToList();
-        //}
-
-        //public AnsibleGroup BuildAnsibleGroup(DeploymentOrderVo deploymentOrderVo)
-        //{
-        //    return new AnsibleGroup
-        //    {
-        //        AnsibleHosts = GetAnsibleHosts(deploymentOrderVo),
-        //        ApplicationSetup = new ApplicationSetup
-        //        {
-        //            Name = deploymentOrderVo.ApplicationName,
-        //            DockerSetup = new Domain.Views.Jenkins.DockerSetup
-        //            {
-        //                Image = deploymentOrderVo.DockerSetup.ImageName + ":" + deploymentOrderVo.ApplicationVersion,
-        //                Ports = BuildPorts(deploymentOrderVo).Select(portMapping => portMapping).ToList(),
-        //                EnvironmentVariables = BuildEnvironmentVariables(deploymentOrderVo).Select(environmentVariablesMapping => environmentVariablesMapping).ToList()
-        //            }
-        //        }
-        //    };
-        //}
-
     }
 }

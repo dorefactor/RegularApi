@@ -37,7 +37,7 @@ namespace RegularApi.Tests.Fixtures
                     new HostSetupView
                     {
                         TagName = "feature/awesome-thing",
-                        Hosts = new List<HostView>
+                        HostViews = new List<HostView>
                         {
                             new HostView
                             {

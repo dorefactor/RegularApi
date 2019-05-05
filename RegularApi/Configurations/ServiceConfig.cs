@@ -29,7 +29,7 @@ namespace RegularApi.Configurations
                                                                                     new ApplicationTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
             services.AddTransient<ITransformer<DeploymentTemplateView, DeploymentTemplate>>(_ =>
                                                                                         new DeploymentTemplateTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
-            services.AddTransient<ITransformer<DeploymentOrderRequestView, DeploymentOrder>>(_ =>
+            services.AddTransient<ITransformer<DeploymentOrderView, DeploymentOrder>>(_ =>
                                                                                         new DeploymentOrderTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
 
             // Services

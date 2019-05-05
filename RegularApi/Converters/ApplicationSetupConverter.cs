@@ -33,7 +33,7 @@ namespace RegularApi.Converters
             switch (applicationTypeEnum)
             {
                 case Enums.ApplicationType.Docker:
-                    applicationSetup = new DockerSetupView();
+                    applicationSetup = new DockerApplicationSetupView();
                     break;
             }
 

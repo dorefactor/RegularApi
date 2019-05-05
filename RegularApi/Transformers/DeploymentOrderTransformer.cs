@@ -6,7 +6,7 @@ using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
-    public class DeploymentOrderTransformer : ITransformer<DeploymentOrderRequestView, DeploymentOrder>
+    public class DeploymentOrderTransformer : ITransformer<DeploymentOrderView, DeploymentOrder>
     {
         private readonly ITransformer<ApplicationSetupView, ApplicationSetup> _applicationSetupTransformer;
 
@@ -15,16 +15,15 @@ namespace RegularApi.Transformers
             _applicationSetupTransformer = applicationSetupTransformer;
         }
 
-        public DeploymentOrder Transform(DeploymentOrderRequestView deploymentOrderView)
+        public DeploymentOrder Transform(DeploymentOrderView deploymentOrderView)
         {
             return new DeploymentOrder
             {
-                DeploymentTemplateId = new ObjectId(deploymentOrderView.DeploymentTemplateId),
                 ApplicationSetup = _applicationSetupTransformer.Transform(deploymentOrderView.ApplicationSetupView),
                 HostsSetup = deploymentOrderView.HostSetupViews?.Select(hostSetupView => new HostSetup()
                 {
                     Tag = hostSetupView.Tag,
-                    Hosts = hostSetupView.Hosts?.Select(hostView => new Host()
+                    Hosts = hostSetupView.HostViews?.Select(hostView => new Host()
                     {
                         Ip = hostView.Ip,
                         Username = hostView.Username,
@@ -34,9 +33,22 @@ namespace RegularApi.Transformers
             };
         }
 
-        public DeploymentOrderRequestView Transform(DeploymentOrder model)
+        public DeploymentOrderView Transform(DeploymentOrder deploymentOrder)
         {
-            throw new NotImplementedException();
+            return new DeploymentOrderView
+            {
+                ApplicationSetupView = _applicationSetupTransformer.Transform(deploymentOrder.ApplicationSetup),
+                HostSetupViews = deploymentOrder.HostsSetup?.Select(hostSetup => new HostSetupView()
+                {
+                    Tag = hostSetup.Tag,
+                    HostViews = hostSetup.Hosts?.Select(host => new HostView()
+                    {
+                        Ip = host.Ip,
+                        Username = host.Username,
+                        Password = host.Password
+                    }).ToList()
+                }).ToList()
+            };
         }
     }
 }

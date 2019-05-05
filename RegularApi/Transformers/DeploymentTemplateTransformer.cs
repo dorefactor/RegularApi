@@ -41,7 +41,7 @@ namespace RegularApi.Transformers
                              select new HostSetup
                              {
                                  Tag = hostSetupView.Tag,
-                                 Hosts = FromView(hostSetupView.Hosts)
+                                 Hosts = FromView(hostSetupView.HostViews)
                              };
 
             return hostsSetup.ToList();

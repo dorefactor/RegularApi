@@ -1,15 +1,22 @@
 ﻿using System.Collections.Generic;
+using MongoDB.Bson;
 
 namespace RegularApi.Domain.Model
 {
     public class DeploymentOrderVo
     {
-        public string ApplicationName { get; set; }
+        public ObjectId Id { get; set; }
 
-        public string ApplicationVersion { get; set; }
+        public string RequestId { get; set; }
 
-        //public DockerSetup DockerSetup { get; set; }
+        public ApplicationSetup ApplicationSetupFromApplication { get; set; }
 
-        public IList<HostSetup> HostsSetup { get; set; }
+        public ApplicationSetup ApplicationSetupFromDeploymentTemplate { get; set; }
+
+        public ApplicationSetup ApplicationSetupFromDeploymentOrder { get; set; }
+
+        public IList<HostSetup> HostsSetupFromDeploymentTemplate { get; set; }
+
+        public IList<HostSetup> HostsSetupFromDeploymentOrder { get; set; }
     }
 }

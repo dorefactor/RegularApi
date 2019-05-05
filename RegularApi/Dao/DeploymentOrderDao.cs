@@ -37,15 +37,13 @@ namespace RegularApi.Dao
                          where deploymentOrder.RequestId.Equals(id)
                          select new DeploymentOrderVo
                          {
-                             ApplicationName = application.Name,
-                             //ApplicationVersion = deploymentOrder.ApplicationVersion,
-                             //DockerSetup = new DockerSetup
-                             //{
-                             //    ImageName = application.DockerSetup.ImageName,
-                             //    EnvironmentVariables = deploymentTemplate.EnvironmentVariables,
-                             //    Ports = application.DockerSetup.Ports
-                             //},
-                             HostsSetup = deploymentOrder.HostsSetup
+                             Id = deploymentOrder.Id,
+                             RequestId = deploymentOrder.RequestId,
+                             ApplicationSetupFromApplication = application.ApplicationSetup,
+                             ApplicationSetupFromDeploymentTemplate = deploymentTemplate.ApplicationSetup,
+                             ApplicationSetupFromDeploymentOrder = deploymentOrder.ApplicationSetup,
+                             HostsSetupFromDeploymentTemplate = deploymentTemplate.HostsSetup,
+                             HostsSetupFromDeploymentOrder = deploymentOrder.HostsSetup
                          }).ToAsyncEnumerable();
 
             return OfNullable(await query.FirstOrDefault());
