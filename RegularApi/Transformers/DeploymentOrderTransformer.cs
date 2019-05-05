@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using MongoDB.Bson;
 using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
@@ -35,7 +36,7 @@ namespace RegularApi.Transformers
 
         public DeploymentOrderRequestView Transform(DeploymentOrder model)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
