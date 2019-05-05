@@ -9,11 +9,11 @@ namespace RegularApi.Domain.Views
         [Required]
         public string DeploymentTemplateId { get; set; }
 
-        [Required]
-        public string Version { get; set; }
+        [JsonProperty(PropertyName = "ApplicationSetup")]
+        public ApplicationSetupView ApplicationSetupView { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "Hosts")]
+        [JsonProperty(PropertyName = "HostsSetup")]
         public IList<HostSetupView> HostSetupViews { get; set; }
     }
 }

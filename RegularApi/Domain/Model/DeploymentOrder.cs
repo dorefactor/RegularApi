@@ -15,7 +15,7 @@ namespace RegularApi.Domain.Model
 
         public ObjectId DeploymentTemplateId { get; set; }
 
-        public string ApplicationVersion { get; set; }
+        public ApplicationSetup ApplicationSetup { get; set; }
 
         public IList<HostSetup> HostsSetup { get; set; }
     }

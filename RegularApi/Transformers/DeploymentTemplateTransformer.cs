@@ -8,15 +8,21 @@ namespace RegularApi.Transformers
 {
     public class DeploymentTemplateTransformer : ITransformer<DeploymentTemplateView, DeploymentTemplate>
     {
+        private readonly ITransformer<ApplicationSetupView, ApplicationSetup> _applicationSetupTransformer;
+
+        public DeploymentTemplateTransformer(ITransformer<ApplicationSetupView, ApplicationSetup> applicationSetupTransformer)
+        {
+            _applicationSetupTransformer = applicationSetupTransformer;
+        }
+
         public DeploymentTemplate Transform(DeploymentTemplateView deploymentTemplateView)
         {
             return new DeploymentTemplate
             {
                 Name = deploymentTemplateView.Name,
                 ApplicationId = ObjectId.Parse(deploymentTemplateView.ApplicationId),
-                EnvironmentVariables = deploymentTemplateView.EnvironmentVariables,
-                HostsSetup = FromView(deploymentTemplateView.HostSetupViews),
-                Ports = deploymentTemplateView.Ports
+                ApplicationSetup = _applicationSetupTransformer.Transform(deploymentTemplateView.ApplicationSetupView),
+                HostsSetup = FromView(deploymentTemplateView.HostSetupViews)
             };
         }
 
@@ -25,9 +31,7 @@ namespace RegularApi.Transformers
             return new DeploymentTemplateView
             {
                 Name = deploymentTemplate.Name,
-                ApplicationId = deploymentTemplate.ApplicationId.ToString(),
-                EnvironmentVariables = deploymentTemplate.EnvironmentVariables,
-                Ports = deploymentTemplate.Ports,
+                ApplicationId = deploymentTemplate.ApplicationId.ToString()
             };
         }
 
@@ -36,7 +40,7 @@ namespace RegularApi.Transformers
             var hostsSetup = from hostSetupView in hostsSetupView
                              select new HostSetup
                              {
-                                 TagName = hostSetupView.TagName,
+                                 Tag = hostSetupView.Tag,
                                  Hosts = FromView(hostSetupView.Hosts)
                              };
 

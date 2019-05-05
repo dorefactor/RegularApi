@@ -4,7 +4,7 @@ using RegularApi.Converters;
 namespace RegularApi.Domain.Views
 {
     [JsonConverter(typeof(ApplicationSetupConverter))]
-    public  class ApplicationSetupView
+    public abstract class ApplicationSetupView
     {
         public string Type { get; set; }
     }

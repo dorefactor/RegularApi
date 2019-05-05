@@ -28,7 +28,7 @@ namespace RegularApi.Controllers.Deployment
         [HttpPost]
         public async Task<IActionResult> NewAsync(DeploymentOrderRequestView deploymentOrderRequestView)
         {
-            _logger.LogInformation("deployment request received: {0} - {1}", deploymentOrderRequestView.DeploymentTemplateId, deploymentOrderRequestView.Version);
+            _logger.LogInformation("deployment request received: {0}", deploymentOrderRequestView.DeploymentTemplateId);
 
             var deploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrderRequestView);
 
@@ -42,7 +42,7 @@ namespace RegularApi.Controllers.Deployment
         }
 
         [HttpGet("{id}/summarized")]
-        public async Task<IActionResult> GetDeploymentOrderByRequestIdAsync(string id)
+        public async Task<IActionResult> GetDeploymentOrderByRequestIdAsync([FromRoute] string id)
         {
             var deploymentOrderSummarizedHolder = await _deploymentService.GetDeploymentOrderSummarizedByRequestIdAsync(id);
 

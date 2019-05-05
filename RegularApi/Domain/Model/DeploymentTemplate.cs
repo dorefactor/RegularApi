@@ -14,9 +14,7 @@ namespace RegularApi.Domain.Model
 
         public ObjectId ApplicationId { get; set; }
 
-        public IList<KeyValuePair<object, object>> EnvironmentVariables { get; set; }
-
-        public IList<KeyValuePair<object, object>> Ports { get; set; }
+        public ApplicationSetup ApplicationSetup { get; set; }
 
         public IList<HostSetup> HostsSetup { get; set; }
     }

@@ -38,7 +38,7 @@ namespace RegularApi.Dao
                          select new DeploymentOrderVo
                          {
                              ApplicationName = application.Name,
-                             ApplicationVersion = deploymentOrder.ApplicationVersion,
+                             //ApplicationVersion = deploymentOrder.ApplicationVersion,
                              //DockerSetup = new DockerSetup
                              //{
                              //    ImageName = application.DockerSetup.ImageName,

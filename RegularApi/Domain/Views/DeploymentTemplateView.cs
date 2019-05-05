@@ -8,17 +8,16 @@ namespace RegularApi.Domain.Views
     {
         [Required]
         public string Name { get; set; }
-        
+
         [Required]
         public string ApplicationId { get; set; }
-        
+
         [Required]
-        [JsonProperty(PropertyName = "HostsSetup")]
+        [JsonProperty(PropertyName = "applicationSetup")]
+        public ApplicationSetupView ApplicationSetupView { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "hostsSetup")]
         public IList<HostSetupView> HostSetupViews { get; set; }
-                
-        [Required]
-        public IList<KeyValuePair<object, object>> Ports { get; set; }
-        
-        public IList<KeyValuePair<object, object>> EnvironmentVariables { get; set; }        
     }
 }

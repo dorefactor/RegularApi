@@ -35,7 +35,7 @@ namespace RegularApi.Services
         {
             try
             {
-                _logger.LogInformation("Deployment request for template_id: {0} version: {1}", deploymentOrder.DeploymentTemplateId, deploymentOrder.ApplicationVersion);
+                _logger.LogInformation("Deployment request for template_id: {0}", deploymentOrder.DeploymentTemplateId);
 
                 var deploymentTemplateHolder = await _deploymentTemplateDao.GetByIdAsync(deploymentOrder.DeploymentTemplateId);
 

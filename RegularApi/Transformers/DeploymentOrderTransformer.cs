@@ -7,16 +7,23 @@ namespace RegularApi.Transformers
 {
     public class DeploymentOrderTransformer : ITransformer<DeploymentOrderRequestView, DeploymentOrder>
     {
+        private readonly ITransformer<ApplicationSetupView, ApplicationSetup> _applicationSetupTransformer;
+
+        public DeploymentOrderTransformer(ITransformer<ApplicationSetupView, ApplicationSetup> applicationSetupTransformer)
+        {
+            _applicationSetupTransformer = applicationSetupTransformer;
+        }
+
         public DeploymentOrder Transform(DeploymentOrderRequestView deploymentOrderView)
         {
             return new DeploymentOrder
             {
                 DeploymentTemplateId = new ObjectId(deploymentOrderView.DeploymentTemplateId),
-                ApplicationVersion = deploymentOrderView.Version,
+                ApplicationSetup = _applicationSetupTransformer.Transform(deploymentOrderView.ApplicationSetupView),
                 HostsSetup = deploymentOrderView.HostSetupViews?.Select(hostSetupView => new HostSetup()
                 {
-                    TagName = hostSetupView.TagName,
-                    Hosts = hostSetupView.Hosts?.Select(hostView => new Host() // Change to HostViews
+                    Tag = hostSetupView.Tag,
+                    Hosts = hostSetupView.Hosts?.Select(hostView => new Host()
                     {
                         Ip = hostView.Ip,
                         Username = hostView.Username,
