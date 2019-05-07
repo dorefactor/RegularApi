@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using MongoDB.Bson;
 using RegularApi.Domain.Views;
 using RegularApi.Domain.Views.Docker;
 
@@ -68,13 +67,34 @@ namespace RegularApi.Tests.Fixtures
             };
         }
 
-        // public static NewResourceResponseView BuildDeploymentTemplateCreationResponse(string name)
-        // {
-        //     return new NewResourceResponseView
-        //     {
-        //         Link = "/configuration/deploymentTemplates/" + name
-        //     };
-        // }
-
+        public static DeploymentOrderView BuildDeploymentOrderView(string requestId, string type)
+        {
+            return new DeploymentOrderView
+            {
+                DeploymentTemplateId = "5cce4c0d0722ec669fe60fcb",
+                RequestId = requestId,
+                ApplicationSetupView = new DockerApplicationSetupView
+                {
+                    Type = type,
+                    ImageView = new ImageView
+                    {
+                        Tag = "1.0"
+                    }
+                },
+                HostSetupViews = new List<HostSetupView>
+                {
+                    new HostSetupView
+                    {
+                        Tag = "QA",
+                        HostViews = new List<HostView>
+                        {
+                            new HostView{
+                                Ip = "192.168.99.1"
+                            }
+                        }
+                    }
+                }
+            };
+        }
     }
 }

@@ -71,7 +71,7 @@ namespace RegularApi.Tests.Fixtures
             };
         }
 
-        public static DeploymentOrder BuildDeploymentOrder(string requestId)
+        public static DeploymentOrder BuildDeploymentOrder(string requestId, ApplicationType applicationType)
         {
             return new DeploymentOrder
             {
@@ -80,7 +80,7 @@ namespace RegularApi.Tests.Fixtures
                 RequestId = requestId,
                 ApplicationSetup = new DockerApplicationSetup
                 {
-                    ApplicationType = Enums.ApplicationType.Docker,
+                    ApplicationType = applicationType,
                     Image = new Image
                     {
                         Tag = "1.0"
