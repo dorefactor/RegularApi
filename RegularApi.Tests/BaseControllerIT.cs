@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.IO;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -8,9 +9,18 @@ namespace RegularApi.Tests
 {
     public class BaseControllerIT : BaseIT
     {
-        protected async Task<HttpResponseMessage> PerformPostAsync<T>(T requestBody, string uri)
+        internal T GetPayloadViewFromJsonFile<T>(string jsonFilePath)
         {
-            var json = JsonConvert.SerializeObject(requestBody, new JsonSerializerSettings
+            jsonFilePath = Path.Combine(Directory.GetCurrentDirectory(), jsonFilePath);
+
+            var body = File.ReadAllText(jsonFilePath);
+
+            return JsonConvert.DeserializeObject<T>(body);
+        }
+
+        internal async Task<HttpResponseMessage> PerformPostAsync<T>(T view, string uri)
+        {
+            var body = JsonConvert.SerializeObject(view, new JsonSerializerSettings
             {
                 ContractResolver = new DefaultContractResolver
                 {
@@ -19,17 +29,17 @@ namespace RegularApi.Tests
                 Formatting = Formatting.Indented
             });
 
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
 
             return await HttpClient.PostAsync(uri, content);
         }
 
-        protected async Task<HttpResponseMessage> PerformGetAsync(string uri)
+        internal async Task<HttpResponseMessage> PerformGetAsync(string uri)
         {
             return await HttpClient.GetAsync(uri);
         }
 
-        protected async Task<T> GetResponse<T>(HttpResponseMessage responseMessage)
+        internal async Task<T> GetResponseView<T>(HttpResponseMessage responseMessage)
         {
             var content = await responseMessage.Content.ReadAsStringAsync();
 

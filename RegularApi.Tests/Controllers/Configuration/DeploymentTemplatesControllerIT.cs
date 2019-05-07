@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
 using RegularApi.Tests.Fixtures;
 using RegularApi.Transformers;
@@ -11,19 +12,19 @@ namespace RegularApi.Tests.Controllers.Configuration
 {
     public class DeploymentTemplatesControllerIT : BaseControllerIT
     {
-        private const string TemplatesUri = "/configuration/deployment-templates";
+        private const string DeploymentTemplatesUri = "/configuration/deployment-templates";
+
         private DaoFixture _daoFixture;
+        private ITransformer<DeploymentTemplateView, DeploymentTemplate> _deploymentTemplateTransformer;
 
-        private IDeploymentTemplateTransformer _transformer;
-
-        [SetUp]        
+        [SetUp]
         public void SetUp()
         {
             CreateMongoDbServer();
             CreateTestServer();
 
             _daoFixture = ServiceProvider.GetRequiredService<DaoFixture>();
-            _transformer = ServiceProvider.GetRequiredService<IDeploymentTemplateTransformer>();
+            _deploymentTemplateTransformer = ServiceProvider.GetRequiredService<ITransformer<DeploymentTemplateView, DeploymentTemplate>>();
         }
 
         [TearDown]
@@ -33,53 +34,52 @@ namespace RegularApi.Tests.Controllers.Configuration
         }
 
         [Test]
-        public async Task CreateDeploymentTemplateTest()
+        public async Task TestNewAsync_Ok()
         {
-            var templateName = "super-template";
-            var deploymentTemplateView = ViewFixture.BuildDeploymentTemplateView(templateName);
+            var deploymentTemplateView = GetPayloadViewFromJsonFile<DeploymentTemplateView>("../../../Samples/Controllers/Payloads/deployment-template.json");
+            var responseMessage = await PerformPostAsync(deploymentTemplateView, DeploymentTemplatesUri);
 
-            var response = await PerformPostAsync(deploymentTemplateView, TemplatesUri);
-            
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-            var expectedResponse = await GetResponse<NewResourceResponseView>(response);
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            expectedResponse.Link.Should().Be(TemplatesUri + "/" + templateName);
+            var expectedView = await GetResponseView<NewResourceResponseView>(responseMessage);
+
+            expectedView.Link.Should().Be(DeploymentTemplatesUri + "/" + deploymentTemplateView.Name);
         }
 
         [Test]
-        public async Task CreateDeploymentTemplateWithInvalidDataReturnErrorTest()
+        public async Task TestNewAsyncWithInvalidData_ReturnError()
         {
             var deploymentTemplateView = new DeploymentTemplateView();
 
-            var response = await PerformPostAsync(deploymentTemplateView, TemplatesUri);
-            
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var responseMessage = await PerformPostAsync(deploymentTemplateView, DeploymentTemplatesUri);
+
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Test]
-        public async Task GetSuccessDeploymentTemplateTest()
+        public async Task TestGetAsync_Success()
         {
             var templateName = "super-template";
             var deploymentTemplate = await _daoFixture.CreateDeploymentTemplateAsync(templateName);
-            var expectedView = _transformer.ToView(deploymentTemplate);
 
-            var uri = TemplatesUri + "/" + templateName;
-            var response = await PerformGetAsync(uri);
+            var uri = DeploymentTemplatesUri + "/" + templateName;
+            var responseMessage = await PerformGetAsync(uri);
 
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var view = await GetResponse<DeploymentTemplateView>(response);
+            var expectedView = _deploymentTemplateTransformer.Transform(deploymentTemplate);
+            var actualView = await GetResponseView<DeploymentTemplateView>(responseMessage);
 
-            view.Should().BeEquivalentTo(expectedView);
+            actualView.Should().BeEquivalentTo(expectedView);
         }
 
         [Test]
-        public async Task GetNonExistingDeploymentTemplateReturnErrorTest()
+        public async Task TestGetAsync_NonExistingDeploymentTemplate_ReturnError()
         {
-            var uri = TemplatesUri + "/non-existing";
-            var response = await PerformGetAsync(uri);
+            var uri = DeploymentTemplatesUri + "/non-existing";
+            var responseMessage = await PerformGetAsync(uri);
 
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
     }
 }

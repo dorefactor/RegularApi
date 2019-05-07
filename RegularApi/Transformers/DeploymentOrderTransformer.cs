@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using MongoDB.Bson;
 using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
@@ -19,6 +18,7 @@ namespace RegularApi.Transformers
         {
             return new DeploymentOrder
             {
+                DeploymentTemplateId = new ObjectId(deploymentOrderView.DeploymentTemplateId),
                 ApplicationSetup = _applicationSetupTransformer.Transform(deploymentOrderView.ApplicationSetupView),
                 HostsSetup = deploymentOrderView.HostSetupViews?.Select(hostSetupView => new HostSetup()
                 {
@@ -35,9 +35,11 @@ namespace RegularApi.Transformers
 
         public DeploymentOrderView Transform(DeploymentOrder deploymentOrder)
         {
-            return new DeploymentOrderView
+            var deploymentOrderView = new DeploymentOrderView
             {
-                ApplicationSetupView = _applicationSetupTransformer.Transform(deploymentOrder.ApplicationSetup),
+                DeploymentTemplateId = deploymentOrder.DeploymentTemplateId.ToString(),
+                RequestId = deploymentOrder.RequestId,
+                CreatedAt = deploymentOrder.CreatedAt.ToString(),
                 HostSetupViews = deploymentOrder.HostsSetup?.Select(hostSetup => new HostSetupView()
                 {
                     Tag = hostSetup.Tag,
@@ -49,6 +51,14 @@ namespace RegularApi.Transformers
                     }).ToList()
                 }).ToList()
             };
+
+            // ApplicationSetupView
+            if (deploymentOrder.ApplicationSetup != null)
+            {
+                deploymentOrderView.ApplicationSetupView = _applicationSetupTransformer.Transform(deploymentOrder.ApplicationSetup);
+            }
+
+            return deploymentOrderView;
         }
     }
 }

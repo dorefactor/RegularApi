@@ -31,7 +31,8 @@ namespace RegularApi.Transformers
             return new DeploymentTemplateView
             {
                 Name = deploymentTemplate.Name,
-                ApplicationId = deploymentTemplate.ApplicationId.ToString()
+                ApplicationId = deploymentTemplate.ApplicationId.ToString(),
+                ApplicationSetupView = _applicationSetupTransformer.Transform(deploymentTemplate.ApplicationSetup)
             };
         }
 

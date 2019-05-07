@@ -26,20 +26,20 @@ namespace RegularApi.Controllers.Deployment
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewAsync(DeploymentOrderView deploymentOrderRequestView)
+        public async Task<IActionResult> NewAsync(DeploymentOrderView deploymentOrdertView)
         {
-            _logger.LogInformation("deployment request received: {0}", deploymentOrderRequestView.DeploymentTemplateId);
+            _logger.LogInformation("deployment request received: {0}", deploymentOrdertView.DeploymentTemplateId);
 
-            var deploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrderRequestView);
+            var deploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrdertView);
 
             var result = await _deploymentService.QueueDeploymentOrderAsync(deploymentOrder);
 
             var action = result.Match<IActionResult>(
-                right => Ok(right),
+                right => Ok(BuildNewResourceResponseView("/deployment-orders", right.RequestId)),
                 left => UnprocessableEntity(BuildErrorResponse(left)));
 
             return action;
-        }
+    }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDeploymentOrderByRequestIdAsync([FromRoute] string id)
@@ -48,7 +48,7 @@ namespace RegularApi.Controllers.Deployment
 
             return deploymentOrderHolder.Match<IActionResult>(
                 right => Ok(_deploymentOrderTransformer.Transform(right)),
-                left => UnprocessableEntity(left));
+                left => NotFound());
         }
     }
 }

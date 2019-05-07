@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
@@ -7,8 +6,6 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RegularApi.Dao;
 using RegularApi.Domain.Model;
-using RegularApi.Domain.Model.Docker;
-using RegularApi.Domain.Services;
 using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Services
@@ -31,7 +28,7 @@ namespace RegularApi.Services
             _rabbitMqTemplate = rabbitMqTemplate;
         }
 
-        public async Task<Either<string, DeploymentRequest>> QueueDeploymentOrderAsync(DeploymentOrder deploymentOrder)
+        public async Task<Either<string, DeploymentOrder>> QueueDeploymentOrderAsync(DeploymentOrder deploymentOrder)
         {
             try
             {
@@ -46,14 +43,14 @@ namespace RegularApi.Services
 
                 var deploymentOrderHolder = await _deploymentOrderDao.SaveAsync(deploymentOrder);
 
-                var deploymentOrderRequest = BuildDeploymentRequest(deploymentOrder.RequestId);
-                var payload = JsonConvert.SerializeObject(deploymentOrderRequest);
+                var deploymentOrderQueued = BuildDeploymentOrderResponse(deploymentOrder);
+                var payload = JsonConvert.SerializeObject(deploymentOrderQueued);
 
                 _logger.LogInformation("Queue deployment request: {0}", payload);
 
                 _rabbitMqTemplate.SendMessage(payload);
 
-                return deploymentOrderRequest;
+                return deploymentOrderQueued;
             }
             catch (Exception ex)
             {
@@ -65,91 +62,22 @@ namespace RegularApi.Services
         public async Task<Either<string, DeploymentOrder>> GetDeploymentOrderByRequestIdAsync(string id)
         {
 
-            var deploymentOrderVoHolder = await _deploymentOrderDao.GetDeploymentOrderVoByRequestIdAsync(id);
+            var deploymentOrderVoHolder = await _deploymentOrderDao.GetDeploymentOrderByRequestIdAsync(id);
 
             if (deploymentOrderVoHolder.IsNone)
             {
                 return "No deployment order found with request_id found: " + id;
             }
 
-            var deploymentOrderVo = deploymentOrderVoHolder.FirstOrDefault();
+            return deploymentOrderVoHolder.FirstOrDefault();
+        }
 
+        private DeploymentOrder BuildDeploymentOrderResponse(DeploymentOrder deploymentOrder)
+        {
             return new DeploymentOrder
             {
-                Id = deploymentOrderVo.Id,
-                RequestId = deploymentOrderVo.RequestId,
-                ApplicationSetup = GetApplicationSetup(deploymentOrderVo),
-                HostsSetup = GetHostsSetup(deploymentOrderVo)
-            };
-        }
-
-        private ApplicationSetup GetApplicationSetup(DeploymentOrderVo deploymentOrderVo)
-        {
-            var applicationSetupFromApplication = deploymentOrderVo.ApplicationSetupFromApplication;
-
-            switch (applicationSetupFromApplication.ApplicationType)
-            {
-                case Enums.ApplicationType.Docker:
-                    {
-                        var dockerApplicationSetupFromApplication = (DockerApplicationSetup)deploymentOrderVo.ApplicationSetupFromApplication;
-                        var dockerApplicationSetupFromDeploymentTemplate = (DockerApplicationSetup)deploymentOrderVo.ApplicationSetupFromDeploymentTemplate;
-                        var dockerApplicationSetupFromDeploymentOrder = (DockerApplicationSetup)deploymentOrderVo.ApplicationSetupFromDeploymentOrder;
-
-                        return new DockerApplicationSetup
-                        {
-                            ApplicationType = Enums.ApplicationType.Docker,
-                            Registry = dockerApplicationSetupFromApplication.Registry,
-                            Image = new Image
-                            {
-                                Name = dockerApplicationSetupFromApplication.Image.Name,
-                                Tag = dockerApplicationSetupFromDeploymentOrder.Image?.Tag
-                            },
-                            Ports = dockerApplicationSetupFromApplication.Ports,
-                            EnvironmentVariables = dockerApplicationSetupFromDeploymentTemplate.EnvironmentVariables
-                        };
-                    }
-                default:
-                    return null;
-            }
-        }
-
-        private IList<HostSetup> GetHostsSetup(DeploymentOrderVo deploymentOrderVo)
-        {
-            var hostsSetupFromDeploymentTemplate = deploymentOrderVo.HostsSetupFromDeploymentTemplate;
-            var hostsSetupFromDeploymentOrder = deploymentOrderVo.HostsSetupFromDeploymentOrder;
-
-            var hostsSetup = new List<HostSetup>();
-            foreach (HostSetup hostSetupFromDeploymentOrder in hostsSetupFromDeploymentOrder)
-            {
-                var hostSetup = (from hostSetupFromDeploymentTemplate in hostsSetupFromDeploymentTemplate
-                                 where hostSetupFromDeploymentTemplate.Tag.Equals(hostSetupFromDeploymentOrder.Tag)
-                                 select new HostSetup
-                                 {
-                                     Tag = hostSetupFromDeploymentOrder.Tag,
-                                     Hosts = (from hostFromDeploymentOrder in hostSetupFromDeploymentOrder.Hosts
-                                              join hostFromDeploymentTemplate in hostSetupFromDeploymentTemplate.Hosts
-                                                                                on hostFromDeploymentOrder.Ip equals hostFromDeploymentTemplate.Ip
-                                              select new Host
-                                              {
-                                                  Ip = hostFromDeploymentTemplate.Ip,
-                                                  Username = hostFromDeploymentTemplate.Username,
-                                                  Password = hostFromDeploymentTemplate.Password
-                                              }).ToList()
-
-                                 }).SingleOrDefault();
-
-                hostsSetup.Add(hostSetup);
-            }
-
-            return hostsSetup;
-        }
-
-        private DeploymentRequest BuildDeploymentRequest(string requestId)
-        {
-            return new DeploymentRequest
-            {
-                RequestId = requestId,
-                Created = DateTime.UtcNow,
+                RequestId = deploymentOrder.RequestId,
+                CreatedAt = deploymentOrder.CreatedAt
             };
         }
     }

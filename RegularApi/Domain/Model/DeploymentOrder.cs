@@ -13,6 +13,8 @@ namespace RegularApi.Domain.Model
 
         public string RequestId { get; set; } = Guid.NewGuid().ToString();
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         public ObjectId DeploymentTemplateId { get; set; }
 
         public ApplicationSetup ApplicationSetup { get; set; }
