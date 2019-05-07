@@ -62,7 +62,7 @@ namespace RegularApi.Services
         public async Task<Either<string, DeploymentOrder>> GetDeploymentOrderByRequestIdAsync(string id)
         {
 
-            var deploymentOrderVoHolder = await _deploymentOrderDao.GetDeploymentOrderByRequestIdAsync(id);
+            var deploymentOrderVoHolder = await _deploymentOrderDao.GetByRequestIdAsync(id);
 
             if (deploymentOrderVoHolder.IsNone)
             {

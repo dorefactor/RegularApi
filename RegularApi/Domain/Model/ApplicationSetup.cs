@@ -8,6 +8,6 @@ namespace RegularApi.Domain.Model
     [BsonKnownTypes(typeof(DockerApplicationSetup))]
     public abstract class ApplicationSetup
     {
-        public ApplicationType ApplicationType { get; set; }
+        public virtual ApplicationType ApplicationType { get; set; }
     }
 }

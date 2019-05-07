@@ -2,6 +2,7 @@
 {
     public enum ApplicationType
     {
-        Docker
+        Docker,
+        Java
     }
 }

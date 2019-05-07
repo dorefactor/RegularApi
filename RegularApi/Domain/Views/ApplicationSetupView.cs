@@ -6,6 +6,6 @@ namespace RegularApi.Domain.Views
     [JsonConverter(typeof(ApplicationSetupConverter))]
     public abstract class ApplicationSetupView
     {
-        public string Type { get; set; }
+        public virtual string Type { get; set; }
     }
 }
