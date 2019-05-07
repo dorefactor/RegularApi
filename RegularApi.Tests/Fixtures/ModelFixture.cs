@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using MongoDB.Bson;
 using RegularApi.Domain.Model;
 using RegularApi.Domain.Model.Docker;
+using RegularApi.Enums;
 
 namespace RegularApi.Tests.Fixtures
 {
@@ -37,7 +38,7 @@ namespace RegularApi.Tests.Fixtures
             };
         }
 
-        public static DeploymentTemplate BuildDeploymentTemplate(string name)
+        public static DeploymentTemplate BuildDeploymentTemplate(string name, ApplicationType applicationType)
         {
             return new DeploymentTemplate
             {
@@ -46,7 +47,7 @@ namespace RegularApi.Tests.Fixtures
                 ApplicationId = new ObjectId("5cce4c0d0722ec669fe60fca"),
                 ApplicationSetup = new DockerApplicationSetup
                 {
-                    ApplicationType = Enums.ApplicationType.Docker,
+                    ApplicationType = applicationType,
                     EnvironmentVariables = new Dictionary<string, string>
                         {
                             {"APP_NAME","todo-app"}

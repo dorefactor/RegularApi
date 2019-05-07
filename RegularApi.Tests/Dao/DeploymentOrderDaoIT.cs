@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using RegularApi.Dao;
+using RegularApi.Enums;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Dao
@@ -45,7 +46,7 @@ namespace RegularApi.Tests.Dao
         public async Task TestGetByRequestIdAsync()
         {
             var requestId = "request-id";
-            var expectedDeploymentOrder = await _daoFixture.CreateDeploymentOrderAsync(requestId);
+            var expectedDeploymentOrder = await _daoFixture.CreateDeploymentOrderAsync(requestId, ApplicationType.Docker);
 
             var deploymentOrderHolder = await _deploymentOrderDao.GetByRequestIdAsync(requestId);
 

@@ -21,9 +21,15 @@ namespace RegularApi.Tests.Transformers
         public void SetUp()
         {
             _applicationSetupTransformer = new Mock<ITransformer<ApplicationSetupView, ApplicationSetup>>();
-            _applicationSetup = new Mock<ApplicationSetup>(MockBehavior.Strict);
+            _applicationSetup = new Mock<ApplicationSetup>();
 
             _applicationTransformer = new ApplicationTransformer(_applicationSetupTransformer.Object);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _applicationSetupTransformer.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -32,11 +38,12 @@ namespace RegularApi.Tests.Transformers
             var applicationView = ViewFixture.BuildApplicationView("application-test", applicationType.ToString());
 
             _applicationSetup.Setup(_ => _.ApplicationType).Returns(applicationType);
-
             _applicationSetupTransformer.Setup(_ => _.Transform(applicationView.ApplicationSetupView))
                 .Returns(_applicationSetup.Object);
 
             var actualApplication = _applicationTransformer.Transform(applicationView);
+
+            _applicationSetupTransformer.Verify(_ => _.Transform(applicationView.ApplicationSetupView));
 
             actualApplication.Name.Should().BeEquivalentTo(applicationView.Name);
             actualApplication.ApplicationSetup.ApplicationType.ToString().Should().BeEquivalentTo(applicationView.ApplicationSetupView.Type);

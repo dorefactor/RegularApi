@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
+using RegularApi.Enums;
 using RegularApi.Tests.Fixtures;
 using RegularApi.Transformers;
 
@@ -38,7 +39,7 @@ namespace RegularApi.Tests.Controllers.Deployment
         public async Task TestNewAsync_Ok()
         {
             var templateName = "todo-app";
-            await _daoFixture.CreateDeploymentTemplateAsync(templateName);
+            await _daoFixture.CreateDeploymentTemplateAsync(templateName, ApplicationType.Docker);
 
             var deploymentOrderView = GetPayloadViewFromJsonFile<DeploymentOrderView>("../../../Samples/Controllers/Payloads/deployment-order.json");
             var responseMessage = await PerformPostAsync(deploymentOrderView, DeploymentOrdersUri);
@@ -64,7 +65,7 @@ namespace RegularApi.Tests.Controllers.Deployment
         public async Task TestGetAsync_Success()
         {
             var requestId = Guid.NewGuid().ToString();
-            var deploymentOrder = await _daoFixture.CreateDeploymentOrderAsync(requestId);
+            var deploymentOrder = await _daoFixture.CreateDeploymentOrderAsync(requestId, ApplicationType.Docker);
 
             var uri = DeploymentOrdersUri + "/" + requestId;
             var responseMessage = await PerformGetAsync(uri);

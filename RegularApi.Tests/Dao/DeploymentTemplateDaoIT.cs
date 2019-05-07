@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using RegularApi.Dao;
+using RegularApi.Enums;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Dao
@@ -31,7 +32,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestSaveAsync()
         {
-            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate("super-template");
+            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate("super-template", ApplicationType.Docker);
 
             var actualTemplate = await _deploymentTemplateDao.SaveAsync(deploymentTemplate);
             var expectedTemplate = await _daoFixture.GetDeploymentTemplateByIdAsync(deploymentTemplate.Id);
@@ -44,7 +45,7 @@ namespace RegularApi.Tests.Dao
         public async Task TestGetByNameAsync()
         {
             string templateName = "deployment-template";
-            var expectedTemplate = await _daoFixture.CreateDeploymentTemplateAsync(templateName);
+            var expectedTemplate = await _daoFixture.CreateDeploymentTemplateAsync(templateName, ApplicationType.Docker);
 
             var deploymentTemplateHolder = await _deploymentTemplateDao.GetByNameAsync(templateName);
 

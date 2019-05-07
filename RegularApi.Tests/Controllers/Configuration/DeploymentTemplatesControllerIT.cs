@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
+using RegularApi.Enums;
 using RegularApi.Tests.Fixtures;
 using RegularApi.Transformers;
 
@@ -60,7 +61,7 @@ namespace RegularApi.Tests.Controllers.Configuration
         public async Task TestGetAsync_Success()
         {
             var templateName = "super-template";
-            var deploymentTemplate = await _daoFixture.CreateDeploymentTemplateAsync(templateName);
+            var deploymentTemplate = await _daoFixture.CreateDeploymentTemplateAsync(templateName, ApplicationType.Docker);
 
             var uri = DeploymentTemplatesUri + "/" + templateName;
             var responseMessage = await PerformGetAsync(uri);

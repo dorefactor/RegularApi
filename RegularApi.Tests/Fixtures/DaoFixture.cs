@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using RegularApi.Dao;
 using RegularApi.Domain.Model;
+using RegularApi.Enums;
 using RegularApi.Tests.Dao;
 
 namespace RegularApi.Tests.Fixtures
@@ -41,9 +42,9 @@ namespace RegularApi.Tests.Fixtures
             return await cursor.FirstOrDefaultAsync();
         }
 
-        public async Task<DeploymentTemplate> CreateDeploymentTemplateAsync(string name)
+        public async Task<DeploymentTemplate> CreateDeploymentTemplateAsync(string name, ApplicationType applicationType)
         {
-            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate(name);
+            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate(name, applicationType);
             var collection = GetCollection<DeploymentTemplate>(DeploymentTemplateDao.DeploymentTemplateCollectionName);
 
             await collection.InsertOneAsync(deploymentTemplate);
@@ -51,10 +52,10 @@ namespace RegularApi.Tests.Fixtures
             return deploymentTemplate;
         }
 
-        public async Task<DeploymentOrder> CreateDeploymentOrderAsync(string requestId)
+        public async Task<DeploymentOrder> CreateDeploymentOrderAsync(string requestId, ApplicationType applicationType)
         {
             await CreateApplicationAsync("application");
-            await CreateDeploymentTemplateAsync("template");
+            await CreateDeploymentTemplateAsync("template", applicationType);
 
             var deploymentOrder = ModelFixture.BuildDeploymentOrder(requestId);
             var collection = GetCollection<DeploymentOrder>(DeploymentOrderDao.DeploymentOrderCollectionName);
@@ -63,7 +64,6 @@ namespace RegularApi.Tests.Fixtures
 
             return deploymentOrder;
         }
-
 
         public async Task<DeploymentOrder> GetDeploymentOrderByIdAsync(string id)
         {
