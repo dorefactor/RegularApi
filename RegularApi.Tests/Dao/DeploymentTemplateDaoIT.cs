@@ -8,16 +8,18 @@ namespace RegularApi.Tests.Dao
 {
     public class DeploymentTemplateDaoIT : BaseDaoIT
     {
-        private IDeploymentTemplateDao _templateDao;
+        private IDeploymentTemplateDao _deploymentTemplateDao;
+        private DaoFixture _daoFixture;
 
         [SetUp]
         public void Setup()
         {
             CreateMongoDbServer();
             CreateTestServer();
-            DropCollection("deploymentTemplates");
+            DropCollection(DeploymentOrderDao.DeploymentOrderCollectionName);
 
-            _templateDao = GetDao<IDeploymentTemplateDao>();
+            _deploymentTemplateDao = GetDao<IDeploymentTemplateDao>();
+            _daoFixture = GetDaoFixture();
         }
 
         [TearDown]
@@ -27,29 +29,30 @@ namespace RegularApi.Tests.Dao
         }
 
         [Test]
-        public async Task AddNewTemplateTest()
+        public async Task TestSaveAsync()
         {
-            var template = ModelFixture.BuildDeploymentTemplate("super-template");
+            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate("super-template");
 
-            var storedTemplate = await _templateDao.SaveAsync(template);
-            var expectedTemplate = await GetDaoFixture().GetDeploymentTemplateByIdAsync(template.Id);
+            var actualTemplate = await _deploymentTemplateDao.SaveAsync(deploymentTemplate);
+            var expectedTemplate = await _daoFixture.GetDeploymentTemplateByIdAsync(deploymentTemplate.Id);
 
-            storedTemplate.Should().NotBeNull();
-            expectedTemplate.Should().BeEquivalentTo(storedTemplate);
+            actualTemplate.Should().NotBeNull();
+            actualTemplate.Should().BeEquivalentTo(expectedTemplate);
         }
 
         [Test]
-        public async Task GetDeploymentTemplateByNameTest()
+        public async Task TestGetByNameAsync()
         {
-            const string templateName = "deployment-template";
-            var expectedTemplate = await GetDaoFixture().CreateDeploymentTemplateAsync(templateName);
+            string templateName = "deployment-template";
+            var expectedTemplate = await _daoFixture.CreateDeploymentTemplateAsync(templateName);
 
-            var holder = await _templateDao.GetByNameAsync(templateName);
-            
-            Assert.True(holder.IsSome);
-            var storedTemplate = holder.AsEnumerable().First();
-            
-            expectedTemplate.Should().BeEquivalentTo(storedTemplate);
+            var deploymentTemplateHolder = await _deploymentTemplateDao.GetByNameAsync(templateName);
+
+            deploymentTemplateHolder.IsSome.Should().BeTrue();
+
+            var actualTemplate = deploymentTemplateHolder.AsEnumerable().First();
+
+            actualTemplate.Should().BeEquivalentTo(expectedTemplate);
         }
     }
 }
