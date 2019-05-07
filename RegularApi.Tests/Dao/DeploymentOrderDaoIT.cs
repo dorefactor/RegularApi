@@ -32,7 +32,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestSaveAsync()
         {
-            var deploymentOrder = ModelFixture.BuildDeploymentOrder("request-id");
+            var deploymentOrder = ModelFixture.BuildDeploymentOrder("request-id", ApplicationType.Docker);
 
             var actualDeploymentOrder = await _deploymentOrderDao.SaveAsync(deploymentOrder);
             var expectedDeploymentOrder = await _daoFixture.GetDeploymentOrderByIdAsync(deploymentOrder.Id.ToString());

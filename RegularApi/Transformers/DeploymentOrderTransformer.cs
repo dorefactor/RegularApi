@@ -19,6 +19,7 @@ namespace RegularApi.Transformers
             return new DeploymentOrder
             {
                 DeploymentTemplateId = new ObjectId(deploymentOrderView.DeploymentTemplateId),
+                RequestId = deploymentOrderView.RequestId,
                 ApplicationSetup = _applicationSetupTransformer.Transform(deploymentOrderView.ApplicationSetupView),
                 HostsSetup = deploymentOrderView.HostSetupViews?.Select(hostSetupView => new HostSetup()
                 {
