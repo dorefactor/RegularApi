@@ -6,7 +6,7 @@ namespace RegularApi.Dao
 {
     public interface IDeploymentOrderDao
     {
-        Task<Option<DeploymentOrder>> SaveAsync(DeploymentOrder deploymentOrder);
-        Task<Option<DeploymentOrder>> GetDeploymentOrderByRequestIdAsync(string id);
+        Task<DeploymentOrder> SaveAsync(DeploymentOrder deploymentOrder);
+        Task<Option<DeploymentOrder>> GetByRequestIdAsync(string id);
     }
 }

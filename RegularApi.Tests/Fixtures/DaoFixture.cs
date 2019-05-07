@@ -53,6 +53,9 @@ namespace RegularApi.Tests.Fixtures
 
         public async Task<DeploymentOrder> CreateDeploymentOrderAsync(string requestId)
         {
+            await CreateApplicationAsync("application");
+            await CreateDeploymentTemplateAsync("template");
+
             var deploymentOrder = ModelFixture.BuildDeploymentOrder(requestId);
             var collection = GetCollection<DeploymentOrder>(DeploymentOrderDao.DeploymentOrderCollectionName);
 

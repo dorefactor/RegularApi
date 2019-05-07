@@ -20,14 +20,14 @@ namespace RegularApi.Dao
             _collection = GetCollection<DeploymentOrder>();
         }
 
-        public async Task<Option<DeploymentOrder>> SaveAsync(DeploymentOrder deploymentOrder)
+        public async Task<DeploymentOrder> SaveAsync(DeploymentOrder deploymentOrder)
         {
             await _collection.InsertOneAsync(deploymentOrder);
 
-            return OfNullable(deploymentOrder);
+            return deploymentOrder;
         }
 
-        public async Task<Option<DeploymentOrder>> GetDeploymentOrderByRequestIdAsync(string id)
+        public async Task<Option<DeploymentOrder>> GetByRequestIdAsync(string id)
         {
             var deploymentTemplatesCollection = GetCollection<DeploymentTemplate>(DeploymentTemplateDao.DeploymentTemplateCollectionName);
             var applicationsCollection = GetCollection<Application>(ApplicationDao.ApplicationCollectionName);
@@ -48,7 +48,6 @@ namespace RegularApi.Dao
                          }).ToAsyncEnumerable();
 
             var queryResult = await query.FirstOrDefault();
-
 
             return queryResult.IsNull() ? Option<DeploymentOrder>.None : Option<DeploymentOrder>.Some(new DeploymentOrder
             {
