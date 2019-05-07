@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using RegularApi.Dao;
-using RegularApi.Domain.Model;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Dao
@@ -12,15 +10,17 @@ namespace RegularApi.Tests.Dao
     public class ApplicationDaoIT : BaseDaoIT
     {
         private IApplicationDao _applicationDao;
+        private DaoFixture _daoFixture;
 
         [SetUp]
         public void SetUp()
         {
             CreateMongoDbServer();
             CreateTestServer();
-            DropCollection("applications");
+            DropCollection(ApplicationDao.ApplicationCollectionName);
 
             _applicationDao = GetDao<IApplicationDao>();
+            _daoFixture = GetDaoFixture();
         }
 
         [TearDown]
@@ -30,57 +30,58 @@ namespace RegularApi.Tests.Dao
         }
 
         [Test]
-        public async Task TestGetApplications()
+        public async Task TestGetAllAsync()
         {
-            var application = await GetDaoFixture().CreateApplication("super-application-2k");
+            var application = await _daoFixture.CreateApplicationAsync("super-application-2k");
 
-            var apps = await _applicationDao.GetAllAsync();
+            var applications = await _applicationDao.GetAllAsync();
 
-            Assert.NotNull(apps);
+            applications.Should().NotBeEmpty();
 
-            var expected = apps.First(app => application.Id.Equals(app.Id));
+            var actual = applications.First(_ => application.Id.Equals(_.Id));
 
-            Assert.NotNull(expected);
+            actual.Should().NotBeNull();
+
+            actual.Should().BeEquivalentTo(application);
         }
 
         [Test]
-        public async Task TestGetNonExistingApplication()
+        public async Task TestGetNonExisting()
         {
-            var appHolder = await _applicationDao.GetByNameAsync("non-existing-app");
+            var applicationHolder = await _applicationDao.GetByNameAsync("non-existing-app");
 
-            Assert.NotNull(appHolder);
-            Assert.True(appHolder.IsNone);
+            applicationHolder.IsNone.Should().BeTrue();
+            applicationHolder.FirstOrDefault().Should().BeNull();
         }
 
         [Test]
-        public async Task TestGetApplicationByName()
+        public async Task TestGetByNameAsync()
         {
-            const string appName = "aka-aka-app";
+            string applicationName = "aka-aka-app";
 
-            var application = await GetDaoFixture().CreateApplication(appName);
+            var expectedApplication = await _daoFixture.CreateApplicationAsync(applicationName);
 
-            var appHolder = await _applicationDao.GetByNameAsync(appName);
+            var applicationHolder = await _applicationDao.GetByNameAsync(applicationName);
 
-            Assert.NotNull(appHolder);
+            applicationHolder.FirstOrDefault().Should().NotBeNull();
 
-            var result = appHolder.AsEnumerable().First();
+            var actualApplication = applicationHolder.FirstOrDefault();
 
-            Assert.AreEqual(application.Id, result.Id);
+            actualApplication.Id.Should().BeEquivalentTo(expectedApplication.Id);
         }
 
         [Test]
-        public async Task TestSaveApplicationSetup()
+        public async Task TestSaveAsync()
         {
-            var expectedApplication = ModelFixture.CreateApplication();
+            var expectedApplication = ModelFixture.BuildApplication("test");
 
             var applicationSetupHolder = await _applicationDao.SaveAsync(expectedApplication);
 
-            Assert.NotNull(applicationSetupHolder);
+            applicationSetupHolder.FirstOrDefault().Should().NotBeNull();
 
-            var actualApplication = GetDaoFixture().GetApplicationById(applicationSetupHolder.AsEnumerable().First().Id).Result;
+            var actualApplication = await _daoFixture.GetApplicationByIdAsync(applicationSetupHolder.FirstOrDefault().Id);
 
-            Assert.NotNull(actualApplication.Id);
-
+            actualApplication.Should().NotBeNull();
             actualApplication.Should().BeEquivalentTo(expectedApplication);
         }
     }

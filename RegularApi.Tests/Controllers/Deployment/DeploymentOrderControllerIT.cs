@@ -64,7 +64,7 @@ namespace RegularApi.Tests.Controllers.Deployment
         public async Task TestGetAsync_Success()
         {
             var requestId = Guid.NewGuid().ToString();
-            await _daoFixture.CreateApplicationAsync();
+            await _daoFixture.CreateApplicationAsync("todo-app");
             await _daoFixture.CreateDeploymentTemplateAsync("todo-app");
             var deploymentOrder = await _daoFixture.CreateDeploymentOrderAsync(requestId);
 
