@@ -6,6 +6,31 @@ namespace RegularApi.Tests.Fixtures
 {
     public static class ViewFixture
     {
+        public static ApplicationSetupView BuildDockerApplicationSetupView(string type)
+        {
+            return new DockerApplicationSetupView
+            {
+                Type = type,
+                RegistryView = new RegistryView
+                {
+                    IsPrivate = false,
+                    Url = "https://registry.docker.com"
+                },
+                ImageView = new ImageView
+                {
+                    Name = "todo-app"
+                },
+                EnvironmentVariables = new Dictionary<string, string>
+                        {
+                            {"VARIABLE","VALUE"}
+                        },
+                Ports = new Dictionary<string, string>
+                        {
+                            {"8080","80"}
+                        }
+            };
+        }
+
         public static ApplicationView BuildApplicationView(string name, string type)
         {
             return new ApplicationView
@@ -67,12 +92,11 @@ namespace RegularApi.Tests.Fixtures
             };
         }
 
-        public static DeploymentOrderView BuildDeploymentOrderView(string requestId, string type)
+        public static DeploymentOrderView BuildDeploymentOrderView(string type)
         {
             return new DeploymentOrderView
             {
                 DeploymentTemplateId = "5cce4c0d0722ec669fe60fcb",
-                RequestId = requestId,
                 ApplicationSetupView = new DockerApplicationSetupView
                 {
                     Type = type,

@@ -9,6 +9,7 @@ namespace RegularApi.Domain.Views
     {
         public string DeploymentTemplateId { get; set; }
 
+        [JsonProperty(Required = Required.Default)]
         public string RequestId { get; set; }
 
         public string CreatedAt { get; set; }

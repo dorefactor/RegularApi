@@ -8,7 +8,7 @@ namespace RegularApi.Tests.Fixtures
 {
     public static class ModelFixture
     {
-        public static Application BuildApplication(string name)
+        public static Application BuildApplication(string name, ApplicationType applicationType)
         {
             return new Application
             {
@@ -16,7 +16,7 @@ namespace RegularApi.Tests.Fixtures
                 Name = name,
                 ApplicationSetup = new DockerApplicationSetup
                 {
-                    ApplicationType = Enums.ApplicationType.Docker,
+                    ApplicationType = applicationType,
                     Registry = new Registry
                     {
                         IsPrivate = false,
@@ -71,13 +71,12 @@ namespace RegularApi.Tests.Fixtures
             };
         }
 
-        public static DeploymentOrder BuildDeploymentOrder(string requestId, ApplicationType applicationType)
+        public static DeploymentOrder BuildDeploymentOrder(ApplicationType applicationType)
         {
             return new DeploymentOrder
             {
                 Id = new ObjectId("5cce4c260722ec669fe60fcc"),
                 DeploymentTemplateId = new ObjectId("5cce4c0d0722ec669fe60fcb"),
-                RequestId = requestId,
                 ApplicationSetup = new DockerApplicationSetup
                 {
                     ApplicationType = applicationType,

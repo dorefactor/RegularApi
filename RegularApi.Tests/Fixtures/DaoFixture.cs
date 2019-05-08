@@ -10,9 +10,9 @@ namespace RegularApi.Tests.Fixtures
 {
     public class DaoFixture : BaseDaoIT
     {
-        public async Task<Application> CreateApplicationAsync(string name)
+        public async Task<Application> CreateApplicationAsync(string name, ApplicationType applicationType)
         {
-            var application = ModelFixture.BuildApplication(name);
+            var application = ModelFixture.BuildApplication(name, applicationType);
             var collection = GetCollection<Application>(ApplicationDao.ApplicationCollectionName);
 
             await collection.InsertOneAsync(application);
@@ -54,10 +54,12 @@ namespace RegularApi.Tests.Fixtures
 
         public async Task<DeploymentOrder> CreateDeploymentOrderAsync(string requestId, ApplicationType applicationType)
         {
-            await CreateApplicationAsync("application");
+            await CreateApplicationAsync("application", applicationType);
             await CreateDeploymentTemplateAsync("template", applicationType);
 
-            var deploymentOrder = ModelFixture.BuildDeploymentOrder(requestId, applicationType);
+            var deploymentOrder = ModelFixture.BuildDeploymentOrder(applicationType);
+            deploymentOrder.RequestId = requestId;
+
             var collection = GetCollection<DeploymentOrder>(DeploymentOrderDao.DeploymentOrderCollectionName);
 
             await collection.InsertOneAsync(deploymentOrder);

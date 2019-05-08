@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using RegularApi.Dao;
+using RegularApi.Enums;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Dao
@@ -32,7 +33,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestGetAllAsync()
         {
-            var application = await _daoFixture.CreateApplicationAsync("super-application-2k");
+            var application = await _daoFixture.CreateApplicationAsync("super-application-2k", ApplicationType.Docker);
 
             var applications = await _applicationDao.GetAllAsync();
 
@@ -59,7 +60,7 @@ namespace RegularApi.Tests.Dao
         {
             string applicationName = "aka-aka-app";
 
-            var expectedApplication = await _daoFixture.CreateApplicationAsync(applicationName);
+            var expectedApplication = await _daoFixture.CreateApplicationAsync(applicationName, ApplicationType.Docker);
 
             var applicationHolder = await _applicationDao.GetByNameAsync(applicationName);
 
@@ -73,7 +74,7 @@ namespace RegularApi.Tests.Dao
         [Test]
         public async Task TestSaveAsync()
         {
-            var expectedApplication = ModelFixture.BuildApplication("test");
+            var expectedApplication = ModelFixture.BuildApplication("test", ApplicationType.Docker);
 
             var applicationSetupHolder = await _applicationDao.SaveAsync(expectedApplication);
 

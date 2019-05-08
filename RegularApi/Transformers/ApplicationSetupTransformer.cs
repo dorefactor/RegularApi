@@ -3,6 +3,7 @@ using RegularApi.Domain.Model;
 using RegularApi.Domain.Model.Docker;
 using RegularApi.Domain.Views;
 using RegularApi.Domain.Views.Docker;
+using RegularApi.Enums;
 
 namespace RegularApi.Transformers
 {
@@ -10,11 +11,11 @@ namespace RegularApi.Transformers
     {
         public ApplicationSetup Transform(ApplicationSetupView applicationSetupView)
         {
-            var applicationType = (Enums.ApplicationType)Enum.Parse(typeof(Enums.ApplicationType), applicationSetupView.Type);
+            var applicationType = (ApplicationType)Enum.Parse(typeof(ApplicationType), applicationSetupView.Type);
 
             switch (applicationType)
             {
-                case Enums.ApplicationType.Docker:
+                case ApplicationType.Docker:
                     {
                         var dockerApplicationSetupView = (DockerApplicationSetupView)applicationSetupView;
 
@@ -59,13 +60,13 @@ namespace RegularApi.Transformers
         {
             switch (applicationSetup.ApplicationType)
             {
-                case Enums.ApplicationType.Docker:
+                case ApplicationType.Docker:
                     {
                         var dockerApplicationSetup = (DockerApplicationSetup)applicationSetup;
 
                         var dockerApplicationSetupView = new DockerApplicationSetupView
                         {
-                            Type = Enums.ApplicationType.Docker.ToString(),
+                            Type = ApplicationType.Docker.ToString(),
                             Ports = dockerApplicationSetup.Ports,
                             EnvironmentVariables = dockerApplicationSetup.EnvironmentVariables
                         };

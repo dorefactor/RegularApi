@@ -9,13 +9,13 @@ using RegularApi.Transformers;
 
 namespace RegularApi.Tests.Transformers
 {
-    public class DeploymentTemplateTransformerTest
+    public class DeploymentOrderTransformerTest
     {
         private Mock<ITransformer<ApplicationSetupView, ApplicationSetup>> _applicationSetupTransformer;
         private Mock<ApplicationSetup> _applicationSetup;
         private Mock<ApplicationSetupView> _applicationSetupView;
 
-        private ITransformer<DeploymentTemplateView, DeploymentTemplate> _deploymentTemplateTransformer;
+        private ITransformer<DeploymentOrderView, DeploymentOrder> _deploymentOrderTransformer;
 
         [SetUp]
         public void SetUp()
@@ -24,7 +24,7 @@ namespace RegularApi.Tests.Transformers
             _applicationSetup = new Mock<ApplicationSetup>();
             _applicationSetupView = new Mock<ApplicationSetupView>();
 
-            _deploymentTemplateTransformer = new DeploymentTemplateTransformer(_applicationSetupTransformer.Object);
+            _deploymentOrderTransformer = new DeploymentOrderTransformer(_applicationSetupTransformer.Object);
         }
 
         [TearDown]
@@ -36,36 +36,36 @@ namespace RegularApi.Tests.Transformers
         [Theory]
         public void TestTransformFromView(ApplicationType applicationType)
         {
-            var deploymentTemplateView = ViewFixture.BuildDeploymentTemplateView("template-test", applicationType.ToString());
+            var deploymentOrderView = ViewFixture.BuildDeploymentOrderView(applicationType.ToString());
 
             _applicationSetup.Setup(_ => _.ApplicationType).Returns(applicationType);
-            _applicationSetupTransformer.Setup(_ => _.Transform(deploymentTemplateView.ApplicationSetupView))
+            _applicationSetupTransformer.Setup(_ => _.Transform(deploymentOrderView.ApplicationSetupView))
                             .Returns(_applicationSetup.Object);
 
-            var actualDeploymentTemplate = _deploymentTemplateTransformer.Transform(deploymentTemplateView);
+            var actualDeploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrderView);
 
-            _applicationSetupTransformer.Verify(_ => _.Transform(deploymentTemplateView.ApplicationSetupView));
+            _applicationSetupTransformer.Verify(_ => _.Transform(deploymentOrderView.ApplicationSetupView));
 
-            actualDeploymentTemplate.Name.Should().BeEquivalentTo(deploymentTemplateView.Name);
-            actualDeploymentTemplate.ApplicationSetup.ApplicationType.ToString().Should().BeEquivalentTo(deploymentTemplateView.ApplicationSetupView.Type);
+            actualDeploymentOrder.RequestId.Should().MatchRegex("\\b");
+            actualDeploymentOrder.ApplicationSetup.ApplicationType.ToString().Should().BeEquivalentTo(deploymentOrderView.ApplicationSetupView.Type);
         }
 
         [Theory]
         public void TestTransformToView(ApplicationType applicationType)
         {
-            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate("super-template", applicationType);
+            var deploymentOrder = ModelFixture.BuildDeploymentOrder(applicationType);
 
             _applicationSetupView.Setup(_ => _.Type).Returns(applicationType.ToString());
-            _applicationSetupTransformer.Setup(_ => _.Transform(deploymentTemplate.ApplicationSetup))
+            _applicationSetupTransformer.Setup(_ => _.Transform(deploymentOrder.ApplicationSetup))
                             .Returns(_applicationSetupView.Object);
 
-            var actualDeploymentTemplate = _deploymentTemplateTransformer.Transform(deploymentTemplate);
+            var actualDeploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrder);
 
-            _applicationSetupTransformer.Verify(_ => _.Transform(deploymentTemplate.ApplicationSetup));
+            _applicationSetupTransformer.Verify(_ => _.Transform(deploymentOrder.ApplicationSetup));
 
-            actualDeploymentTemplate.Should().NotBeNull();
-            actualDeploymentTemplate.Name.Should().Be("super-template");
-            actualDeploymentTemplate.ApplicationSetupView.Type.Should().BeEquivalentTo(deploymentTemplate.ApplicationSetup.ApplicationType.ToString());
+            actualDeploymentOrder.Should().NotBeNull();
+            actualDeploymentOrder.RequestId.Should().MatchRegex("\\b");
+            actualDeploymentOrder.ApplicationSetupView.Type.Should().BeEquivalentTo(deploymentOrder.ApplicationSetup.ApplicationType.ToString());
         }
     }
 }
