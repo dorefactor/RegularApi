@@ -1,6 +1,6 @@
 {
   "name": "todo-app",
-  "applicationId": "5cce4c0d0722ec669fe60fcc",
+  "deploymentTemplateId": "5cce4c0d0722ec669fe60fcb",
   "applicationSetup": {
     "type": "Docker",
     "environmentVariables": {
