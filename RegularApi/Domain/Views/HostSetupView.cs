@@ -1,11 +1,13 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace RegularApi.Domain.Views
 {
     public class HostSetupView
     {
-        public string TagName { get; set; }
+        public string Tag { get; set; }
 
-        public IList<HostView> Hosts { get; set; }
+        [JsonProperty(PropertyName = "hosts")]
+        public IList<HostView> HostViews { get; set; }
     }
 }

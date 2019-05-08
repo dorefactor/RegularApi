@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
+using RegularApi.Domain.Model;
+using RegularApi.Domain.Views;
 using RegularApi.RabbitMq.Templates;
 using RegularApi.Services;
 using RegularApi.Transformers;
@@ -14,22 +16,25 @@ namespace RegularApi.Configurations
             var provider = services.BuildServiceProvider();
 
             // Dependencies
-            var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
             var rabbitTemplate = provider.GetRequiredService<IRabbitMqTemplate>();
 
+            // Daos
             var applicationDao = provider.GetRequiredService<IApplicationDao>();
             var deploymentTemplateDao = provider.GetRequiredService<IDeploymentTemplateDao>();
+            var deploymentOrderDao = provider.GetRequiredService<IDeploymentOrderDao>();
 
             // Transformers
-            services.AddTransient<IApplicationTransformer>(applicationTransformer => new ApplicationTransformer());
-            services.AddTransient<IDeploymentTemplateTransformer>(deploymentTemplateTransformer =>
-                new DeploymentTemplateTransformer());
-            
+            services.AddTransient<ITransformer<ApplicationSetupView, ApplicationSetup>>(_ => new ApplicationSetupTransformer());
+            services.AddTransient<ITransformer<ApplicationView, Application>>(_ =>
+                                                                                    new ApplicationTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
+            services.AddTransient<ITransformer<DeploymentTemplateView, DeploymentTemplate>>(_ =>
+                                                                                        new DeploymentTemplateTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
+            services.AddTransient<ITransformer<DeploymentOrderView, DeploymentOrder>>(_ =>
+                                                                                        new DeploymentOrderTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
             // Services
-            services.AddTransient(deploymentService => new DeploymentService(loggerFactory, applicationDao, rabbitTemplate));
-            services.AddTransient(applicationSetupService => new ApplicationSetupService(loggerFactory, applicationDao));
-            services.AddTransient(deploymentTemplateService =>
-                new DeploymentTemplateService(loggerFactory, deploymentTemplateDao));
+            services.AddTransient(_ => new ApplicationService(applicationDao));
+            services.AddTransient(_ => new DeploymentTemplateService(_.GetRequiredService<ILogger<DeploymentTemplateService>>(), deploymentTemplateDao));
+            services.AddTransient(_ => new DeploymentService(_.GetRequiredService<ILogger<DeploymentService>>(), deploymentTemplateDao, deploymentOrderDao, rabbitTemplate));
 
             return services;
         }

@@ -7,8 +7,8 @@ namespace RegularApi.Dao
 {
     public interface IApplicationDao
     {
-        Task<IList<Application>> GetApplicationsAsync();
-        Task<Option<Application>> GetApplicationByNameAsync(string name);
-        Task<Option<Application>> SaveApplicationSetup(Application application);
+        Task<IList<Application>> GetAllAsync();
+        Task<Option<Application>> GetByNameAsync(string name);
+        Task<Option<Application>> SaveAsync(Application application);
     }
 }

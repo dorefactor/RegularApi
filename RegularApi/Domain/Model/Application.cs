@@ -8,7 +8,9 @@ namespace RegularApi.Domain.Model
     {
         [BsonId(IdGenerator = typeof(ObjectIdGenerator))]
         public ObjectId Id { get; set; }
+
         public string Name { get; set; }
-        public DockerSetup DockerSetup { get; set; }
+
+        public ApplicationSetup ApplicationSetup { get; set; }
     }
 }

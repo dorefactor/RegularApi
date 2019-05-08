@@ -1,0 +1,37 @@
+{
+  "name": "todo-app",
+  "applicationId": "5cce4c0d0722ec669fe60fca",
+  "applicationSetup": {
+    "type": "Docker",
+    "environmentVariables": {
+      "APP_NAME": "todo-app"
+    }
+  },
+  "hostsSetup": [
+    {
+      "tag": "QA",
+      "hosts": [
+        {
+          "ip": "192.168.99.1",
+          "username": "root",
+          "password": "r00t#1"
+        },
+        {
+          "ip": "192.168.99.2",
+          "username": "root",
+          "password": "r00t#2"
+        }
+      ]
+    },
+    {
+      "tag": "STG",
+      "hosts": [
+        {
+          "ip": "192.168.99.3",
+          "username": "root",
+          "password": "r00t#3"
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using LanguageExt;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using RegularApi.Domain.Model;
 
@@ -7,15 +8,17 @@ namespace RegularApi.Dao
 {
     public class DeploymentTemplateDao : BaseDao, IDeploymentTemplateDao
     {
+        public static readonly string CollectionName = "deploymentsTemplates";
+
         private readonly IMongoCollection<DeploymentTemplate> _collection;
         
         public DeploymentTemplateDao(IMongoClient mongoClient, string databaseName) 
-            : base(mongoClient, databaseName, "deploymentTemplates")
+            : base(mongoClient, databaseName, CollectionName)
         {
             _collection = GetCollection<DeploymentTemplate>();
         }
 
-        public async Task<DeploymentTemplate> NewAsync(DeploymentTemplate template)
+        public async Task<DeploymentTemplate> SaveAsync(DeploymentTemplate template)
         {
             await _collection.InsertOneAsync(template);
 
@@ -30,6 +33,16 @@ namespace RegularApi.Dao
             var deploymentTemplate = await _collection.FindAsync(filter);
 
             return OfNullable(deploymentTemplate.FirstOrDefault());
+        }
+
+        public async Task<Option<DeploymentTemplate>> GetByIdAsync(ObjectId id)
+        {
+            var filter = new FilterDefinitionBuilder<DeploymentTemplate>()
+                .Where(deploymentTemplate => deploymentTemplate.Id.Equals(id));
+
+            var deploymentTemplateHolder = await _collection.FindAsync(filter);
+
+            return OfNullable(deploymentTemplateHolder.FirstOrDefault());
         }
     }
 }

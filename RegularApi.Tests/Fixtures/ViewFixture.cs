@@ -1,68 +1,124 @@
 using System.Collections.Generic;
 using RegularApi.Domain.Views;
+using RegularApi.Domain.Views.Docker;
 
 namespace RegularApi.Tests.Fixtures
 {
     public static class ViewFixture
     {
-        public static ApplicationView BuildApplicationView()
+        public static ApplicationSetupView BuildDockerApplicationSetupView(string type)
         {
+            return new DockerApplicationSetupView
+            {
+                Type = type,
+                RegistryView = new RegistryView
+                {
+                    IsPrivate = false,
+                    Url = "https://registry.docker.com"
+                },
+                ImageView = new ImageView
+                {
+                    Name = "todo-app"
+                },
+                EnvironmentVariables = new Dictionary<string, string>
+                        {
+                            {"VARIABLE","VALUE"}
+                        },
+                Ports = new Dictionary<string, string>
+                        {
+                            {"8080","80"}
+                        }
+            };
+        }
 
+        public static ApplicationView BuildApplicationView(string name, string type)
+        {
             return new ApplicationView
             {
-                Name = "test-app",
-                DockerSetup = new DockerSetupView
+                Name = name,
+                ApplicationSetupView = new DockerApplicationSetupView
                 {
-                    ImageName = "image-name",
-                    RegistryUrl = "registry-url",
-                    EnvironmentVariables = new[] { new KeyValuePair<object, object>("key", "value") },
-                    Ports = new[] { new KeyValuePair<object, object>("8080", "80") }
-
+                    Type = type,
+                    RegistryView = new RegistryView
+                    {
+                        IsPrivate = false,
+                        Url = "https://registry.docker.com"
+                    },
+                    ImageView = new ImageView
+                    {
+                        Name = "todo-app"
+                    },
+                    EnvironmentVariables = new Dictionary<string, string>
+                        {
+                            {"VARIABLE","VALUE"}
+                        },
+                    Ports = new Dictionary<string, string>
+                        {
+                            {"8080","80"}
+                        }
                 }
             };
         }
 
-        public static DeploymentTemplateView BuildDeploymentTemplateView(string name)
+        public static DeploymentTemplateView BuildDeploymentTemplateView(string name, string type)
         {
             return new DeploymentTemplateView
             {
                 Name = name,
-                ApplicationId = "01234567890123456789ABCD",
-                EnvironmentVariables = new List<KeyValuePair<object, object>>
+                ApplicationId = "5cce4c0d0722ec669fe60fca",
+                ApplicationSetupView = new DockerApplicationSetupView
                 {
-                    new KeyValuePair<object, object>("VARIABLE", "VALUE")
+                    Type = type,
+                    EnvironmentVariables = new Dictionary<string, string>
+                        {
+                            {"APP_NAME","todo-app"}
+                        }
                 },
-                HostsSetup = new List<HostSetupView>
+                HostSetupViews = new List<HostSetupView>
                 {
                     new HostSetupView
                     {
-                        TagName = "feature/awesome-thing",
-                        Hosts = new List<HostView>
+                        Tag = "QA",
+                        HostViews = new List<HostView>
                         {
-                            new HostView
-                            {
-                                Ip = "10.10.10.1",
-                                Username = "username",
+                            new HostView{
+                                Ip = "192.168.99.1",
+                                Username = "root",
                                 Password = "****"
-
                             }
                         }
                     }
-                },
-                Ports = new List<KeyValuePair<object, object>>
-                {
-                    new KeyValuePair<object, object>("8080", "80")
                 }
             };
         }
 
-        public static NewResourceResponseView BuildDeploymentTemplateCreationResponse(string name)
+        public static DeploymentOrderView BuildDeploymentOrderView(string type)
         {
-            return new NewResourceResponseView
+            return new DeploymentOrderView
             {
-                Link = "/configuration/deploymentTemplates/" + name
+                DeploymentTemplateId = "5cce4c0d0722ec669fe60fcb",
+                ApplicationSetupView = new DockerApplicationSetupView
+                {
+                    Type = type,
+                    ImageView = new ImageView
+                    {
+                        Tag = "1.0"
+                    }
+                },
+                HostSetupViews = new List<HostSetupView>
+                {
+                    new HostSetupView
+                    {
+                        Tag = "QA",
+                        HostViews = new List<HostView>
+                        {
+                            new HostView{
+                                Ip = "192.168.99.1"
+                            }
+                        }
+                    }
+                }
             };
         }
-        
     }
 }

@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using RegularApi.Domain.Views;
-using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests.Controllers.Configuration
 {
@@ -25,12 +24,16 @@ namespace RegularApi.Tests.Controllers.Configuration
         }
 
         [Test]
-        public async Task TestNewApplicationSetupAsync_Created()
+        public async Task TestNewAsync_Ok()
         {
-            var applicationResource = ViewFixture.BuildApplicationView();
-            var responseMessage = await PerformPostAsync(applicationResource, ApplicationUri);
+            var applicationView = GetPayloadViewFromJsonFile<ApplicationView>("../../../Samples/Controllers/Payloads/application.json");
+            var responseMessage = await PerformPostAsync(applicationView, ApplicationUri);
 
-            Assert.AreEqual(HttpStatusCode.OK, responseMessage.StatusCode);
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var actualResponse = await GetResponseView<NewResourceResponseView>(responseMessage);
+
+            actualResponse.Link.Should().MatchRegex(ApplicationUri + "/\\b");
         }
     }
 }

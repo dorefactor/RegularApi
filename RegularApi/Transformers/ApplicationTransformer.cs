@@ -1,23 +1,30 @@
-﻿using RegularApi.Domain.Model;
+﻿using System;
+using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
-    public class ApplicationTransformer : IApplicationTransformer
+    public class ApplicationTransformer : ITransformer<ApplicationView, Application>
     {
-        public Application FromView(ApplicationView applicationView)
+        private readonly ITransformer<ApplicationSetupView, ApplicationSetup> _applicationSetupTransformer;
+
+        public ApplicationTransformer(ITransformer<ApplicationSetupView, ApplicationSetup> applicationSetupTransformer)
+        {
+            _applicationSetupTransformer = applicationSetupTransformer;
+        }
+
+        public Application Transform(ApplicationView applicationView)
         {
             return new Application
             {
                 Name = applicationView.Name,
-                DockerSetup = new DockerSetup
-                {
-                    RegistryUrl = applicationView.DockerSetup.RegistryUrl,
-                    ImageName = applicationView.DockerSetup.ImageName,
-                    EnvironmentVariables = applicationView.DockerSetup.EnvironmentVariables,
-                    Ports = applicationView.DockerSetup.Ports
-                }
+                ApplicationSetup = _applicationSetupTransformer.Transform(applicationView.ApplicationSetupView)
             };
+        }
+
+        public ApplicationView Transform(Application view)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -6,40 +6,44 @@ using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
-    public class DeploymentTemplateTransformer : IDeploymentTemplateTransformer
+    public class DeploymentTemplateTransformer : ITransformer<DeploymentTemplateView, DeploymentTemplate>
     {
-        public DeploymentTemplate FromView(DeploymentTemplateView deploymentTemplateView)
+        private readonly ITransformer<ApplicationSetupView, ApplicationSetup> _applicationSetupTransformer;
+
+        public DeploymentTemplateTransformer(ITransformer<ApplicationSetupView, ApplicationSetup> applicationSetupTransformer)
+        {
+            _applicationSetupTransformer = applicationSetupTransformer;
+        }
+
+        public DeploymentTemplate Transform(DeploymentTemplateView deploymentTemplateView)
         {
             return new DeploymentTemplate
             {
                 Name = deploymentTemplateView.Name,
                 ApplicationId = ObjectId.Parse(deploymentTemplateView.ApplicationId),
-                EnvironmentVariables = deploymentTemplateView.EnvironmentVariables,
-                HostsSetup = FromView(deploymentTemplateView.HostsSetup),
-                Ports = deploymentTemplateView.Ports
+                ApplicationSetup = _applicationSetupTransformer.Transform(deploymentTemplateView.ApplicationSetupView),
+                HostsSetup = FromView(deploymentTemplateView.HostSetupViews)
             };
         }
 
-        public DeploymentTemplateView ToView(DeploymentTemplate deploymentTemplate)
+        public DeploymentTemplateView Transform(DeploymentTemplate deploymentTemplate)
         {
             return new DeploymentTemplateView
             {
                 Name = deploymentTemplate.Name,
                 ApplicationId = deploymentTemplate.ApplicationId.ToString(),
-                EnvironmentVariables = deploymentTemplate.EnvironmentVariables,
-                Ports = deploymentTemplate.Ports,
-                // HostsSetup = ToResource(deploymentTemplate.HostsSetup)
+                ApplicationSetupView = _applicationSetupTransformer.Transform(deploymentTemplate.ApplicationSetup)
             };
         }
 
         private IList<HostSetup> FromView(IList<HostSetupView> hostsSetupView)
         {
             var hostsSetup = from hostSetupView in hostsSetupView
-                select new HostSetup
-                {
-                    TagName = hostSetupView.TagName,
-                    Hosts = FromView(hostSetupView.Hosts)
-                };
+                             select new HostSetup
+                             {
+                                 Tag = hostSetupView.Tag,
+                                 Hosts = FromView(hostSetupView.HostViews)
+                             };
 
             return hostsSetup.ToList();
         }
@@ -47,39 +51,14 @@ namespace RegularApi.Transformers
         private IList<Host> FromView(IList<HostView> hostsView)
         {
             var hosts = from hostView in hostsView
-                select new Host
-                {
-                    Ip = hostView.Ip,
-                    Username = hostView.Username,
-                    Password = hostView.Password
-                };
+                        select new Host
+                        {
+                            Ip = hostView.Ip,
+                            Username = hostView.Username,
+                            Password = hostView.Password
+                        };
 
             return hosts.ToList();
-        }
-
-        private IList<HostSetupView> ToView(IList<HostSetup> hostsSetup)
-        {
-            var hostsSetupView = from hostSetup in hostsSetup
-                select new HostSetupView
-                {
-                    TagName = hostSetup.TagName,
-                    Hosts = ToView(hostSetup.Hosts)
-                };
-
-            return hostsSetupView.ToList();
-        }
-
-        private IList<HostView> ToView(IList<Host> hosts)
-        {
-            var hostsView = from host in hosts
-                select new HostView
-                {
-                    Ip = host.Ip,
-                    Username = host.Username,
-                    Password = host.Password
-                };
-
-            return hostsView.ToList();
         }
     }
 }

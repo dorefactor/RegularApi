@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
 using RegularApi.Dao;
 
@@ -11,6 +13,8 @@ namespace RegularApi.Configurations
         {
             var provider = services.BuildServiceProvider();
             var configuration = provider.GetRequiredService<IConfiguration>();
+
+            RegisterConventions();
 
             var settings = new MongoClientSettings
             {
@@ -34,10 +38,26 @@ namespace RegularApi.Configurations
             var mongoClient = provider.GetRequiredService<IMongoClient>();
             var databaseName = configuration["MongoDb:Database"];
 
-            services.AddTransient<IApplicationDao>(applicationDao => new ApplicationDao(mongoClient, databaseName, "applications"));
+            services.AddTransient<IApplicationDao>(applicationDao => new ApplicationDao(mongoClient, databaseName));
             services.AddTransient<IDeploymentTemplateDao>(deploymentTemplateDao => new DeploymentTemplateDao(mongoClient, databaseName));
+            services.AddTransient<IDeploymentOrderDao>(deploymentOrderDao => new DeploymentOrderDao(mongoClient, databaseName));
 
             return services;
+        }
+
+        private static void RegisterConventions()
+        {
+            // IgnoreIfNullConvention
+            ConventionRegistry.Register("IgnoreIfNullConvention", new ConventionPack
+            {
+                new IgnoreIfNullConvention(true)
+            }, filter => true);
+
+            // EnumStringConvention
+            ConventionRegistry.Register("EnumStringConvention", new ConventionPack
+            {
+                new EnumRepresentationConvention(BsonType.String)
+            }, filter => true);
         }
     }
 }

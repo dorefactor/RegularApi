@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using LanguageExt;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Internal;
 using MongoDB.Bson;
 using Moq;
 using NUnit.Framework;
@@ -15,96 +16,104 @@ namespace RegularApi.Tests.Services
 {
     public class DeploymentServiceTest
     {
-        private const string AppName = "super-app";
-        private const string Tag = "1.1.1";
-
-        private Mock<IApplicationDao> _applicationDao;
+        private Mock<ILogger<DeploymentService>> _logger;
+        private Mock<IDeploymentTemplateDao> _deploymentTemplateDao;
+        private Mock<IDeploymentOrderDao> _deploymentOrderDao;
         private Mock<IRabbitMqTemplate> _rabbitMqTemplate;
+
         private DeploymentService _deploymentService;
 
         [SetUp]
         public void SetUp()
         {
-            _applicationDao = new Mock<IApplicationDao>();
+            _logger = new Mock<ILogger<DeploymentService>>();
+            _deploymentTemplateDao = new Mock<IDeploymentTemplateDao>();
+            _deploymentOrderDao = new Mock<IDeploymentOrderDao>();
             _rabbitMqTemplate = new Mock<IRabbitMqTemplate>();
 
-            _deploymentService = new DeploymentService(new LoggerFactory(), _applicationDao.Object, _rabbitMqTemplate.Object);
+            _deploymentService = new DeploymentService(
+                _logger.Object,
+                _deploymentTemplateDao.Object,
+                _deploymentOrderDao.Object,
+                _rabbitMqTemplate.Object);
         }
 
-        [Test]
-        public async Task TestWhenNoApplicationExistsReturnsError()
+        [TearDown]
+        public void TearDown()
         {
-            _applicationDao.Setup(dao => dao.GetApplicationByNameAsync(AppName))
-                .ReturnsAsync(Option<Application>.None);
-
-            var result = await _deploymentService.QueueDeploymentRequestAsync(AppName, Tag);
-
-            var expectedError = "No application found with name: " + AppName;
-
-            result.IsLeft.Should().BeTrue();
-            result.LeftAsEnumerable().First().Should().Be(expectedError);
-            
-            _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
-            _applicationDao.VerifyNoOtherCalls();
+            _logger.VerifyNoOtherCalls();
+            _deploymentTemplateDao.VerifyNoOtherCalls();
+            _deploymentTemplateDao.VerifyNoOtherCalls();
             _rabbitMqTemplate.VerifyNoOtherCalls();
         }
 
         [Test]
-        public async Task TestSuccessApplicationDeploymentQueued()
+        public async Task TestQueueDeploymentOrderAsync_NoDeploymentTemplateExists_ReturnsError()
         {
-            var application = BuildApplication();
-            _applicationDao.Setup(dao => dao.GetApplicationByNameAsync(AppName))
-                .ReturnsAsync(Option<Application>.Some(application));
+            var deploymentTemplateId = new ObjectId();
 
-            _rabbitMqTemplate.Setup(template => template.SendMessage(It.IsAny<string>()));
+            var deploymentOrder = new DeploymentOrder { DeploymentTemplateId = deploymentTemplateId };
 
-            var result = await _deploymentService.QueueDeploymentRequestAsync(AppName, Tag);
-            
-            result.IsRight.Should().BeTrue();
+            _deploymentTemplateDao.Setup(_ => _.GetByIdAsync(deploymentOrder.DeploymentTemplateId))
+                 .ReturnsAsync(Option<DeploymentTemplate>.None);
 
-            var value = result.RightAsEnumerable().First();
-            value.Name.Should().Be(AppName);
-            value.Tag.Should().Be(Tag);
+            var deploymentOrderHolder = await _deploymentService.QueueDeploymentOrderAsync(deploymentOrder);
 
-            _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
-            _rabbitMqTemplate.Verify(template => template.SendMessage(It.IsAny<string>()));
+            var expectedError = "No deployment template_id found: " + deploymentTemplateId;
 
-            _applicationDao.VerifyNoOtherCalls();
-            _rabbitMqTemplate.VerifyNoOtherCalls();
+            deploymentOrderHolder.IsLeft.Should().BeTrue();
+            deploymentOrderHolder.LeftAsEnumerable().First().Should().Be(expectedError);
+
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _deploymentTemplateDao.Verify(_ => _.GetByIdAsync(deploymentOrder.DeploymentTemplateId));
         }
 
         [Test]
-        public async Task TestWhenExceptionReturnError()
+        public async Task TestQueueDeploymentOrderAsync_Success()
         {
-            var application = BuildApplication();
-            _applicationDao.Setup(dao => dao.GetApplicationByNameAsync(AppName))
-                .ReturnsAsync(Option<Application>.Some(application));
+            var deploymentTemplateId = new ObjectId();
+            var deploymentTemplate = new DeploymentTemplate { Id = deploymentTemplateId };
+            var deploymentOrder = new DeploymentOrder { DeploymentTemplateId = deploymentTemplateId };
 
-            _rabbitMqTemplate.Setup(template => template.SendMessage(It.IsAny<string>()))
-                .Throws(new Exception("expected exception"));
+            _deploymentTemplateDao.Setup(_ => _.GetByIdAsync(deploymentOrder.DeploymentTemplateId))
+                .ReturnsAsync(Option<DeploymentTemplate>.Some(deploymentTemplate));
 
-            var result = await _deploymentService.QueueDeploymentRequestAsync(AppName, Tag);
+            _rabbitMqTemplate.Setup(_ => _.SendMessage(It.IsAny<string>()));
 
-            var expectedError = "Can't queue deployment request for app: " + AppName;
-            var error = result.Match(right => "", left => left);
-            
-            result.IsLeft.Should().BeTrue();
-            result.LeftAsEnumerable().First().Should().Be(expectedError);
+            var actualDeploymentOrderQueued = await _deploymentService.QueueDeploymentOrderAsync(deploymentOrder);
 
-            _applicationDao.Verify(dao => dao.GetApplicationByNameAsync(AppName));
-            _rabbitMqTemplate.Verify(template => template.SendMessage(It.IsAny<string>()));
+            actualDeploymentOrderQueued.IsRight.Should().BeTrue();
 
-            _applicationDao.VerifyNoOtherCalls();
-            _rabbitMqTemplate.VerifyNoOtherCalls();
+            actualDeploymentOrderQueued.RightAsEnumerable().First().Should().BeEquivalentTo(deploymentOrder);
+
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()), Times.AtLeast(2));
+            _deploymentTemplateDao.Verify(_ => _.GetByIdAsync(deploymentOrder.DeploymentTemplateId));
+            _rabbitMqTemplate.Verify(_ => _.SendMessage(It.IsAny<string>()));
         }
 
-        private static Application BuildApplication()
+        [Test]
+        public async Task TestQueueDeploymentOrderAsync_ThrowsException_ReturnError()
         {
-            return new Application
-            {
-                Id = ObjectId.GenerateNewId(),
-                Name = AppName
-            };
+            var deploymentTemplateId = new ObjectId();
+            var deploymentTemplate = new DeploymentTemplate { Id = deploymentTemplateId };
+            var deploymentOrder = new DeploymentOrder { DeploymentTemplateId = deploymentTemplateId };
+
+            _deploymentTemplateDao.Setup(_ => _.GetByIdAsync(deploymentOrder.DeploymentTemplateId))
+                .ReturnsAsync(Option<DeploymentTemplate>.Some(deploymentTemplate));
+
+            _rabbitMqTemplate.Setup(_ => _.SendMessage(It.IsAny<string>()))
+                .Throws(new Exception("expected exception")); ;
+
+            var actualDeploymentOrderQueued = await _deploymentService.QueueDeploymentOrderAsync(deploymentOrder);
+            var expectedError = "Can't queue deployment request for template_id: " + deploymentTemplateId;
+
+            actualDeploymentOrderQueued.IsLeft.Should().BeTrue();
+            actualDeploymentOrderQueued.LeftAsEnumerable().First().Should().Be(expectedError);
+
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()), Times.AtLeast(2));
+            _logger.Verify(_ => _.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _deploymentTemplateDao.Verify(_ => _.GetByIdAsync(deploymentOrder.DeploymentTemplateId));
+            _rabbitMqTemplate.Verify(_ => _.SendMessage(It.IsAny<string>()));
         }
     }
 }

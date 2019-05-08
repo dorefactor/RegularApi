@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
 using RegularApi.Services;
 using RegularApi.Transformers;
@@ -11,29 +12,29 @@ namespace RegularApi.Controllers.Configuration
     public class ApplicationsController : ConfigurationControllerBase
     {
         private readonly ILogger<ApplicationsController> _logger;
-        private readonly ApplicationSetupService _applicationSetupService;
-        private readonly IApplicationTransformer _applicationTransformer;
+        private readonly ApplicationService _applicationSetupService;
+        private readonly ITransformer<ApplicationView, Application> _applicationTransformer;
 
-        public ApplicationsController(ILoggerFactory loggerFactory,
-                                     ApplicationSetupService applicationSetupService,
-                                     IApplicationTransformer applicationTransformer)
+        public ApplicationsController(ILogger<ApplicationsController> logger,
+                                      ApplicationService applicationSetupService,
+                                      ITransformer<ApplicationView, Application> applicationTransformer)
         {
-            _logger = loggerFactory.CreateLogger<ApplicationsController>();
+            _logger = logger;
             _applicationSetupService = applicationSetupService;
             _applicationTransformer = applicationTransformer;
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewApplicationSetupAsync(ApplicationView applicationView)
+        public async Task<IActionResult> NewAsync(ApplicationView applicationView)
         {
             _logger.LogInformation("application setup request received: {0}", applicationView);
 
-            var application = _applicationTransformer.FromView(applicationView);
+            var application = _applicationTransformer.Transform(applicationView);
 
-            var resultHolder = await _applicationSetupService.SaveApplicationSetupAsync(application);
+            var resultHolder = await _applicationSetupService.AddApplicationSetupAsync(application);
 
             return resultHolder.Match<IActionResult>(
-                right => Ok(),
+                right => Ok(BuildNewResourceResponseView("/configuration/applications", right.Id.ToString())),
                 left => UnprocessableEntity(BuildErrorResponse(left))
             );
         }

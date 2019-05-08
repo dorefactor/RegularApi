@@ -23,8 +23,13 @@ namespace RegularApi.Dao
 
         protected IMongoCollection<T> GetCollection<T>()
         {
+            return GetCollection<T>(_collectionName);
+        }
+
+        protected IMongoCollection<T> GetCollection<T>(string collectionName)
+        {
             var database = _mongoClient.GetDatabase(_databaseName);
-            var collection = database.GetCollection<T>(_collectionName);
+            var collection = database.GetCollection<T>(collectionName);
 
             return collection;
         }
