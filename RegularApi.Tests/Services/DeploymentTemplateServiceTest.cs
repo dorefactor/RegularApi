@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LanguageExt;
@@ -10,140 +9,164 @@ using RegularApi.Services;
 using Moq;
 using RegularApi.Domain.Model;
 using RegularApi.Tests.Fixtures;
+using RegularApi.Enums;
+using Microsoft.Extensions.Logging.Internal;
 
 namespace RegularApi.Tests.Services
 {
     public class DeploymentTemplateServiceTest
     {
-        private const string TemplateName = "super-template";
+        private const string TemplateName = "template";
 
-        private Mock<IDeploymentTemplateDao> _deploymentTemplateDaoMock;
+        private Mock<ILogger<DeploymentTemplateService>> _logger;
+        private Mock<IDeploymentTemplateDao> _deploymentTemplateDao;
 
-        private DeploymentTemplateService _service;
+        private DeploymentTemplateService _deploymentTemplateService;
 
         [SetUp]
         public void SetUp()
         {
-            _deploymentTemplateDaoMock = new Mock<IDeploymentTemplateDao>();
-            _service = new DeploymentTemplateService(new LoggerFactory(), _deploymentTemplateDaoMock.Object);
+            _logger = new Mock<ILogger<DeploymentTemplateService>>();
+            _deploymentTemplateDao = new Mock<IDeploymentTemplateDao>();
+
+            _deploymentTemplateService = new DeploymentTemplateService(
+                _logger.Object,
+                _deploymentTemplateDao.Object);
         }
 
         [TearDown]
         public void TearDown()
         {
-            _deploymentTemplateDaoMock.VerifyNoOtherCalls();
+            _logger.VerifyNoOtherCalls();
+            _deploymentTemplateDao.VerifyNoOtherCalls();
+        }
+
+        [Theory]
+        public async Task TestGetDeploymentTemplateByNameAsync(ApplicationType applicationType)
+        {
+            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate(TemplateName, applicationType);
+
+            _deploymentTemplateDao.Setup(_ => _.GetByNameAsync(TemplateName))
+                .ReturnsAsync(Option<DeploymentTemplate>.Some(deploymentTemplate));
+
+            var actualDeploymentTemplateHolder = await _deploymentTemplateService.GetDeploymentTemplateByNameAsync(TemplateName);
+
+            actualDeploymentTemplateHolder.IsRight.Should().BeTrue();
+
+            var actualDeploymentTemplate = actualDeploymentTemplateHolder.RightAsEnumerable().First();
+
+            actualDeploymentTemplate.Should().BeEquivalentTo(deploymentTemplate);
+
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()), Times.AtLeast(2));
+            _deploymentTemplateDao.Verify(_ => _.GetByNameAsync(TemplateName));
         }
 
         [Test]
-        public async Task GetDeploymentTemplateByNameTest()
+        public async Task TestGetDeploymentTemplateByNameAsync_ReturnNone()
         {
-            var template = ModelFixture.BuildDeploymentTemplate(TemplateName);
-
-            _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
-                .ReturnsAsync(Option<DeploymentTemplate>.Some(template));
-
-            var result = await _service.GetDeploymentTemplateByNameAsync(TemplateName);
-
-            Assert.True(result.IsRight);
-            var storedTemplate = result.RightAsEnumerable().First();
-            
-            storedTemplate.Should().BeEquivalentTo(template);
-            
-            _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-        }
-
-        [Test]
-        public async Task GetDeploymentTemplateByNameReturnNoneTest()
-        {
-            _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
+            _deploymentTemplateDao.Setup(_ => _.GetByNameAsync(TemplateName))
                 .ReturnsAsync(Option<DeploymentTemplate>.None);
 
-            var result = await _service.GetDeploymentTemplateByNameAsync(TemplateName);
+            var actualDeploymentTemplateHolder = await _deploymentTemplateService.GetDeploymentTemplateByNameAsync(TemplateName);
 
-            Assert.True(result.IsLeft);
-            var expectedError = result.LeftAsEnumerable().First();
+            actualDeploymentTemplateHolder.IsLeft.Should().BeTrue();
 
-            expectedError.Should().Be("Deployment template: " + TemplateName + " not found");
+            var actualError = actualDeploymentTemplateHolder.LeftAsEnumerable().First();
 
-            _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
+            actualError.Should().Be("Deployment template: " + TemplateName + " not found");
+
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _logger.Verify(_ => _.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _deploymentTemplateDao.Verify(_ => _.GetByNameAsync(TemplateName));
         }
 
         [Test]
-        public async Task GetDeploymentTemplateThrowsExceptionTest()
+        public async Task TestGetDeploymentTemplateByNameAsync_ThrowsException()
         {
-            _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
+            _deploymentTemplateDao.Setup(_ => _.GetByNameAsync(TemplateName))
+                 .Throws<Exception>();
+
+            var actualDeploymentTemplateHolder = await _deploymentTemplateService.GetDeploymentTemplateByNameAsync(TemplateName);
+
+            actualDeploymentTemplateHolder.IsLeft.Should().BeTrue();
+
+            var actualError = actualDeploymentTemplateHolder.LeftAsEnumerable().First();
+
+            actualError.Should().Be("Can't get deployment template: " + TemplateName);
+
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _logger.Verify(_ => _.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _deploymentTemplateDao.Verify(_ => _.GetByNameAsync(TemplateName));
+        }
+
+        [Theory]
+        public async Task TestAddDeploymentTemplateAsync(ApplicationType applicationType)
+        {
+            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate(TemplateName, applicationType);
+
+            _deploymentTemplateDao.Setup(_ => _.GetByNameAsync(TemplateName))
+                .ReturnsAsync(Option<DeploymentTemplate>.None);
+
+            _deploymentTemplateDao.Setup(dao => dao.SaveAsync(deploymentTemplate))
+                .ReturnsAsync(deploymentTemplate);
+
+            var actualDeploymentTemplateHolder = await _deploymentTemplateService.AddDeploymentTemplateAsync(deploymentTemplate);
+
+            actualDeploymentTemplateHolder.IsRight.Should().BeTrue();
+
+            var actualDeploymentTemplate = actualDeploymentTemplateHolder.RightAsEnumerable().First();
+
+            actualDeploymentTemplate.Should().BeEquivalentTo(deploymentTemplate);
+
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()), Times.AtLeast(2));
+            _deploymentTemplateDao.Verify(_ => _.GetByNameAsync(TemplateName));
+            _deploymentTemplateDao.Verify(_ => _.SaveAsync(deploymentTemplate));
+        }
+
+        [Theory]
+        public async Task TestAddExistingDeploymentTemplateAsync_ReturnsError(ApplicationType applicationType)
+        {
+            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate(TemplateName, applicationType);
+
+            _deploymentTemplateDao.Setup(_ => _.GetByNameAsync(TemplateName))
+                 .ReturnsAsync(Option<DeploymentTemplate>.Some(deploymentTemplate));
+
+            var actualDeploymentTemplateHolder = await _deploymentTemplateService.AddDeploymentTemplateAsync(deploymentTemplate);
+
+            actualDeploymentTemplateHolder.IsLeft.Should().BeTrue();
+
+            var actualError = actualDeploymentTemplateHolder.LeftAsEnumerable().First();
+
+            actualError.Should().BeEquivalentTo("Deployment template: " + TemplateName + " already exists");
+
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _logger.Verify(_ => _.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _deploymentTemplateDao.Verify(_ => _.GetByNameAsync(TemplateName));
+        }
+
+        [Theory]
+        public async Task TestAddDeploymentTemplateAsync_ThrowsException(ApplicationType applicationType)
+        {
+            var deploymentTemplate = ModelFixture.BuildDeploymentTemplate(TemplateName, applicationType);
+
+            _deploymentTemplateDao.Setup(_ => _.GetByNameAsync(TemplateName))
+                 .ReturnsAsync(Option<DeploymentTemplate>.None);
+
+            _deploymentTemplateDao.Setup(_ => _.SaveAsync(deploymentTemplate))
                 .Throws<Exception>();
 
-            var result = await _service.GetDeploymentTemplateByNameAsync(TemplateName);
+            var actualDeploymentTemplateHolder = await _deploymentTemplateService.AddDeploymentTemplateAsync(deploymentTemplate);
 
-            Assert.True(result.IsLeft);
-            var expectedError = result.LeftAsEnumerable().First();
+            actualDeploymentTemplateHolder.IsLeft.Should().BeTrue();
 
-            expectedError.Should().Be("Can't get deployment template: " + TemplateName);
+            var actualError = actualDeploymentTemplateHolder.LeftAsEnumerable().First();
 
-            _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-        }
+            actualError.Should().BeEquivalentTo("Can't create deployment template: " + TemplateName);
 
-        [Test]
-        public async Task NewDeploymentTemplateTest()
-        {
-            var template = ModelFixture.BuildDeploymentTemplate(TemplateName);
-
-            _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
-                .ReturnsAsync(Option<DeploymentTemplate>.None);
-
-            _deploymentTemplateDaoMock.Setup(dao => dao.SaveAsync(template))
-                .ReturnsAsync(template);
-            
-            var result = await _service.AddDeploymentTemplateAsync(template);
-            
-            Assert.True(result.IsRight);
-            var expectedTemplate = result.RightAsEnumerable().First();
-            
-            expectedTemplate.Should().BeEquivalentTo(template);
-
-            _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-            _deploymentTemplateDaoMock.Verify(dao => dao.SaveAsync(template));
-        }
-
-        [Test]
-        public async Task AddExistingDeploymentTemplateTest()
-        {
-            var template = ModelFixture.BuildDeploymentTemplate(TemplateName);
-
-            _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
-                .ReturnsAsync(Option<DeploymentTemplate>.Some(template));
-            
-            var result = await _service.AddDeploymentTemplateAsync(template);
-            
-            Assert.True(result.IsLeft);
-            var expectedError = result.LeftAsEnumerable().First();
-            
-            expectedError.Should().BeEquivalentTo("Deployment template: " + TemplateName + " already exists");
-
-            _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-        }
-
-        [Test]
-        public async Task AddDeploymentTemplateThrowsExceptionTest()
-        {
-            var template = ModelFixture.BuildDeploymentTemplate(TemplateName);
-
-            _deploymentTemplateDaoMock.Setup(dao => dao.GetByNameAsync(TemplateName))
-                .ReturnsAsync(Option<DeploymentTemplate>.None);
-
-            _deploymentTemplateDaoMock.Setup(dao => dao.SaveAsync(template))
-                .Throws<Exception>();
-            
-            var result = await _service.AddDeploymentTemplateAsync(template);
-            
-            Assert.True(result.IsLeft);
-            var expectedError = result.LeftAsEnumerable().First();
-            
-            expectedError.Should().BeEquivalentTo("Can't create deployment template: " + TemplateName);
-
-            _deploymentTemplateDaoMock.Verify(dao => dao.GetByNameAsync(TemplateName));
-            _deploymentTemplateDaoMock.Verify(dao => dao.SaveAsync(template));
+            _logger.Verify(_ => _.Log(LogLevel.Information, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _logger.Verify(_ => _.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
+            _deploymentTemplateDao.Verify(_ => _.GetByNameAsync(TemplateName));
+            _deploymentTemplateDao.Verify(_ => _.SaveAsync(deploymentTemplate));
         }
     }
 }

@@ -17,31 +17,31 @@ namespace RegularApi.Services
             _logger = logger;
             _deploymentTemplateDao = deploymentTemplateDao;
         }
-        
+
         public async Task<Either<string, DeploymentTemplate>> AddDeploymentTemplateAsync(DeploymentTemplate deploymentTemplate)
         {
-            var name = deploymentTemplate.Name;
-            
+            var deploymentTemplateName = deploymentTemplate.Name;
+
             try
             {
-                _logger.LogInformation("creating new deployment template: {0}", name);
+                _logger.LogInformation("creating new deployment template: {0}", deploymentTemplateName);
                 var existingTemplateHolder = await _deploymentTemplateDao.GetByNameAsync(deploymentTemplate.Name);
 
                 if (existingTemplateHolder.IsSome)
                 {
-                    _logger.LogError("deployment template: {0} already exists", name);
-                    return "Deployment template: " + name + " already exists";
+                    _logger.LogError("deployment template: {0} already exists", deploymentTemplateName);
+                    return "Deployment template: " + deploymentTemplateName + " already exists";
                 }
 
-                _logger.LogInformation("deployment template: {0} created successfully", name);
                 var template = await _deploymentTemplateDao.SaveAsync(deploymentTemplate);
+                _logger.LogInformation("deployment template: {0} created successfully", deploymentTemplateName);
 
                 return template;
             }
             catch (Exception ex)
             {
                 _logger.LogError("can't create template: {0}", deploymentTemplate, ex);
-                return "Can't create deployment template: " + name;
+                return "Can't create deployment template: " + deploymentTemplateName;
             }
         }
 
