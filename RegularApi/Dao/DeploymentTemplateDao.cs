@@ -8,12 +8,12 @@ namespace RegularApi.Dao
 {
     public class DeploymentTemplateDao : BaseDao, IDeploymentTemplateDao
     {
-        public static readonly string DeploymentTemplateCollectionName = "deploymentsTemplates";
+        public static readonly string CollectionName = "deploymentsTemplates";
 
         private readonly IMongoCollection<DeploymentTemplate> _collection;
         
         public DeploymentTemplateDao(IMongoClient mongoClient, string databaseName) 
-            : base(mongoClient, databaseName, DeploymentTemplateCollectionName)
+            : base(mongoClient, databaseName, CollectionName)
         {
             _collection = GetCollection<DeploymentTemplate>();
         }

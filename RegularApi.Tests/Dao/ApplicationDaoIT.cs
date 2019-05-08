@@ -18,7 +18,7 @@ namespace RegularApi.Tests.Dao
         {
             CreateMongoDbServer();
             CreateTestServer();
-            DropCollection(ApplicationDao.ApplicationCollectionName);
+            DropCollection(ApplicationDao.CollectionName);
 
             _applicationDao = GetDao<IApplicationDao>();
             _daoFixture = GetDaoFixture();

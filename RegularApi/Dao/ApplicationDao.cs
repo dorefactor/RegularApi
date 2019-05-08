@@ -8,12 +8,12 @@ namespace RegularApi.Dao
 {
     public class ApplicationDao : BaseDao, IApplicationDao
     {
-        public static readonly string ApplicationCollectionName = "applications";
+        public static readonly string CollectionName = "applications";
 
         private readonly IMongoCollection<Application> _collection;
 
         public ApplicationDao(IMongoClient mongoClient, string databaseName) 
-            : base(mongoClient, databaseName, ApplicationCollectionName)
+            : base(mongoClient, databaseName, CollectionName)
         {
             _collection = GetCollection<Application>();
         }

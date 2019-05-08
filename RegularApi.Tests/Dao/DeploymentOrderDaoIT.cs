@@ -17,7 +17,7 @@ namespace RegularApi.Tests.Dao
         {
             CreateMongoDbServer();
             CreateTestServer();
-            DropCollection(DeploymentOrderDao.DeploymentOrderCollectionName);
+            DropCollection(DeploymentOrderDao.CollectionName);
 
             _deploymentOrderDao = GetDao<IDeploymentOrderDao>();
             _daoFixture = GetDaoFixture();

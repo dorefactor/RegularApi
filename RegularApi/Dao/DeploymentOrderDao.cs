@@ -10,12 +10,12 @@ namespace RegularApi.Dao
 {
     public class DeploymentOrderDao : BaseDao, IDeploymentOrderDao
     {
-        public static readonly string DeploymentOrderCollectionName = "deploymentsOrders";
+        public static readonly string CollectionName = "deploymentsOrders";
 
         private readonly IMongoCollection<DeploymentOrder> _collection;
 
         public DeploymentOrderDao(IMongoClient mongoClient, string databaseName)
-            : base(mongoClient, databaseName, DeploymentOrderCollectionName)
+            : base(mongoClient, databaseName, CollectionName)
         {
             _collection = GetCollection<DeploymentOrder>();
         }
@@ -29,8 +29,8 @@ namespace RegularApi.Dao
 
         public async Task<Option<DeploymentOrder>> GetByRequestIdAsync(string id)
         {
-            var deploymentTemplatesCollection = GetCollection<DeploymentTemplate>(DeploymentTemplateDao.DeploymentTemplateCollectionName);
-            var applicationsCollection = GetCollection<Application>(ApplicationDao.ApplicationCollectionName);
+            var deploymentTemplatesCollection = GetCollection<DeploymentTemplate>(DeploymentTemplateDao.CollectionName);
+            var applicationsCollection = GetCollection<Application>(ApplicationDao.CollectionName);
 
             var query = (from deploymentOrder in _collection.AsQueryable()
                          join deploymentTemplate in deploymentTemplatesCollection.AsQueryable() on deploymentOrder.DeploymentTemplateId equals deploymentTemplate.Id
