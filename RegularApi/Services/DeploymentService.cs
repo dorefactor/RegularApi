@@ -17,12 +17,12 @@ namespace RegularApi.Services
         private readonly IDeploymentOrderDao _deploymentOrderDao;
         private readonly IRabbitMqTemplate _rabbitMqTemplate;
 
-        public DeploymentService(ILoggerFactory loggerFactory,
+        public DeploymentService(ILogger<DeploymentService> logger,
                                  IDeploymentTemplateDao deploymentTemplateDao,
                                  IDeploymentOrderDao deploymentOrderDao,
                                  IRabbitMqTemplate rabbitMqTemplate)
         {
-            _logger = loggerFactory.CreateLogger<DeploymentService>();
+            _logger = logger;
             _deploymentTemplateDao = deploymentTemplateDao;
             _deploymentOrderDao = deploymentOrderDao;
             _rabbitMqTemplate = rabbitMqTemplate;

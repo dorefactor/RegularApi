@@ -16,9 +16,9 @@ namespace RegularApi.Configurations
             var provider = services.BuildServiceProvider();
 
             // Dependencies
-            var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
             var rabbitTemplate = provider.GetRequiredService<IRabbitMqTemplate>();
 
+            // Daos
             var applicationDao = provider.GetRequiredService<IApplicationDao>();
             var deploymentTemplateDao = provider.GetRequiredService<IDeploymentTemplateDao>();
             var deploymentOrderDao = provider.GetRequiredService<IDeploymentOrderDao>();
@@ -31,11 +31,10 @@ namespace RegularApi.Configurations
                                                                                         new DeploymentTemplateTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
             services.AddTransient<ITransformer<DeploymentOrderView, DeploymentOrder>>(_ =>
                                                                                         new DeploymentOrderTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
-
             // Services
-            services.AddTransient(deploymentService => new DeploymentService(loggerFactory, deploymentTemplateDao, deploymentOrderDao, rabbitTemplate));
-            services.AddTransient(applicationService => new ApplicationService(applicationDao));
-            services.AddTransient(deploymentTemplateService => new DeploymentTemplateService(loggerFactory, deploymentTemplateDao));
+            services.AddTransient(_ => new ApplicationService(applicationDao));
+            services.AddTransient(_ => new DeploymentTemplateService(_.GetRequiredService<ILogger<DeploymentTemplateService>>(), deploymentTemplateDao));
+            services.AddTransient(_ => new DeploymentService(_.GetRequiredService<ILogger<DeploymentService>>(), deploymentTemplateDao, deploymentOrderDao, rabbitTemplate));
 
             return services;
         }

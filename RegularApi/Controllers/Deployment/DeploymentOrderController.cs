@@ -16,11 +16,11 @@ namespace RegularApi.Controllers.Deployment
         private readonly ITransformer<DeploymentOrderView, DeploymentOrder> _deploymentOrderTransformer;
         private readonly DeploymentService _deploymentService;
 
-        public DeploymentOrderController(ILoggerFactory loggerFactory,
+        public DeploymentOrderController(ILogger<DeploymentOrderController> logger,
                                          ITransformer<DeploymentOrderView, DeploymentOrder> deploymentOrderTransformer,
                                          DeploymentService deploymentService)
         {
-            _logger = loggerFactory.CreateLogger<DeploymentOrderController>();
+            _logger = logger;
             _deploymentOrderTransformer = deploymentOrderTransformer;
             _deploymentService = deploymentService;
         }

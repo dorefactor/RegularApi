@@ -15,11 +15,11 @@ namespace RegularApi.Controllers.Configuration
         private readonly ApplicationService _applicationSetupService;
         private readonly ITransformer<ApplicationView, Application> _applicationTransformer;
 
-        public ApplicationsController(ILoggerFactory loggerFactory,
+        public ApplicationsController(ILogger<ApplicationsController> logger,
                                       ApplicationService applicationSetupService,
                                       ITransformer<ApplicationView, Application> applicationTransformer)
         {
-            _logger = loggerFactory.CreateLogger<ApplicationsController>();
+            _logger = logger;
             _applicationSetupService = applicationSetupService;
             _applicationTransformer = applicationTransformer;
         }

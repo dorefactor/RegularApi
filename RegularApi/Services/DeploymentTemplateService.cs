@@ -12,9 +12,9 @@ namespace RegularApi.Services
         private readonly ILogger<DeploymentTemplateService> _logger;
         private readonly IDeploymentTemplateDao _deploymentTemplateDao;
 
-        public DeploymentTemplateService(ILoggerFactory loggerFactory, IDeploymentTemplateDao deploymentTemplateDao)
+        public DeploymentTemplateService(ILogger<DeploymentTemplateService> logger, IDeploymentTemplateDao deploymentTemplateDao)
         {
-            _logger = loggerFactory.CreateLogger<DeploymentTemplateService>();
+            _logger = logger;
             _deploymentTemplateDao = deploymentTemplateDao;
         }
         

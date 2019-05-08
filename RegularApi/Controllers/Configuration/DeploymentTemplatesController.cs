@@ -16,11 +16,11 @@ namespace RegularApi.Controllers.Configuration
         private readonly ITransformer<DeploymentTemplateView, DeploymentTemplate> _deploymentTemplateTransformer;
         private readonly DeploymentTemplateService _deploymentTemplateService;
 
-        public DeploymentTemplatesController(ILoggerFactory loggerFactory,
+        public DeploymentTemplatesController(ILogger<DeploymentTemplatesController> logger,
                                              ITransformer<DeploymentTemplateView, DeploymentTemplate> deploymentTemplateTransformer,
                                              DeploymentTemplateService deploymentTemplateService)
         {
-            _logger = loggerFactory.CreateLogger<DeploymentTemplatesController>();
+            _logger = logger;
             _deploymentTemplateTransformer = deploymentTemplateTransformer;
             _deploymentTemplateService = deploymentTemplateService;
         }
