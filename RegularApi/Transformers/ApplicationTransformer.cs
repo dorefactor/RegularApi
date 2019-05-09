@@ -1,5 +1,4 @@
-﻿using System;
-using RegularApi.Domain.Model;
+﻿using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
@@ -22,9 +21,14 @@ namespace RegularApi.Transformers
             };
         }
 
-        public ApplicationView Transform(Application view)
+        public ApplicationView Transform(Application application)
         {
-            throw new NotImplementedException();
+            return new ApplicationView
+            {
+                Id = application.Id.ToString(),
+                Name = application.Name,
+                ApplicationSetupView = _applicationSetupTransformer.Transform(application.ApplicationSetup)
+            };
         }
     }
 }

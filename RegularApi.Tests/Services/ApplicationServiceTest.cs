@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using LanguageExt;
@@ -45,6 +46,24 @@ namespace RegularApi.Tests.Services
             actualApplication.RightAsEnumerable().FirstOrDefault().Should().BeEquivalentTo(expectedApplication);
 
             _applicationDao.Verify(_ => _.SaveAsync(expectedApplication));
+        }
+
+        [Test]
+        public async Task TestGetAllApplicationsAsync()
+        {
+            var expectedApplications = new List<Application>() { new Application() }; 
+
+            _applicationDao.Setup(_ => _.GetAllAsync())
+                .ReturnsAsync(expectedApplications);
+
+            var actualApplications = await _applicationSetupService.GetAllApplicationsAsync();
+
+            actualApplications.IsLeft.Should().BeFalse();
+            actualApplications.IsRight.Should().BeTrue();
+
+            actualApplications.Should().NotBeEmpty();
+
+            _applicationDao.Verify(_ => _.GetAllAsync());
         }
     }
 }

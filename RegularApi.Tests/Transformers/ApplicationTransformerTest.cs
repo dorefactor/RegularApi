@@ -14,6 +14,7 @@ namespace RegularApi.Tests.Transformers
     {
         private Mock<ITransformer<ApplicationSetupView, ApplicationSetup>> _applicationSetupTransformer;
         private Mock<ApplicationSetup> _applicationSetup;
+        private Mock<ApplicationSetupView> _applicationSetupView;
 
         private ITransformer<ApplicationView, Application> _applicationTransformer;
 
@@ -22,6 +23,7 @@ namespace RegularApi.Tests.Transformers
         {
             _applicationSetupTransformer = new Mock<ITransformer<ApplicationSetupView, ApplicationSetup>>();
             _applicationSetup = new Mock<ApplicationSetup>();
+            _applicationSetupView = new Mock<ApplicationSetupView>();
 
             _applicationTransformer = new ApplicationTransformer(_applicationSetupTransformer.Object);
         }
@@ -49,11 +51,21 @@ namespace RegularApi.Tests.Transformers
             actualApplication.ApplicationSetup.ApplicationType.ToString().Should().BeEquivalentTo(applicationView.ApplicationSetupView.Type);
         }
 
-        [Test]
-        public void TestTransformToView_ReturnNotImplementedException()
+        [Theory]
+        public void TestTransformToView(ApplicationType applicationType)
         {
-            var application = new Application();
-            Assert.Throws<NotImplementedException>(() => _applicationTransformer.Transform(application));
+            var application = ModelFixture.BuildApplication("application-test", applicationType);
+
+            _applicationSetupView.Setup(_ => _.Type).Returns(applicationType.ToString());
+            _applicationSetupTransformer.Setup(_ => _.Transform(application.ApplicationSetup))
+                .Returns(_applicationSetupView.Object);
+
+            var actualApplicationView = _applicationTransformer.Transform(application);
+
+            _applicationSetupTransformer.Verify(_ => _.Transform(application.ApplicationSetup));
+
+            actualApplicationView.Name.Should().BeEquivalentTo(application.Name);
+            actualApplicationView.ApplicationSetupView.Type.Should().BeEquivalentTo(application.ApplicationSetup.ApplicationType.ToString());
         }
     }
 }

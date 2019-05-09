@@ -11,6 +11,7 @@ using RegularApi.Domain.Model;
 using RegularApi.Tests.Fixtures;
 using RegularApi.Enums;
 using Microsoft.Extensions.Logging.Internal;
+using System.Collections.Generic;
 
 namespace RegularApi.Tests.Services
 {
@@ -167,6 +168,24 @@ namespace RegularApi.Tests.Services
             _logger.Verify(_ => _.Log(LogLevel.Error, It.IsAny<EventId>(), It.IsAny<FormattedLogValues>(), It.IsAny<Exception>(), It.IsAny<Func<object, Exception, string>>()));
             _deploymentTemplateDao.Verify(_ => _.GetByNameAsync(TemplateName));
             _deploymentTemplateDao.Verify(_ => _.SaveAsync(deploymentTemplate));
+        }
+
+        [Test]
+        public async Task TestGetAllApplicationsAsync()
+        {
+            var expectedDeploymentTemplates = new List<DeploymentTemplate>() { new DeploymentTemplate() };
+
+            _deploymentTemplateDao.Setup(_ => _.GetAllAsync())
+                .ReturnsAsync(expectedDeploymentTemplates);
+
+            var actualDeploymentTemplates = await _deploymentTemplateService.GetAllDeploymentTemplatesAsync();
+
+            actualDeploymentTemplates.IsLeft.Should().BeFalse();
+            actualDeploymentTemplates.IsRight.Should().BeTrue();
+
+            actualDeploymentTemplates.Should().NotBeEmpty();
+
+            _deploymentTemplateDao.Verify(_ => _.GetAllAsync());
         }
     }
 }

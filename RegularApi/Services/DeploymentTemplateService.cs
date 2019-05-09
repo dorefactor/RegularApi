@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
 using Microsoft.Extensions.Logging;
@@ -67,6 +69,13 @@ namespace RegularApi.Services
                 _logger.LogError("can't get template: {0}", name, ex);
                 return "Can't get deployment template: " + name;
             }
+        }
+
+        public async Task<Either<string, IList<DeploymentTemplate>>> GetAllDeploymentTemplatesAsync()
+        {
+            var deploymentTemplatesHolder = await _deploymentTemplateDao.GetAllAsync();
+
+            return deploymentTemplatesHolder.ToList();
         }
     }
 }

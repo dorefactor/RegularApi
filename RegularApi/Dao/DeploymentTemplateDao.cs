@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LanguageExt;
 using MongoDB.Bson;
@@ -43,6 +44,13 @@ namespace RegularApi.Dao
             var deploymentTemplateHolder = await _collection.FindAsync(filter);
 
             return OfNullable(deploymentTemplateHolder.FirstOrDefault());
+        }
+
+        public async Task<IList<DeploymentTemplate>> GetAllAsync()
+        {
+            var cursor = await _collection.FindAsync(FilterDefinition<DeploymentTemplate>.Empty);
+
+            return await cursor.ToListAsync();
         }
     }
 }

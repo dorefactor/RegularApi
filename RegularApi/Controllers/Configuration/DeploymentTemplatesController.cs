@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,7 @@ namespace RegularApi.Controllers.Configuration
             _deploymentTemplateService = deploymentTemplateService;
         }
 
+        [HttpPost]
         public async Task<IActionResult> NewAsync(DeploymentTemplateView deploymentTemplateView)
         {
             _logger.LogInformation("New deployment template request received: {0}", deploymentTemplateView);
@@ -39,7 +41,7 @@ namespace RegularApi.Controllers.Configuration
             );
         }
 
-        [Route("{templateName}")]
+        [HttpGet("{templateName}")]
         public async Task<IActionResult> GetAsync([FromRoute] string templateName)
         {
             _logger.LogInformation("Get deployment template: {0}", templateName);
@@ -61,6 +63,20 @@ namespace RegularApi.Controllers.Configuration
 
                     return UnprocessableEntity(BuildErrorResponse(left));
                 });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var deploymentTemplatesHolder = await _deploymentTemplateService.GetAllDeploymentTemplatesAsync();
+
+            return deploymentTemplatesHolder.Match<IActionResult>(
+                right =>
+                {
+                    var view = right.Select(deploymentTemplate => _deploymentTemplateTransformer.Transform(deploymentTemplate)).ToList();
+                    return Ok(view);
+                },
+                left => UnprocessableEntity(BuildErrorResponse(left)));
         }
 
         private string NotFoundResponse(string templateName)
