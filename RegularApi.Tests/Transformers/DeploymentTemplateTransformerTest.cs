@@ -59,13 +59,13 @@ namespace RegularApi.Tests.Transformers
             _applicationSetupTransformer.Setup(_ => _.Transform(deploymentTemplate.ApplicationSetup))
                             .Returns(_applicationSetupView.Object);
 
-            var actualDeploymentTemplate = _deploymentTemplateTransformer.Transform(deploymentTemplate);
+            var actualDeploymentTemplateView = _deploymentTemplateTransformer.Transform(deploymentTemplate);
 
             _applicationSetupTransformer.Verify(_ => _.Transform(deploymentTemplate.ApplicationSetup));
 
-            actualDeploymentTemplate.Should().NotBeNull();
-            actualDeploymentTemplate.Name.Should().Be("super-template");
-            actualDeploymentTemplate.ApplicationSetupView.Type.Should().BeEquivalentTo(deploymentTemplate.ApplicationSetup.ApplicationType.ToString());
+            actualDeploymentTemplateView.Should().NotBeNull();
+            actualDeploymentTemplateView.Name.Should().Be("super-template");
+            actualDeploymentTemplateView.ApplicationSetupView.Type.Should().BeEquivalentTo(deploymentTemplate.ApplicationSetup.ApplicationType.ToString());
         }
     }
 }
