@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using LanguageExt;
 using MongoDB.Bson;
@@ -10,5 +11,6 @@ namespace RegularApi.Dao
         Task<DeploymentTemplate> SaveAsync(DeploymentTemplate template);
         Task<Option<DeploymentTemplate>> GetByNameAsync(string templateName);
         Task<Option<DeploymentTemplate>> GetByIdAsync(ObjectId id);
+        Task<IList<DeploymentTemplate>> GetAllAsync();
     }
 }
