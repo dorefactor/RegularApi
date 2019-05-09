@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 
 namespace RegularApi.Domain.Views.Docker
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class DockerApplicationSetupView : ApplicationSetupView
     {
         [JsonProperty(PropertyName = "registry")]

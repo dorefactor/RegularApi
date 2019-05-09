@@ -4,8 +4,11 @@ using Newtonsoft.Json;
 
 namespace RegularApi.Domain.Views
 {
+    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
     public class DeploymentTemplateView
     {
+        public string Id { get; set; }
+
         [Required]
         public string Name { get; set; }
 
