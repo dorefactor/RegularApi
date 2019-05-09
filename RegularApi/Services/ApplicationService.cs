@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
 using RegularApi.Dao;
@@ -24,6 +27,13 @@ namespace RegularApi.Services
             }
 
             return applicationHolder.AsEnumerable().First();
+        }
+
+        public async Task<Either<string, IList<Application>>> GetAllApplicationsAsync()
+        {
+            var applicationHolder = await _applicationDao.GetAllAsync();
+
+            return applicationHolder.ToList();
         }
     }
 }
