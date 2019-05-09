@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -37,6 +38,21 @@ namespace RegularApi.Controllers.Configuration
                 right => Ok(BuildNewResourceResponseView("/configuration/applications", right.Id.ToString())),
                 left => UnprocessableEntity(BuildErrorResponse(left))
             );
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var applicationsHolder = await _applicationSetupService.GetAllApplicationsAsync();
+
+            return applicationsHolder.Match<IActionResult>(
+                right =>
+                {
+                    var view = right.Select(application => _applicationTransformer.Transform(application)).ToList();
+
+                    return Ok(view);
+                },
+                left => UnprocessableEntity(BuildErrorResponse(left)));
         }
     }
 }
