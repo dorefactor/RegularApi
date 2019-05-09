@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -81,6 +82,33 @@ namespace RegularApi.Tests.Controllers.Configuration
             var responseMessage = await PerformGetAsync(uri);
 
             responseMessage.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Test]
+        public async Task TestGetAllAsync_Ok()
+        {
+            var deploymentTemplate = await _daoFixture.CreateDeploymentTemplateAsync("test", ApplicationType.Docker);
+
+            var responseMessage = await PerformGetAsync(DeploymentTemplatesUri);
+
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var expectedView = _deploymentTemplateTransformer.Transform(deploymentTemplate);
+            var actualView = await GetResponseView<IList<DeploymentTemplateView>>(responseMessage);
+
+            actualView.Should().BeEquivalentTo(expectedView);
+        }
+
+        [Test]
+        public async Task TestGetAllAsync_EmptyOk()
+        {
+            var responseMessage = await PerformGetAsync(DeploymentTemplatesUri);
+
+            responseMessage.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var actualView = await GetResponseView<IList<DeploymentTemplateView>>(responseMessage);
+
+            actualView.Should().BeEmpty();
         }
     }
 }
