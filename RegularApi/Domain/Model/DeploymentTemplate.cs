@@ -12,9 +12,7 @@ namespace RegularApi.Domain.Model
 
         public string Name { get; set; }
 
-        public ObjectId ApplicationId { get; set; }
-
-        public ApplicationSetup ApplicationSetup { get; set; }
+        public Application Application { get; set; }
 
         public IList<HostSetup> HostsSetup { get; set; }
     }

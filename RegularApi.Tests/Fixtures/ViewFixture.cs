@@ -65,14 +65,18 @@ namespace RegularApi.Tests.Fixtures
             return new DeploymentTemplateView
             {
                 Name = name,
-                ApplicationId = "5cce4c0d0722ec669fe60fca",
-                ApplicationSetupView = new DockerApplicationSetupView
+                ApplicationView = new ApplicationView
                 {
-                    Type = type,
-                    EnvironmentVariables = new Dictionary<string, string>
+                    Id = "5cce4c0d0722ec669fe60fca",
+                    Name = name + "-application",
+                    ApplicationSetupView = new DockerApplicationSetupView
+                    {
+                        Type = type,
+                        EnvironmentVariables = new Dictionary<string, string>
                         {
                             {"APP_NAME","todo-app"}
                         }
+                    }
                 },
                 HostSetupViews = new List<HostSetupView>
                 {
@@ -97,12 +101,16 @@ namespace RegularApi.Tests.Fixtures
             return new DeploymentOrderView
             {
                 DeploymentTemplateId = "5cce4c0d0722ec669fe60fcb",
-                ApplicationSetupView = new DockerApplicationSetupView
+                ApplicationView = new ApplicationView
                 {
-                    Type = type,
-                    ImageView = new ImageView
+                    Name = "test-application",
+                    ApplicationSetupView = new DockerApplicationSetupView
                     {
-                        Tag = "1.0"
+                        Type = type,
+                        ImageView = new ImageView
+                        {
+                            Tag = "1.0"
+                        }
                     }
                 },
                 HostSetupViews = new List<HostSetupView>

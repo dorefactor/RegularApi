@@ -11,26 +11,26 @@ namespace RegularApi.Tests.Transformers
 {
     public class DeploymentTemplateTransformerTest
     {
-        private Mock<ITransformer<ApplicationSetupView, ApplicationSetup>> _applicationSetupTransformer;
-        private Mock<ApplicationSetup> _applicationSetup;
-        private Mock<ApplicationSetupView> _applicationSetupView;
+        private Mock<ITransformer<ApplicationView, Application>> _applicationTransformer;
+        private Mock<Application> _application;
+        private Mock<ApplicationView> _applicationView;
 
         private ITransformer<DeploymentTemplateView, DeploymentTemplate> _deploymentTemplateTransformer;
 
         [SetUp]
         public void SetUp()
         {
-            _applicationSetupTransformer = new Mock<ITransformer<ApplicationSetupView, ApplicationSetup>>();
-            _applicationSetup = new Mock<ApplicationSetup>();
-            _applicationSetupView = new Mock<ApplicationSetupView>();
+            _applicationTransformer = new Mock<ITransformer<ApplicationView, Application>>();
+            _application = new Mock<Application>();
+            _applicationView = new Mock<ApplicationView>();
 
-            _deploymentTemplateTransformer = new DeploymentTemplateTransformer(_applicationSetupTransformer.Object);
+            _deploymentTemplateTransformer = new DeploymentTemplateTransformer(_applicationTransformer.Object);
         }
 
         [TearDown]
         public void TearDown()
         {
-            _applicationSetupTransformer.VerifyNoOtherCalls();
+            _applicationTransformer.VerifyNoOtherCalls();
         }
 
         [Theory]
@@ -38,16 +38,14 @@ namespace RegularApi.Tests.Transformers
         {
             var deploymentTemplateView = ViewFixture.BuildDeploymentTemplateView("template-test", applicationType.ToString());
 
-            _applicationSetup.Setup(_ => _.ApplicationType).Returns(applicationType);
-            _applicationSetupTransformer.Setup(_ => _.Transform(deploymentTemplateView.ApplicationSetupView))
-                            .Returns(_applicationSetup.Object);
+            _applicationTransformer.Setup(_ => _.Transform(deploymentTemplateView.ApplicationView))
+                            .Returns(_application.Object);
 
             var actualDeploymentTemplate = _deploymentTemplateTransformer.Transform(deploymentTemplateView);
 
-            _applicationSetupTransformer.Verify(_ => _.Transform(deploymentTemplateView.ApplicationSetupView));
+            _applicationTransformer.Verify(_ => _.Transform(deploymentTemplateView.ApplicationView));
 
             actualDeploymentTemplate.Name.Should().BeEquivalentTo(deploymentTemplateView.Name);
-            actualDeploymentTemplate.ApplicationSetup.ApplicationType.ToString().Should().BeEquivalentTo(deploymentTemplateView.ApplicationSetupView.Type);
         }
 
         [Theory]
@@ -55,17 +53,15 @@ namespace RegularApi.Tests.Transformers
         {
             var deploymentTemplate = ModelFixture.BuildDeploymentTemplate("super-template", applicationType);
 
-            _applicationSetupView.Setup(_ => _.Type).Returns(applicationType.ToString());
-            _applicationSetupTransformer.Setup(_ => _.Transform(deploymentTemplate.ApplicationSetup))
-                            .Returns(_applicationSetupView.Object);
+            _applicationTransformer.Setup(_ => _.Transform(deploymentTemplate.Application))
+                            .Returns(_applicationView.Object);
 
             var actualDeploymentTemplateView = _deploymentTemplateTransformer.Transform(deploymentTemplate);
 
-            _applicationSetupTransformer.Verify(_ => _.Transform(deploymentTemplate.ApplicationSetup));
+            _applicationTransformer.Verify(_ => _.Transform(deploymentTemplate.Application));
 
             actualDeploymentTemplateView.Should().NotBeNull();
             actualDeploymentTemplateView.Name.Should().Be("super-template");
-            actualDeploymentTemplateView.ApplicationSetupView.Type.Should().BeEquivalentTo(deploymentTemplate.ApplicationSetup.ApplicationType.ToString());
         }
     }
 }

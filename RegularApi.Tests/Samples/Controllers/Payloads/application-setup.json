@@ -1,0 +1,16 @@
+{
+  "type": "Docker",
+  "registry": {
+    "isPrivate": false,
+    "url": "http://registry.dockerhub.com"
+  },
+  "image": {
+    "name": "todo-app"
+  },
+  "environmentVariables": {
+    "APP_NAME": ""
+  },
+  "ports": {
+    "8080": "80"
+  }
+}

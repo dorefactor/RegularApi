@@ -34,15 +34,15 @@ namespace RegularApi.Dao
 
             var query = (from deploymentOrder in _collection.AsQueryable()
                          join deploymentTemplate in deploymentTemplatesCollection.AsQueryable() on deploymentOrder.DeploymentTemplateId equals deploymentTemplate.Id
-                         join application in applicationsCollection.AsQueryable() on deploymentTemplate.ApplicationId equals application.Id
+                         join application in applicationsCollection.AsQueryable() on deploymentTemplate.Application.Id equals application.Id
                          where deploymentOrder.RequestId.Equals(id)
                          select new
                          {
                              deploymentOrder.Id,
                              deploymentOrder.RequestId,
-                             ApplicationSetupFromApplication = application.ApplicationSetup,
-                             ApplicationSetupFromDeploymentTemplate = deploymentTemplate.ApplicationSetup,
-                             ApplicationSetupFromDeploymentOrder = deploymentOrder.ApplicationSetup,
+                             ApplicationFromApplication = application,
+                             ApplicationFromDeploymentTemplate = deploymentTemplate.Application,
+                             ApplicationFromDeploymentOrder = deploymentOrder.Application,
                              HostsSetupFromDeploymentTemplate = deploymentTemplate.HostsSetup,
                              HostsSetupFromDeploymentOrder = deploymentOrder.HostsSetup
                          }).ToAsyncEnumerable();
@@ -53,34 +53,38 @@ namespace RegularApi.Dao
             {
                 Id = queryResult.Id,
                 RequestId = queryResult.RequestId,
-                ApplicationSetup = GetApplicationSetup(queryResult),
+                Application = GetApplication(queryResult),
                 HostsSetup = GetHostsSetup(queryResult)
             });
         }
 
-        private ApplicationSetup GetApplicationSetup(dynamic queryResult)
+        private Application GetApplication(dynamic queryResult)
         {
-            var applicationSetupFromApplication = queryResult.ApplicationSetupFromApplication;
+            var applicationFromApplication = queryResult.ApplicationFromApplication;
 
-            switch (applicationSetupFromApplication.ApplicationType)
+            switch (applicationFromApplication.ApplicationSetup.ApplicationType)
             {
                 case Enums.ApplicationType.Docker:
                     {
-                        var dockerApplicationSetupFromApplication = (DockerApplicationSetup)queryResult.ApplicationSetupFromApplication;
-                        var dockerApplicationSetupFromDeploymentTemplate = (DockerApplicationSetup)queryResult.ApplicationSetupFromDeploymentTemplate;
-                        var dockerApplicationSetupFromDeploymentOrder = (DockerApplicationSetup)queryResult.ApplicationSetupFromDeploymentOrder;
+                        var dockerApplicationSetupFromApplication = (DockerApplicationSetup)queryResult.ApplicationFromApplication.ApplicationSetup;
+                        var dockerApplicationSetupFromDeploymentTemplate = (DockerApplicationSetup)queryResult.ApplicationFromDeploymentTemplate.ApplicationSetup;
+                        var dockerApplicationSetupFromDeploymentOrder = (DockerApplicationSetup)queryResult.ApplicationFromDeploymentOrder.ApplicationSetup;
 
-                        return new DockerApplicationSetup
+                        return new Application
                         {
-                            ApplicationType = Enums.ApplicationType.Docker,
-                            Registry = dockerApplicationSetupFromApplication.Registry,
-                            Image = new Image
+                            Name = applicationFromApplication.Name,
+                            ApplicationSetup = new DockerApplicationSetup
                             {
-                                Name = dockerApplicationSetupFromApplication.Image?.Name,
-                                Tag = dockerApplicationSetupFromDeploymentOrder.Image?.Tag
-                            },
-                            Ports = dockerApplicationSetupFromApplication.Ports,
-                            EnvironmentVariables = dockerApplicationSetupFromDeploymentTemplate.EnvironmentVariables
+                                ApplicationType = Enums.ApplicationType.Docker,
+                                Registry = dockerApplicationSetupFromApplication.Registry,
+                                Image = new Image
+                                {
+                                    Name = dockerApplicationSetupFromApplication.Image?.Name,
+                                    Tag = dockerApplicationSetupFromDeploymentOrder.Image?.Tag
+                                },
+                                Ports = dockerApplicationSetupFromApplication.Ports,
+                                EnvironmentVariables = dockerApplicationSetupFromDeploymentTemplate.EnvironmentVariables
+                            }
                         };
                     }
                 default:
