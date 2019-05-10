@@ -7,11 +7,11 @@ namespace RegularApi.Transformers
 {
     public class DeploymentOrderTransformer : ITransformer<DeploymentOrderView, DeploymentOrder>
     {
-        private readonly ITransformer<ApplicationSetupView, ApplicationSetup> _applicationSetupTransformer;
+        private readonly ITransformer<ApplicationView, Application> _applicationTransformer;
 
-        public DeploymentOrderTransformer(ITransformer<ApplicationSetupView, ApplicationSetup> applicationSetupTransformer)
+        public DeploymentOrderTransformer(ITransformer<ApplicationView, Application> applicationTransformer)
         {
-            _applicationSetupTransformer = applicationSetupTransformer;
+            _applicationTransformer = applicationTransformer;
         }
 
         public DeploymentOrder Transform(DeploymentOrderView deploymentOrderView)
@@ -19,7 +19,7 @@ namespace RegularApi.Transformers
             return new DeploymentOrder
             {
                 DeploymentTemplateId = new ObjectId(deploymentOrderView.DeploymentTemplateId),
-                ApplicationSetup = _applicationSetupTransformer.Transform(deploymentOrderView.ApplicationSetupView),
+                Application = _applicationTransformer.Transform(deploymentOrderView.ApplicationView),
                 HostsSetup = deploymentOrderView.HostSetupViews?.Select(hostSetupView => new HostSetup()
                 {
                     Tag = hostSetupView.Tag,
@@ -37,9 +37,8 @@ namespace RegularApi.Transformers
         {
             var deploymentOrderView = new DeploymentOrderView
             {
-                DeploymentTemplateId = deploymentOrder.DeploymentTemplateId.ToString(),
                 RequestId = deploymentOrder.RequestId,
-                CreatedAt = deploymentOrder.CreatedAt.ToString(),
+                CreatedAt = deploymentOrder.CreatedAt,
                 HostSetupViews = deploymentOrder.HostsSetup?.Select(hostSetup => new HostSetupView()
                 {
                     Tag = hostSetup.Tag,
@@ -53,9 +52,9 @@ namespace RegularApi.Transformers
             };
 
             // ApplicationSetupView
-            if (deploymentOrder.ApplicationSetup != null)
+            if (deploymentOrder.Application?.ApplicationSetup != null)
             {
-                deploymentOrderView.ApplicationSetupView = _applicationSetupTransformer.Transform(deploymentOrder.ApplicationSetup);
+                deploymentOrderView.ApplicationView = _applicationTransformer.Transform(deploymentOrder.Application);
             }
 
             return deploymentOrderView;

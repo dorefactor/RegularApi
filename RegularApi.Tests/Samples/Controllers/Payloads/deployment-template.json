@@ -1,10 +1,12 @@
 {
   "name": "todo-app",
-  "applicationId": "5cce4c0d0722ec669fe60fca",
-  "applicationSetup": {
-    "type": "Docker",
-    "environmentVariables": {
-      "APP_NAME": "todo-app"
+  "application": {
+    "applicationId": "5cce4c0d0722ec669fe60fca",
+    "applicationSetup": {
+      "type": "Docker",
+      "environmentVariables": {
+        "APP_NAME": "todo-app"
+      }
     }
   },
   "hostsSetup": [

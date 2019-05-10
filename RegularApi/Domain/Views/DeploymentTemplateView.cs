@@ -13,11 +13,8 @@ namespace RegularApi.Domain.Views
         public string Name { get; set; }
 
         [Required]
-        public string ApplicationId { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "applicationSetup")]
-        public ApplicationSetupView ApplicationSetupView { get; set; }
+        [JsonProperty(PropertyName = "application")]
+        public ApplicationView ApplicationView { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "hostsSetup")]

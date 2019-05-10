@@ -28,9 +28,9 @@ namespace RegularApi.Configurations
             services.AddTransient<ITransformer<ApplicationView, Application>>(_ =>
                                                                                     new ApplicationTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
             services.AddTransient<ITransformer<DeploymentTemplateView, DeploymentTemplate>>(_ =>
-                                                                                        new DeploymentTemplateTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
+                                                                                        new DeploymentTemplateTransformer(_.GetRequiredService<ITransformer<ApplicationView, Application>>()));
             services.AddTransient<ITransformer<DeploymentOrderView, DeploymentOrder>>(_ =>
-                                                                                        new DeploymentOrderTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
+                                                                                        new DeploymentOrderTransformer(_.GetRequiredService<ITransformer<ApplicationView, Application>>()));
             // Services
             services.AddTransient(_ => new ApplicationService(applicationDao));
             services.AddTransient(_ => new DeploymentTemplateService(_.GetRequiredService<ILogger<DeploymentTemplateService>>(), deploymentTemplateDao));

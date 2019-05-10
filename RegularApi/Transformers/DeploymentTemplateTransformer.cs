@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
-using MongoDB.Bson;
 using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
 
 namespace RegularApi.Transformers
 {
-    public class DeploymentTemplateTransformer : ITransformer<DeploymentTemplateView, DeploymentTemplate>
+    public class DeploymentTemplateTransformer : BaseTransformer, ITransformer<DeploymentTemplateView, DeploymentTemplate>
     {
-        private readonly ITransformer<ApplicationSetupView, ApplicationSetup> _applicationSetupTransformer;
+        private readonly ITransformer<ApplicationView, Application> _applicationTransformer;
 
-        public DeploymentTemplateTransformer(ITransformer<ApplicationSetupView, ApplicationSetup> applicationSetupTransformer)
+        public DeploymentTemplateTransformer(ITransformer<ApplicationView, Application> applicationTransformer)
         {
-            _applicationSetupTransformer = applicationSetupTransformer;
+            _applicationTransformer = applicationTransformer;
         }
 
         public DeploymentTemplate Transform(DeploymentTemplateView deploymentTemplateView)
@@ -20,22 +19,27 @@ namespace RegularApi.Transformers
             return new DeploymentTemplate
             {
                 Name = deploymentTemplateView.Name,
-                ApplicationId = ObjectId.Parse(deploymentTemplateView.ApplicationId),
-                ApplicationSetup = _applicationSetupTransformer.Transform(deploymentTemplateView.ApplicationSetupView),
+                Application = _applicationTransformer.Transform(deploymentTemplateView.ApplicationView),
                 HostsSetup = FromView(deploymentTemplateView.HostSetupViews)
             };
         }
 
         public DeploymentTemplateView Transform(DeploymentTemplate deploymentTemplate)
         {
-            return new DeploymentTemplateView
+            var deploymentTemplateView = new DeploymentTemplateView
             {
-                Id = deploymentTemplate.Id.ToString(),
                 Name = deploymentTemplate.Name,
-                ApplicationId = deploymentTemplate.ApplicationId.ToString(),
-                ApplicationSetupView = _applicationSetupTransformer.Transform(deploymentTemplate.ApplicationSetup),
+                ApplicationView = _applicationTransformer.Transform(deploymentTemplate.Application),
                 HostSetupViews = ToView(deploymentTemplate.HostsSetup)
             };
+
+            // Id
+            if (ObjectIdIsNotEmpty(deploymentTemplate.Id))
+            {
+                deploymentTemplateView.Id = deploymentTemplate.Id.ToString();
+            }
+
+            return deploymentTemplateView;
         }
 
         private IList<HostSetup> FromView(IList<HostSetupView> hostsSetupView)

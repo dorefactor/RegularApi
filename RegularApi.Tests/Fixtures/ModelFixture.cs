@@ -44,14 +44,18 @@ namespace RegularApi.Tests.Fixtures
             {
                 Id = new ObjectId("5cce4c0d0722ec669fe60fcb"),
                 Name = name,
-                ApplicationId = new ObjectId("5cce4c0d0722ec669fe60fca"),
-                ApplicationSetup = new DockerApplicationSetup
+                Application = new Application
                 {
-                    ApplicationType = applicationType,
-                    EnvironmentVariables = new Dictionary<string, string>
+                    Id = new ObjectId("5cce4c0d0722ec669fe60fca"),
+                    Name = name + "-application",
+                    ApplicationSetup = new DockerApplicationSetup
+                    {
+                        ApplicationType = applicationType,
+                        EnvironmentVariables = new Dictionary<string, string>
                         {
                             {"APP_NAME","todo-app"}
                         }
+                    },
                 },
                 HostsSetup = new List<HostSetup>
                 {
@@ -77,12 +81,16 @@ namespace RegularApi.Tests.Fixtures
             {
                 Id = new ObjectId("5cce4c260722ec669fe60fcc"),
                 DeploymentTemplateId = new ObjectId("5cce4c0d0722ec669fe60fcb"),
-                ApplicationSetup = new DockerApplicationSetup
+                Application = new Application
                 {
-                    ApplicationType = applicationType,
-                    Image = new Image
+                    Name = "test-application",
+                    ApplicationSetup = new DockerApplicationSetup
                     {
-                        Tag = "1.0"
+                        ApplicationType = applicationType,
+                        Image = new Image
+                        {
+                            Tag = "1.0"
+                        }
                     }
                 },
                 HostsSetup = new List<HostSetup>

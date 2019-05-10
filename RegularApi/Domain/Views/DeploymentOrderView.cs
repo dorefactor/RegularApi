@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using RegularApi.Converters;
 
 namespace RegularApi.Domain.Views
 {
@@ -12,10 +14,11 @@ namespace RegularApi.Domain.Views
         [JsonProperty(Required = Required.Default)]
         public string RequestId { get; set; }
 
-        public string CreatedAt { get; set; }
+        [JsonConverter(typeof(DateTimeFormatConverter), "yyyy-MM-dd HH:mm:ss")]
+        public DateTime CreatedAt { get; set; }
 
-        [JsonProperty(PropertyName = "applicationSetup")]
-        public ApplicationSetupView ApplicationSetupView { get; set; }
+        [JsonProperty(PropertyName = "application")]
+        public ApplicationView ApplicationView { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "hostsSetup")]
