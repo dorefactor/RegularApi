@@ -20,17 +20,18 @@ namespace RegularApi.Factories
         public HttpClient CreateWithBasicAuth()
         {
             var httpClient = new HttpClient { BaseAddress = new Uri(_baseUrl) };
-            var token = BuildBasicAuthToken(_username, _password);
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", token);
+            var authToken = BuildBasicAuthToken(_username, _password);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
 
             return httpClient;
         }
 
         private string BuildBasicAuthToken(string username, string password)
         {
-            var token = username + ":" + password;
-            var tokenBytes = System.Text.Encoding.UTF8.GetBytes(token);
-            return Convert.ToBase64String(tokenBytes);
+            var authToken = username + ":" + password;
+            var authTokenInBytes = System.Text.Encoding.UTF8.GetBytes(authToken);
+
+            return Convert.ToBase64String(authTokenInBytes);
         }
     }
 }

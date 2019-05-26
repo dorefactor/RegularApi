@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using RegularApi.Converters;
 
-namespace RegularApi.Converters
+namespace RegularApi.Tests.Converters
 {
     public class DateTimeFormatConverterTest
     {
