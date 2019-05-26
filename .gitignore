@@ -6,3 +6,5 @@
 **/Properties/launchSettings.json
 .vs
 .DS_Store
+
+RegularApi.csproj.user
