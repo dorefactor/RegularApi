@@ -74,6 +74,7 @@ namespace RegularApi.Tests
             
             Environment.SetEnvironmentVariable("MONGO_USER", "root");
             Environment.SetEnvironmentVariable("MONGO_PASSWORD", "r00t");
+
             Environment.SetEnvironmentVariable("JENKINS_USER", "admin");
             Environment.SetEnvironmentVariable("JENKINS_PASSWORD", "admin");
         }
