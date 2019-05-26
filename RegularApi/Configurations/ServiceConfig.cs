@@ -24,17 +24,20 @@ namespace RegularApi.Configurations
             var deploymentOrderDao = provider.GetRequiredService<IDeploymentOrderDao>();
 
             // Transformers
-            services.AddTransient<ITransformer<ApplicationSetupView, ApplicationSetup>>(_ => new ApplicationSetupTransformer());
-            services.AddTransient<ITransformer<ApplicationView, Application>>(_ =>
-                                                                                    new ApplicationTransformer(_.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
-            services.AddTransient<ITransformer<DeploymentTemplateView, DeploymentTemplate>>(_ =>
-                                                                                        new DeploymentTemplateTransformer(_.GetRequiredService<ITransformer<ApplicationView, Application>>()));
-            services.AddTransient<ITransformer<DeploymentOrderView, DeploymentOrder>>(_ =>
-                                                                                        new DeploymentOrderTransformer(_.GetRequiredService<ITransformer<ApplicationView, Application>>()));
+            services.AddSingleton<ITransformer<ApplicationSetupView, ApplicationSetup>>(new ApplicationSetupTransformer());
+            services.AddSingleton<ITransformer<ApplicationView, Application>>(_ =>
+                                                                    new ApplicationTransformer(
+                                                                        _.GetRequiredService<ITransformer<ApplicationSetupView, ApplicationSetup>>()));
+            services.AddSingleton<ITransformer<DeploymentTemplateView, DeploymentTemplate>>(_ =>
+                                                                        new DeploymentTemplateTransformer(
+                                                                            _.GetRequiredService<ITransformer<ApplicationView, Application>>()));
+            services.AddSingleton<ITransformer<DeploymentOrderView, DeploymentOrder>>(_ =>
+                                                                        new DeploymentOrderTransformer(
+                                                                            _.GetRequiredService<ITransformer<ApplicationView, Application>>()));
             // Services
-            services.AddTransient(_ => new ApplicationService(applicationDao));
-            services.AddTransient(_ => new DeploymentTemplateService(_.GetRequiredService<ILogger<DeploymentTemplateService>>(), deploymentTemplateDao));
-            services.AddTransient(_ => new DeploymentService(_.GetRequiredService<ILogger<DeploymentService>>(), deploymentTemplateDao, deploymentOrderDao, rabbitTemplate));
+            services.AddSingleton(new ApplicationService(applicationDao));
+            services.AddSingleton(new DeploymentTemplateService(provider.GetRequiredService<ILogger<DeploymentTemplateService>>(), deploymentTemplateDao));
+            services.AddSingleton(new DeploymentService(provider.GetRequiredService<ILogger<DeploymentService>>(), deploymentTemplateDao, deploymentOrderDao, rabbitTemplate));
 
             return services;
         }

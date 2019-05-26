@@ -39,7 +39,7 @@ namespace RegularApi.RabbitMq.Templates
 
         private void ResourceDeclare(IModel channel, string exchange, string queue)
         {
-            channel.ExchangeDeclare(exchange, "direct", true);
+            channel.ExchangeDeclare(exchange, ExchangeType.Direct, true);
             channel.QueueDeclare(queue, true,  false,  false);
             channel.QueueBind(queue, exchange, queue);
         }

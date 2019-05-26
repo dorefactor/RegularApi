@@ -1,7 +1,7 @@
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
-using RegularApi.Domain.Model;
 
 namespace RegularApi.RabbitMq.Listener
 {
@@ -9,20 +9,25 @@ namespace RegularApi.RabbitMq.Listener
     {
         private readonly ILogger _logger;
         private readonly IModel _channel;
+        private readonly HttpClient _httpClient;
 
-        public RabbiMqCommandQueueListener(ILoggerFactory loggerFactory, IConnectionFactory connectionFactory, string queue) : base(loggerFactory)
+        public RabbiMqCommandQueueListener(ILogger<RabbiMqCommandQueueListener> logger,
+                                           IConnectionFactory connectionFactory,
+                                           Factories.IHttpClientFactory httpClientFactory,
+                                           string queue) : base(logger)
         {
-            _logger = loggerFactory.CreateLogger<RabbiMqCommandQueueListener>();
-            _channel = CreateConnection(connectionFactory); 
-            ConsumerTag = AddQueueListener(_channel, queue);
+            _logger = logger;
+            _channel = CreateConnection(connectionFactory);
+            _httpClient = httpClientFactory.CreateWithBasicAuth();
+
+            AddQueueListener(_channel, queue);
         }
 
-        public override void OnMessage(string message)
+        public override async Task OnMessageAsync(string message)
         {
-            var deploymentOrder = JsonConvert.DeserializeObject<DeploymentOrder>(message);
-
-
             _logger.LogInformation("message received: {0}", message);
+
+            await _httpClient.PostAsync("regular-deployer/job/deployer/buildWithParameters?DEPLOYMENT_ORDER_ID=" + message, null);
         }
     }
 }
