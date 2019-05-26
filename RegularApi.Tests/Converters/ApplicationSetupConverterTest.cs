@@ -4,12 +4,13 @@ using FluentAssertions;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using RegularApi.Converters;
 using RegularApi.Domain.Views;
 using RegularApi.Domain.Views.Docker;
 using RegularApi.Enums;
 using RegularApi.Tests.Fixtures;
 
-namespace RegularApi.Converters
+namespace RegularApi.Tests.Converters
 {
     public class ApplicationSetupConverterTest
     {

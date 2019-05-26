@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
+using RegularApi.Factories;
 using RegularApi.RabbitMq.Listener;
 using RegularApi.RabbitMq.Templates;
 
@@ -21,7 +22,8 @@ namespace RegularApi.Configurations
                 UserName = configuration["RABBIT_USER"],
                 Password = configuration["RABBIT_PASSWORD"],
                 AutomaticRecoveryEnabled = true,
-                NetworkRecoveryInterval = TimeSpan.FromSeconds(5)
+                NetworkRecoveryInterval = TimeSpan.FromSeconds(5),
+                DispatchConsumersAsync = true
             });
 
             return services;
@@ -47,10 +49,11 @@ namespace RegularApi.Configurations
             var provider = services.BuildServiceProvider();
             var configuration = provider.GetRequiredService<IConfiguration>();
             var connectionFactory = provider.GetRequiredService<IConnectionFactory>();
-            var loggerFactory = provider.GetRequiredService<ILoggerFactory>();
             var queue = configuration["RabbitMq:CommandQueue"];
+            var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
 
-            services.AddSingleton<RabbitMqMessageListener>(new RabbiMqCommandQueueListener(loggerFactory, connectionFactory, queue));
+            services.AddSingleton(new RabbiMqCommandQueueListener(
+                                    provider.GetRequiredService<ILogger<RabbiMqCommandQueueListener>>(), connectionFactory, httpClientFactory, queue));
 
             return services;
         }

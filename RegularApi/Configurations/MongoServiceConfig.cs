@@ -25,7 +25,7 @@ namespace RegularApi.Configurations
             };
 
 
-            services.AddTransient<IMongoClient>(mongoClient => new MongoClient(settings));
+            services.AddSingleton<IMongoClient>(new MongoClient(settings));
 
             return services;
         }
@@ -38,9 +38,9 @@ namespace RegularApi.Configurations
             var mongoClient = provider.GetRequiredService<IMongoClient>();
             var databaseName = configuration["MongoDb:Database"];
 
-            services.AddTransient<IApplicationDao>(applicationDao => new ApplicationDao(mongoClient, databaseName));
-            services.AddTransient<IDeploymentTemplateDao>(deploymentTemplateDao => new DeploymentTemplateDao(mongoClient, databaseName));
-            services.AddTransient<IDeploymentOrderDao>(deploymentOrderDao => new DeploymentOrderDao(mongoClient, databaseName));
+            services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient, databaseName));
+            services.AddSingleton<IDeploymentTemplateDao>(new DeploymentTemplateDao(mongoClient, databaseName));
+            services.AddSingleton<IDeploymentOrderDao>(new DeploymentOrderDao(mongoClient, databaseName));
 
             return services;
         }
