@@ -12,7 +12,7 @@ namespace RegularApi.Configurations
             var configuration = provider.GetRequiredService<IConfiguration>();
 
             services.AddSingleton<IHttpClientFactory>(new HttpClientFactory(configuration["Jenkins:Url"],
-                                                                            configuration["JENKINS_USERNAME"],
+                                                                            configuration["JENKINS_USER"],
                                                                             configuration["JENKINS_PASSWORD"]));
 
             return services;
