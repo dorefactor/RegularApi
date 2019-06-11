@@ -43,9 +43,9 @@ namespace RegularApi.Controllers.Configuration
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var applicationsHolder = await _applicationSetupService.GetAllApplicationsAsync();
+            var result = await _applicationSetupService.GetAllApplicationsAsync();
 
-            return applicationsHolder.Match<IActionResult>(
+            return result.Match<IActionResult>(
                 right =>
                 {
                     var view = right.Select(application => _applicationTransformer.Transform(application)).ToList();

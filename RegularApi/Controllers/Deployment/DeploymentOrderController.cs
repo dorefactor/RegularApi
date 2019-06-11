@@ -26,11 +26,11 @@ namespace RegularApi.Controllers.Deployment
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewAsync(DeploymentOrderView deploymentOrdertView)
+        public async Task<IActionResult> NewAsync(DeploymentOrderView deploymentOrderView)
         {
-            _logger.LogInformation("deployment request received: {0}", deploymentOrdertView.DeploymentTemplateId);
+            _logger.LogInformation("deployment request received: {0}", deploymentOrderView.DeploymentTemplateId);
 
-            var deploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrdertView);
+            var deploymentOrder = _deploymentOrderTransformer.Transform(deploymentOrderView);
 
             var result = await _deploymentService.QueueDeploymentOrderAsync(deploymentOrder);
 
