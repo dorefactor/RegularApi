@@ -16,6 +16,9 @@ namespace RegularApi.Tests
         {
             services.AddCors();
 
+            // Factories
+            services.AddHttpClientFactory();
+
             // RabbitMQ services
             services.AddConnectionFactory();
             services.AddRabbitMqTemplate();

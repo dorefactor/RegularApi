@@ -1,8 +1,9 @@
+using System.Threading.Tasks;
+
 namespace RegularApi.RabbitMq.Listener
 {
     public interface IMessageListener
     {
-        void OnMessage(string message);
-        string GetConsumerTag(); 
+        Task OnMessageAsync(string message);
     }
 }

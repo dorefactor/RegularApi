@@ -44,11 +44,11 @@ namespace RegularApi.Services
                 var deploymentOrderHolder = await _deploymentOrderDao.SaveAsync(deploymentOrder);
 
                 var deploymentOrderQueued = BuildDeploymentOrderResponse(deploymentOrder);
-                var payload = JsonConvert.SerializeObject(deploymentOrderQueued);
+                var deploymentOrderRequestId = deploymentOrderQueued.RequestId;
 
-                _logger.LogInformation("Queue deployment request: {0}", payload);
+                _logger.LogInformation("Queue deployment request: {0}", deploymentOrderRequestId);
 
-                _rabbitMqTemplate.SendMessage(payload);
+                _rabbitMqTemplate.SendMessage(deploymentOrderRequestId);
 
                 return deploymentOrderQueued;
             }
