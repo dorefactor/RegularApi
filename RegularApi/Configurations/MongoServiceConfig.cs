@@ -16,6 +16,12 @@ namespace RegularApi.Configurations
 
             RegisterConventions();
 
+            if (configuration["ASPNETCORE_ENVIRONMENT"].Equals("Production"))
+            {
+                services.AddSingleton<IMongoClient>(new MongoClient(configuration["MONGO_CONNECTION_STRING"]));
+                return services;
+            }
+
             var settings = new MongoClientSettings
             {
                 UseSsl = false,
