@@ -71,9 +71,6 @@ namespace RegularApi.Tests
         {
             Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
             Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
-            
-            Environment.SetEnvironmentVariable("MONGO_USER", "root");
-            Environment.SetEnvironmentVariable("MONGO_PASSWORD", "r00t");
         }
 
         private static IDictionary<string, string> SetInMemorySettings()
