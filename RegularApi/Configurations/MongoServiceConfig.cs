@@ -16,16 +16,7 @@ namespace RegularApi.Configurations
 
             RegisterConventions();
 
-            var settings = new MongoClientSettings
-            {
-                UseSsl = false,
-                Server = MongoServerAddress.Parse(configuration["MongoDb:Server"]),
-                Credential = MongoCredential.CreateCredential(configuration["MongoDb:Database"],
-                    configuration["MONGO_USER"], configuration["MONGO_PASSWORD"])
-            };
-
-
-            services.AddSingleton<IMongoClient>(new MongoClient(settings));
+            services.AddSingleton<IMongoClient>(new MongoClient(configuration["MONGO_CONNECTION_STRING"]));
 
             return services;
         }
@@ -34,9 +25,9 @@ namespace RegularApi.Configurations
         {
             var provider = services.BuildServiceProvider();
             var configuration = provider.GetRequiredService<IConfiguration>();
-
             var mongoClient = provider.GetRequiredService<IMongoClient>();
-            var databaseName = configuration["MongoDb:Database"];
+            var databaseName = string.IsNullOrEmpty(configuration["MONGO_DATABASE"]) ? configuration["MongoDb:Database"]
+                : configuration["MONGO_DATABASE"];
 
             services.AddSingleton<IApplicationDao>(new ApplicationDao(mongoClient, databaseName));
             services.AddSingleton<IDeploymentTemplateDao>(new DeploymentTemplateDao(mongoClient, databaseName));

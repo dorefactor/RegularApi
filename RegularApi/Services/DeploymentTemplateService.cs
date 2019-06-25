@@ -73,9 +73,9 @@ namespace RegularApi.Services
 
         public async Task<Either<string, IList<DeploymentTemplate>>> GetAllDeploymentTemplatesAsync()
         {
-            var deploymentTemplatesHolder = await _deploymentTemplateDao.GetAllAsync();
+            var templates = await _deploymentTemplateDao.GetAllAsync();
 
-            return deploymentTemplatesHolder.ToList();
+            return templates.ToList();
         }
     }
 }

@@ -71,12 +71,6 @@ namespace RegularApi.Tests
         {
             Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
             Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
-            
-            Environment.SetEnvironmentVariable("MONGO_USER", "root");
-            Environment.SetEnvironmentVariable("MONGO_PASSWORD", "r00t");
-
-            Environment.SetEnvironmentVariable("JENKINS_USER", "admin");
-            Environment.SetEnvironmentVariable("JENKINS_PASSWORD", "admin");
         }
 
         private static IDictionary<string, string> SetInMemorySettings()
@@ -86,8 +80,7 @@ namespace RegularApi.Tests
                 { "RabbitMq:Server", "rabbitmq-host" },
                 { "RabbitMq:Exchange", "regular-deployer-exchange" },
                 { "RabbitMq:CommandQueue", "com.dorefactor.deploy.command" },
-                { "MongoDb:Database", "regularOrchestrator" },
-                { "Jenkins:Url", "http://jenkins.local:8080" }
+                { "MongoDb:Database", "regularOrchestrator" }
             };
         }
     }

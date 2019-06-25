@@ -31,9 +31,9 @@ namespace RegularApi.Services
 
         public async Task<Either<string, IList<Application>>> GetAllApplicationsAsync()
         {
-            var applicationHolder = await _applicationDao.GetAllAsync();
+            var applications = await _applicationDao.GetAllAsync();
 
-            return applicationHolder.ToList();
+            return applications.ToList();
         }
     }
 }

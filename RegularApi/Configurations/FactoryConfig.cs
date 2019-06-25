@@ -11,9 +11,9 @@ namespace RegularApi.Configurations
             var provider = services.BuildServiceProvider();
             var configuration = provider.GetRequiredService<IConfiguration>();
 
-            services.AddSingleton<IHttpClientFactory>(new HttpClientFactory(configuration["Jenkins:Url"],
-                                                                            configuration["JENKINS_USER"],
-                                                                            configuration["JENKINS_PASSWORD"]));
+            services.AddSingleton<IHttpClientFactory>(
+                new HttpClientFactory(configuration["RD_BUILDER_URL"], configuration["RD_BUILDER_TOKEN"])
+            );
 
             return services;
         }

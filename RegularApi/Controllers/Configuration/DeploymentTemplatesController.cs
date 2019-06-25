@@ -68,9 +68,9 @@ namespace RegularApi.Controllers.Configuration
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var deploymentTemplatesHolder = await _deploymentTemplateService.GetAllDeploymentTemplatesAsync();
+            var result = await _deploymentTemplateService.GetAllDeploymentTemplatesAsync();
 
-            return deploymentTemplatesHolder.Match<IActionResult>(
+            return result.Match<IActionResult>(
                 right =>
                 {
                     var view = right.Select(deploymentTemplate => _deploymentTemplateTransformer.Transform(deploymentTemplate)).ToList();
@@ -79,7 +79,7 @@ namespace RegularApi.Controllers.Configuration
                 left => UnprocessableEntity(BuildErrorResponse(left)));
         }
 
-        private string NotFoundResponse(string templateName)
+        private static string NotFoundResponse(string templateName)
         {
             return "Deployment template: " + templateName + " not found";
         }

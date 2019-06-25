@@ -10,6 +10,8 @@ namespace RegularApi.Factories
         private readonly string _username;
         private readonly string _password;
 
+        private readonly string _token;
+
         public HttpClientFactory(string baseUrl, string username, string password)
         {
             _baseUrl = baseUrl;
@@ -17,11 +19,26 @@ namespace RegularApi.Factories
             _password = password;
         }
 
+        public HttpClientFactory(string baseUrl, string token)
+        {
+            _baseUrl = baseUrl;
+            _token = token;
+        }
+
         public HttpClient CreateWithBasicAuth()
         {
             var httpClient = new HttpClient { BaseAddress = new Uri(_baseUrl) };
             var authToken = BuildBasicAuthToken(_username, _password);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authToken);
+
+            return httpClient;
+        }
+
+        public HttpClient CreateWithBearerToken()
+        {
+            var httpClient = new HttpClient { BaseAddress = new Uri(_baseUrl) };
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
 
             return httpClient;
         }

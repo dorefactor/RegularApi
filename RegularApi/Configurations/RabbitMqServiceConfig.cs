@@ -3,8 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
-using RegularApi.Factories;
-using RegularApi.RabbitMq.Listener;
 using RegularApi.RabbitMq.Templates;
 
 namespace RegularApi.Configurations
@@ -40,20 +38,6 @@ namespace RegularApi.Configurations
             var queue = configuration["RabbitMq:CommandQueue"];
 
             services.AddSingleton<IRabbitMqTemplate>(new RabbitMqTemplate(loggerFactory, connectionFactory, exchange, queue));
-
-            return services;
-        }
-
-        public static IServiceCollection AddCommandQueueListener(this IServiceCollection services)
-        {
-            var provider = services.BuildServiceProvider();
-            var configuration = provider.GetRequiredService<IConfiguration>();
-            var connectionFactory = provider.GetRequiredService<IConnectionFactory>();
-            var queue = configuration["RabbitMq:CommandQueue"];
-            var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
-
-            services.AddSingleton(new RabbiMqCommandQueueListener(
-                                    provider.GetRequiredService<ILogger<RabbiMqCommandQueueListener>>(), connectionFactory, httpClientFactory, queue));
 
             return services;
         }
