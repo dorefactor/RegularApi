@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using RegularApi.Dao;
 using RegularApi.Domain.Model;
 using RegularApi.RabbitMq.Templates;
