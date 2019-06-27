@@ -1,17 +1,16 @@
-# **Regular API**
+﻿# **Deployer API**
 
-Configuration API for Regular Deployer, it allows users to configure the applications that are going to be deployed by the tool. Also, this API provides the entrypoint where a deployment can be triggered.
+It allows users to configure the applications that are going to be deployed by the tool. Also, this API provides the entrypoint where a deployment can be triggered.
 
 ## **Prerequisites**
 
 * NetCore 2.2+
 * RabbitMQ 3+
 * MongoDB 4+
-* [Jenkins Builder](https://github.com/dorefactor/rd-jenkins-deployer) for deployments
 
 ## **Service Dependencies**
 
-Regular API depends on:
+Deployer API depends on:
 
 * RabbitMQ, used as a service bus.
 * MongoDB, used as repository for application configurations.
@@ -24,14 +23,12 @@ In order to execute this API it is necessary to set the following settings:
 * MongoDb:Server, Mongo DB host
 * Jenkins:Url, Jenkins host
 
-RegularAPI will look for user and credentials in the following environment variables:
+Deployer API will look for user and credentials in the following environment variables:
 
 * `RABBIT_USER`: Rabbit MQ user
 * `RABBIT_PASSWORD`: Rabbit MQ password
-* `MONGO_USER`: MongoDB user (with privileges to write into configured database)
-* `MONGO_PASSWORD`: MongoDB password
-* `JENKINS_USER`: Jenkins user
-* `JENKINS_PASSWORD`: Jenkins password
+* `MONGO_CONNECTION_STRING`: MongoDB connection string `mongodb://<user>:<password>@<host>/<db>?<parameters>`
+* `MONGO_DATABASE`: [Optional] MongoDB database, if it's not specified it will take `MongoDb:Database`
 
 ### **Custom Configuration**
 
