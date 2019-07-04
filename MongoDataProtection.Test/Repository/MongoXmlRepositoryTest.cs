@@ -6,7 +6,6 @@ using NUnit.Framework;
 using FluentAssertions;
 using System.Xml.Linq;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace DoRefactor.Tests.AspNetCore.DataProtection.Repository
 {
