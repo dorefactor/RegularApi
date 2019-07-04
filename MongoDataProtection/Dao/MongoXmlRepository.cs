@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using DoRefactor.AspNetCore.DataProtection.Model;
 using Microsoft.AspNetCore.DataProtection.Repositories;
@@ -19,12 +20,22 @@ namespace DoRefactor.AspNetCore.DataProtection.Repository
 
         public IReadOnlyCollection<XElement> GetAllElements()
         {
-            throw new System.NotImplementedException();
+            var keys = _keyCollection.Find(FilterDefinition<MongoStoredKey>.Empty).ToList();
+
+            return keys.Select(key => XElement.Parse(key.Xml))
+                .ToList()
+                .AsReadOnly();
         }
 
         public void StoreElement(XElement element, string friendlyName)
         {
-            throw new System.NotImplementedException();
+            var storedKey = new MongoStoredKey
+            {
+                FriendlyName = friendlyName,
+                Xml = element.ToString(SaveOptions.DisableFormatting)
+            };
+
+            _keyCollection.InsertOne(storedKey);
         }
     }
 }
