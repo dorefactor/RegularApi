@@ -15,5 +15,9 @@ namespace RegularApi.Domain.Views.Docker
         public IDictionary<string, string> Ports { get; set; }
 
         public IDictionary<string, string> EnvironmentVariables { get; set; }
+
+        public IDictionary<string, string> ExtraHosts { get; set; }
+
+        public IDictionary<string, string> Volumes { get; set; }
     }
 }

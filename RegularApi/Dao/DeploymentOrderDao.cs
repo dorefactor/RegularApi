@@ -83,7 +83,9 @@ namespace RegularApi.Dao
                                     Tag = dockerApplicationSetupFromDeploymentOrder.Image?.Tag
                                 },
                                 Ports = dockerApplicationSetupFromApplication.Ports,
-                                EnvironmentVariables = dockerApplicationSetupFromDeploymentTemplate.EnvironmentVariables
+                                EnvironmentVariables = dockerApplicationSetupFromDeploymentTemplate.EnvironmentVariables,
+                                ExtraHosts = dockerApplicationSetupFromDeploymentTemplate.ExtraHosts,
+                                Volumes = dockerApplicationSetupFromDeploymentTemplate.Volumes
                             }
                         };
                     }
