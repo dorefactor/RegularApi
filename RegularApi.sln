@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegularApi", "RegularApi\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegularApi.Tests", "RegularApi.Tests\RegularApi.Tests.csproj", "{3A5AFEC9-59CE-4FF1-8464-930473208944}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDataProtection", "MongoDataProtection\MongoDataProtection.csproj", "{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,5 +46,17 @@ Global
 		{3A5AFEC9-59CE-4FF1-8464-930473208944}.Release|x64.Build.0 = Release|Any CPU
 		{3A5AFEC9-59CE-4FF1-8464-930473208944}.Release|x86.ActiveCfg = Release|Any CPU
 		{3A5AFEC9-59CE-4FF1-8464-930473208944}.Release|x86.Build.0 = Release|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Debug|x64.Build.0 = Debug|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Debug|x86.Build.0 = Debug|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Release|x64.ActiveCfg = Release|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Release|x64.Build.0 = Release|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Release|x86.ActiveCfg = Release|Any CPU
+		{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
