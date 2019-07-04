@@ -23,7 +23,9 @@ namespace RegularApi.Transformers
                         {
                             ApplicationType = applicationType,
                             Ports = dockerApplicationSetupView.Ports,
-                            EnvironmentVariables = dockerApplicationSetupView.EnvironmentVariables
+                            EnvironmentVariables = dockerApplicationSetupView.EnvironmentVariables,
+                            ExtraHosts = dockerApplicationSetupView.ExtraHosts,
+                            Volumes = dockerApplicationSetupView.Volumes
                         };
 
                         // RegistryView
@@ -68,7 +70,9 @@ namespace RegularApi.Transformers
                         {
                             Type = ApplicationType.Docker.ToString(),
                             Ports = dockerApplicationSetup.Ports,
-                            EnvironmentVariables = dockerApplicationSetup.EnvironmentVariables
+                            EnvironmentVariables = dockerApplicationSetup.EnvironmentVariables,
+                            ExtraHosts = dockerApplicationSetup.ExtraHosts,
+                            Volumes = dockerApplicationSetup.Volumes
                         };
 
                         // Registry
