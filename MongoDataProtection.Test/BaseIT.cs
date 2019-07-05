@@ -1,22 +1,38 @@
-using Mongo2Go;
-using MongoDB.Driver;
+using System;
+using DoRefactor.Tests.AspNetCore.DataProtection;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 
-namespace DoRefactor.Tests.AspNetCore.DataProtection
+namespace DoRefactor.AspNetCore.DataProtection
 {
-    public abstract class BaseIT 
+    public class BaseIT
     {
-        internal static MongoDbRunner MongoDbRunner;
-        internal static IMongoClient MongoClient;
+        protected TestServer TestServer;
 
-        internal static void CreateMongoDbServer()
+        protected IServiceProvider ServiceProvider;
+
+        protected void CreateTestServer()
         {
-            MongoDbRunner = MongoDbRunner.Start();
-            MongoClient = new MongoClient(MongoDbRunner.ConnectionString);
+            TestServer = new TestServer(CreateWebHostBuilder());
+            ServiceProvider = TestServer.Host.Services;
         }
 
-        protected void ReleaseMongoDbServer()
+        private static IConfiguration CreateConfigurationBuilder()
         {
-            MongoDbRunner.Dispose();
+            return new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
         }
+
+        private static IWebHostBuilder CreateWebHostBuilder()
+        {
+            return WebHost.CreateDefaultBuilder()
+                .UseConfiguration(CreateConfigurationBuilder())
+                .UseEnvironment("Development")
+                 .UseStartup<TestStartup>();
+        }
+        
     }
 }

@@ -9,11 +9,8 @@ using System.Linq;
 
 namespace DoRefactor.Tests.AspNetCore.DataProtection.Repository
 {
-    public class MongoXmlRepositoryTest : BaseIT
+    public class MongoXmlRepositoryTest : BaseDatabase
     {
-        private static readonly string DatabaseName = "test-key-database";
-        private static readonly string CollectionName = "key-collection";
-
         private IXmlRepository _xmlRepository;
 
         [SetUp]
