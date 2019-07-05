@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson;
@@ -17,7 +19,7 @@ namespace RegularApi.Configurations
             RegisterConventions();
 
             services.AddSingleton<IMongoClient>(new MongoClient(configuration["MONGO_CONNECTION_STRING"]));
-
+            
             return services;
         }
 

@@ -30,6 +30,9 @@ namespace RegularApi
             services.AddMongoClient();
             services.AddDaos();
 
+            // DPAPI
+            services.AddCustomDataProtection();
+            
             // Services
             services.AddApplicationServices();
 
