@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using MongoDB.Bson;
-using RegularApi.Domain.Model;
-using RegularApi.Domain.Views;
+﻿using MongoDB.Bson;
 
 namespace RegularApi.Transformers
 {

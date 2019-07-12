@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using LanguageExt;
 using MongoDB.Driver;
 using RegularApi.Domain.Model;
+using RegularApi.Protector;
 
 namespace RegularApi.Dao
 {
     public class ApplicationDao : BaseDao, IApplicationDao
     {
-        public static readonly string CollectionName = "applications";
+        public const string CollectionName = "applications";
 
         private readonly IMongoCollection<Application> _collection;
 
@@ -35,6 +36,8 @@ namespace RegularApi.Dao
 
         public async Task<Option<Application>> SaveAsync(Application application) // Change to Save
         {
+            var protectedApp = application;
+            
             await _collection.InsertOneAsync(application);
 
             return OfNullable(application);

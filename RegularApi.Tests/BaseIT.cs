@@ -18,7 +18,8 @@ namespace RegularApi.Tests
         internal static MongoDbRunner MongoDbRunner;
         internal static IMongoClient MongoClient;
 
-        protected TestServer TestServer;
+        private TestServer _testServer;
+        
         protected HttpClient HttpClient;
         protected IServiceProvider ServiceProvider;
 
@@ -30,16 +31,16 @@ namespace RegularApi.Tests
 
         protected void CreateTestServer()
         {
-            TestServer = new TestServer(CreateWebHostBuilder());
+            _testServer = new TestServer(CreateWebHostBuilder());
 
-            ServiceProvider = TestServer.Host.Services;
+            ServiceProvider = _testServer.Host.Services;
 
-            HttpClient = TestServer.CreateClient();
+            HttpClient = _testServer.CreateClient();
             HttpClient.DefaultRequestHeaders.Accept.Clear();
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        protected void ReleaseMongoDbServer()
+        protected static void ReleaseMongoDbServer()
         {
             MongoDbRunner.Dispose();
         }
@@ -69,8 +70,13 @@ namespace RegularApi.Tests
 
         private static void AddEnvironmentVariables()
         {
-            Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
-            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
+            // DPAPI
+            Environment.SetEnvironmentVariable("RD_DPAPI_CONNECTION_STRING", MongoDbRunner.ConnectionString);
+            Environment.SetEnvironmentVariable("RD_DPAPI_DATABASE", "keyStorage");
+            Environment.SetEnvironmentVariable("RD_DPAPI_COLLECTION", "keys");
+            
+            Environment.SetEnvironmentVariable("RABBIT_USER", "xoom");
+            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "xoom123");
         }
 
         private static IDictionary<string, string> SetInMemorySettings()

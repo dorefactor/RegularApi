@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DoRefactor.AspNetCore.DataProtection.Attributes;
 
 namespace RegularApi.Domain.Model.Docker
 {
@@ -10,6 +11,7 @@ namespace RegularApi.Domain.Model.Docker
 
         public IDictionary<string, string> Ports { get; set; }
 
+        [Protected]
         public IDictionary<string, string> EnvironmentVariables { get; set; }
 
         public IDictionary<string, string> ExtraHosts { get; set; }
