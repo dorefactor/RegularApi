@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegularApi", "RegularApi\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegularApi.Tests", "RegularApi.Tests\RegularApi.Tests.csproj", "{3A5AFEC9-59CE-4FF1-8464-930473208944}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDataProtection", "MongoDataProtection\MongoDataProtection.csproj", "{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoRefactorDataProtection", "DoRefactorDataProtection\DoRefactorDataProtection.csproj", "{9CA4CD2F-4A3E-4739-9CAC-61CFE5144DD2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDataProtection.Test", "MongoDataProtection.Test\MongoDataProtection.Test.csproj", "{618C3F74-3E90-4E23-BB09-80CE4F42EBB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoRefactorDataProtection.Tests", "DoRefactorDataProtection.Tests\DoRefactorDataProtection.Tests.csproj", "{618C3F74-3E90-4E23-BB09-80CE4F42EBB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

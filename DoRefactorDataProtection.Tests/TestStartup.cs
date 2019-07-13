@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using static DoRefactor.AspNetCore.DataProtection.MongoDataProtectionConfig;
+using static DoRefactor.AspNetCore.DataProtection.DataProtectionConfig;
 
 namespace DoRefactor.Tests.AspNetCore.DataProtection
 {
@@ -21,13 +21,15 @@ namespace DoRefactor.Tests.AspNetCore.DataProtection
         {
             CreateMongoDbServer();
             var database = MongoClient.GetDatabase(DatabaseName);
-            services.AddSingleton<IMongoClient>(MongoClient);
+            services.AddSingleton(MongoClient);
 
             services.AddSingleton<IXmlRepository>(new MongoXmlRepository(database, CollectionName));
 
             services.AddDataProtection()
                 .SetApplicationName("test-application")
                 .PersistKeysToMongoDb(database, CollectionName);
+
+            services.UseProtectorByAttribute();
 
             return services.BuildServiceProvider();
         }

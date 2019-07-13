@@ -1,7 +1,7 @@
+using DoRefactor.AspNetCore.DataProtection.Protector;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using RegularApi.Protector;
 
 namespace RegularApi.Tests.Protector
 {
@@ -28,7 +28,7 @@ namespace RegularApi.Tests.Protector
         [Test]
         public void TestProtect()
         {
-            var protectedText = _protector.Protect(TextToProtect);
+            var protectedText = _protector.ProtectObject(TextToProtect);
 
             protectedText.Should().NotBeNullOrEmpty();
             TextToProtect.Should().NotBe(protectedText);
@@ -37,11 +37,11 @@ namespace RegularApi.Tests.Protector
         [Test]
         public void TestUnprotect()
         {
-            var protectedText = _protector.Protect(TextToProtect);
+            var protectedText = _protector.ProtectObject(TextToProtect);
 
             protectedText.Should().NotBeNullOrEmpty();
 
-            var unprotectedText = _protector.Unprotect(protectedText);
+            var unprotectedText = _protector.UnprotectObject(protectedText);
 
             unprotectedText.Should().NotBeNullOrEmpty();
             unprotectedText.Should().Be(TextToProtect);

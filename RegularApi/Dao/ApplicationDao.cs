@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using LanguageExt;
 using MongoDB.Driver;
 using RegularApi.Domain.Model;
-using RegularApi.Protector;
 
 namespace RegularApi.Dao
 {

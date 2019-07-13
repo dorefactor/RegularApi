@@ -1,10 +1,10 @@
+using DoRefactor.AspNetCore.DataProtection.Protector;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
 using RegularApi.Domain.Model;
 using RegularApi.Domain.Views;
-using RegularApi.Protector;
 using RegularApi.RabbitMq.Templates;
 using RegularApi.Services;
 using RegularApi.Transformers;
@@ -27,9 +27,10 @@ namespace RegularApi.Configurations
             
             // Protection Service
             var protectionProvider = provider.GetRequiredService<IDataProtectionProvider>();
-            var realm = "DoRefactor.RegularDeployer.Secrets";
+            var purpose = "DoRefactor.Deployment.Secrets";
+            var dataProtector = protectionProvider.CreateProtector(purpose);
 
-            services.AddSingleton<IProtector>(new Protector.Protector(protectionProvider, realm)); 
+            services.AddSingleton<IProtector>(new Protector(dataProtector)); 
             
             // Transformers
             services.AddSingleton<ITransformer<ApplicationSetupView, ApplicationSetup>>(new ApplicationSetupTransformer());
