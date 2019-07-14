@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using DoRefactor.AspNetCore.DataProtection.Model;
+using DataProtection.Model;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using MongoDB.Driver;
 
-namespace DoRefactor.AspNetCore.DataProtection.Repository
+namespace DataProtection.Repository
 {
     public sealed class MongoXmlRepository : IXmlRepository
     {

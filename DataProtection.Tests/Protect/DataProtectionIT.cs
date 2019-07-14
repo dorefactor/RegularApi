@@ -1,11 +1,12 @@
 using DoRefactor.AspNetCore.DataProtection;
+using DoRefactor.Tests.AspNetCore.DataProtection;
 using FluentAssertions;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace DoRefactor.Tests.AspNetCore.DataProtection.Protect
+namespace DataProtection.Tests.Protect
 {
     public class DataProtectionIT : BaseIT
     {

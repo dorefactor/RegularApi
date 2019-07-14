@@ -1,4 +1,4 @@
-using DoRefactor.AspNetCore.DataProtection;
+using DataProtection;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +20,9 @@ namespace RegularApi.Configurations
                 .SetApplicationName("RegularApi")
                 .PersistKeysToMongoDb(database, configuration["RD_DPAPI_COLLECTION"]);
 
+            var purpose = "DoRefactor.Deployment.Secrets";
+            services.UseProtectorByAttribute(purpose);
+            
             return services;
         }
     }

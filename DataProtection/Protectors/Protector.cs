@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DoRefactor.AspNetCore.DataProtection.Attributes;
+using DataProtection.Attributes;
+using DeepCopy;
 using Microsoft.AspNetCore.DataProtection;
 
-namespace DoRefactor.AspNetCore.DataProtection.Protector
+namespace DataProtection.Protectors
 {
     public class Protector : IProtector
     {
@@ -19,8 +20,9 @@ namespace DoRefactor.AspNetCore.DataProtection.Protector
 
         public T ProtectObject<T>(T obj)
         {
-            ProtectOperation(obj, ProtectionOperationType.Protect);
-            return obj;
+            var copy = DeepCopier.Copy(obj);
+            ProtectOperation(copy, ProtectionOperationType.Protect);
+            return copy;
         }
 
         public T UnprotectObject<T>(T obj)
@@ -80,30 +82,37 @@ namespace DoRefactor.AspNetCore.DataProtection.Protector
             {
                 var propValue = propertyInfo.GetValue(obj, null);
 
-                if (propertyInfo.PropertyType == typeof(string))
+                if (propValue != null)
                 {
-                    var value = propertyInfo.GetValue(obj).ToString();
-                    var data = DelegateOperation(value, operationType);
-                    propertyInfo.SetValue(obj, Convert.ChangeType(data, propertyInfo.PropertyType));                    
-                }
-
-                if (propertyInfo.PropertyType == typeof(IDictionary<string, string>))
-                {
-                    var dictionary = (IDictionary<string, string>) propValue;
-
-                    if (dictionary != null)
+                    if (propertyInfo.PropertyType == typeof(string))
                     {
-                        var other = new Dictionary<string, string>();
-                                    
-                        foreach (var key in dictionary.Keys)
-                        {
-                            other[key] = DelegateOperation(dictionary[key], operationType);
-                        }
-
-                        dictionary.Clear();
-                        dictionary.Union(other);
+                        var value = propertyInfo.GetValue(obj).ToString();
+                        var data = DelegateOperation(value, operationType);
+                        propertyInfo.SetValue(obj, Convert.ChangeType(data, propertyInfo.PropertyType));                    
                     }
 
+                    if (propertyInfo.PropertyType == typeof(IDictionary<string, string>))
+                    {
+                        var dictionary = (IDictionary<string, string>) propValue;
+
+                        if (dictionary != null)
+                        {
+                            var other = new Dictionary<string, string>();
+                                    
+                            foreach (var key in dictionary.Keys)
+                            {
+                                other[key] = DelegateOperation(dictionary[key], operationType);
+                            }
+
+                            dictionary.Clear();
+
+                            foreach (var key in other.Keys)
+                            {
+                                dictionary[key] = other[key];
+                            }
+                        
+                        }
+                    }
                 }
             });
             

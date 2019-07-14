@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace DoRefactor.AspNetCore.DataProtection.Model
+namespace DataProtection.Model
 {
     public sealed class MongoStoredKey
     {

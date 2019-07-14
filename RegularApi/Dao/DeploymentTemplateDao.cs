@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DataProtection.Protectors;
 using LanguageExt;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,8 +14,8 @@ namespace RegularApi.Dao
 
         private readonly IMongoCollection<DeploymentTemplate> _collection;
         
-        public DeploymentTemplateDao(IMongoClient mongoClient, string databaseName) 
-            : base(mongoClient, databaseName, CollectionName)
+        public DeploymentTemplateDao(IMongoClient mongoClient, IProtector protector, string databaseName) 
+            : base(mongoClient, protector, databaseName, CollectionName)
         {
             _collection = GetCollection<DeploymentTemplate>();
         }

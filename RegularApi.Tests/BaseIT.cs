@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using DataProtection.Protectors;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mongo2Go;
 using MongoDB.Driver;
+using RegularApi.Configurations;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests
@@ -63,6 +65,10 @@ namespace RegularApi.Tests
                 .ConfigureServices(services =>
                  {
                      services.AddSingleton(MongoClient);
+                     
+                     // DPAPI
+                     services.AddCustomDataProtection();
+                     
                      services.AddSingleton<DaoFixture, DaoFixture>();
                  })
                  .UseStartup<TestStartup>();
@@ -75,8 +81,8 @@ namespace RegularApi.Tests
             Environment.SetEnvironmentVariable("RD_DPAPI_DATABASE", "keyStorage");
             Environment.SetEnvironmentVariable("RD_DPAPI_COLLECTION", "keys");
             
-            Environment.SetEnvironmentVariable("RABBIT_USER", "xoom");
-            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "xoom123");
+            Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
+            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
         }
 
         private static IDictionary<string, string> SetInMemorySettings()

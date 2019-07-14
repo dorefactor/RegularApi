@@ -1,4 +1,4 @@
-namespace DoRefactor.AspNetCore.DataProtection.Protector
+namespace DataProtection.Protectors
 {
     internal enum ProtectionOperationType
     {

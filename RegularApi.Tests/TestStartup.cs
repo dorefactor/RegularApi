@@ -20,12 +20,9 @@ namespace RegularApi.Tests
             services.AddConnectionFactory();
             services.AddRabbitMqTemplate();
 
-            // DPAPI
-            services.AddCustomDataProtection();
-            
             // MongoDb services
             services.AddDaos();
-
+            
             // Services
             services.AddApplicationServices();
 

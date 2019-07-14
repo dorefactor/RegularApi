@@ -1,6 +1,6 @@
 using System;
 
-namespace DoRefactor.AspNetCore.DataProtection.Attributes
+namespace DataProtection.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class ProtectedAttribute : Attribute

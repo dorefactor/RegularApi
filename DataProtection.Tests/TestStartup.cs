@@ -1,12 +1,12 @@
 using System;
-using DoRefactor.AspNetCore.DataProtection.Repository;
+using DataProtection.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using static DoRefactor.AspNetCore.DataProtection.DataProtectionConfig;
+using static DataProtection.DataProtectionConfig;
 
 namespace DoRefactor.Tests.AspNetCore.DataProtection
 {
@@ -29,7 +29,7 @@ namespace DoRefactor.Tests.AspNetCore.DataProtection
                 .SetApplicationName("test-application")
                 .PersistKeysToMongoDb(database, CollectionName);
 
-            services.UseProtectorByAttribute();
+            services.UseProtectorByAttribute("testPurpose");
 
             return services.BuildServiceProvider();
         }

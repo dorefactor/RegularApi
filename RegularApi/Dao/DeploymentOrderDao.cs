@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataProtection.Protectors;
 using LanguageExt;
 using MongoDB.Driver;
 using RegularApi.Domain.Model;
@@ -14,8 +15,8 @@ namespace RegularApi.Dao
 
         private readonly IMongoCollection<DeploymentOrder> _collection;
 
-        public DeploymentOrderDao(IMongoClient mongoClient, string databaseName)
-            : base(mongoClient, databaseName, CollectionName)
+        public DeploymentOrderDao(IMongoClient mongoClient, IProtector protector, string databaseName)
+            : base(mongoClient, protector, databaseName, CollectionName)
         {
             _collection = GetCollection<DeploymentOrder>();
         }

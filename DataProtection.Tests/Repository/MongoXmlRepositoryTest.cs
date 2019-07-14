@@ -1,11 +1,11 @@
-using DoRefactor.AspNetCore.DataProtection.Model;
-using DoRefactor.AspNetCore.DataProtection.Repository;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 using MongoDB.Driver;
 using NUnit.Framework;
 using FluentAssertions;
 using System.Xml.Linq;
 using System.Linq;
+using DataProtection.Model;
+using DataProtection.Repository;
 
 namespace DoRefactor.Tests.AspNetCore.DataProtection.Repository
 {

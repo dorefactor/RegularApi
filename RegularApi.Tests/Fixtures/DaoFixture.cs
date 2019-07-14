@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using DataProtection.Protectors;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using RegularApi.Dao;
@@ -10,12 +11,21 @@ namespace RegularApi.Tests.Fixtures
 {
     public class DaoFixture : BaseDaoIT
     {
+        private readonly IProtector _protector;
+
+        public DaoFixture(IProtector protector)
+        {
+            _protector = protector;
+        }
+        
         public async Task<Application> CreateApplicationAsync(string name, ApplicationType applicationType)
         {
             var application = ModelFixture.BuildApplication(name, applicationType);
             var collection = GetCollection<Application>(ApplicationDao.CollectionName);
 
-            await collection.InsertOneAsync(application);
+            var protectedApplication = _protector.ProtectObject(application);
+
+            await collection.InsertOneAsync(protectedApplication);
 
             return application;
         }

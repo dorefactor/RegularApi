@@ -1,11 +1,11 @@
-using DoRefactor.AspNetCore.DataProtection.Protector;
-using DoRefactor.AspNetCore.DataProtection.Repository;
+using DataProtection.Protectors;
+using DataProtection.Repository;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 
-namespace DoRefactor.AspNetCore.DataProtection
+namespace DataProtection
 {
     public static class DataProtectionConfig
     {
@@ -18,13 +18,14 @@ namespace DoRefactor.AspNetCore.DataProtection
             return builder;
         }
 
-        public static IServiceCollection UseProtectorByAttribute (this IServiceCollection services)
+        public static IServiceCollection UseProtectorByAttribute (this IServiceCollection services, string purpose)
         {
             var provider = services.BuildServiceProvider();
 
-            var dataProtector = provider.GetRequiredService<IDataProtector>();
-
-            services.AddSingleton<IProtector>(new Protector.Protector(dataProtector));
+            var protectionProvider = provider.GetRequiredService<IDataProtectionProvider>();
+            var dataProtector = protectionProvider.CreateProtector(purpose);
+            
+            services.AddSingleton<IProtector>(new Protector(dataProtector));
             
             return services;
         }

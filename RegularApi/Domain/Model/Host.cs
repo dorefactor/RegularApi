@@ -1,5 +1,5 @@
 
-using DoRefactor.AspNetCore.DataProtection.Attributes;
+using DataProtection.Attributes;
 
 namespace RegularApi.Domain.Model
 {

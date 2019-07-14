@@ -1,6 +1,4 @@
-using System;
-
-namespace DoRefactor.AspNetCore.DataProtection.Protector
+namespace DataProtection.Protectors
 {
     public interface IProtector
     {

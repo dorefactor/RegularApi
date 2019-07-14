@@ -1,4 +1,4 @@
-using DoRefactor.AspNetCore.DataProtection.Protector;
+using DataProtection.Protectors;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -24,14 +24,7 @@ namespace RegularApi.Configurations
             var applicationDao = provider.GetRequiredService<IApplicationDao>();
             var deploymentTemplateDao = provider.GetRequiredService<IDeploymentTemplateDao>();
             var deploymentOrderDao = provider.GetRequiredService<IDeploymentOrderDao>();
-            
-            // Protection Service
-            var protectionProvider = provider.GetRequiredService<IDataProtectionProvider>();
-            var purpose = "DoRefactor.Deployment.Secrets";
-            var dataProtector = protectionProvider.CreateProtector(purpose);
-
-            services.AddSingleton<IProtector>(new Protector(dataProtector)); 
-            
+                        
             // Transformers
             services.AddSingleton<ITransformer<ApplicationSetupView, ApplicationSetup>>(new ApplicationSetupTransformer());
             services.AddSingleton<ITransformer<ApplicationView, Application>>(_ =>
