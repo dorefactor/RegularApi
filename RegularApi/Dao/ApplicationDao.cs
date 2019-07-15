@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DataProtection.Protectors;
 using LanguageExt;
@@ -23,28 +24,44 @@ namespace RegularApi.Dao
         {
             var cursor = await _collection.FindAsync(FilterDefinition<Application>.Empty);
 
-            var data = _protector.UnprotectObject(await cursor.ToListAsync());
+            var applications = await cursor.ToListAsync();
+
+            var unprotectedApps = applications.Select(UnprotectApplication)
+                .ToList();
             
-            return data;
+            return unprotectedApps;
         }
 
         public async Task<Option<Application>> GetByNameAsync(string name)
         {
-            var filter = new FilterDefinitionBuilder<Application>().Where(app => name.Equals(app.Name));
-            var cursor = await _collection.FindAsync(filter);
+            var filter = new FilterDefinitionBuilder<Application>()
+                .Where(app => name.Equals(app.Name));
 
-            var data = _protector.UnprotectObject(await cursor.FirstOrDefaultAsync());
+            var cursor = await _collection.FindAsync(filter);
+            var application = await cursor.FirstOrDefaultAsync();
+
+            var unprotectedApplication = UnprotectApplication(application);
             
-            return OfNullable(data);
+            return OfNullable(unprotectedApplication);
         }
 
         public async Task<Option<Application>> SaveAsync(Application application) // Change to Save
         {
-            var protectedApp = _protector.ProtectObject(application);
+            var protectedApp = ProtectApplication(application);
             
             await _collection.InsertOneAsync(protectedApp);
 
             return OfNullable(application);
+        }
+
+        private Application UnprotectApplication(Application application)
+        {
+            return application == null ? null : _protector.UnprotectObject(application);
+        }
+
+        private Application ProtectApplication(Application application)
+        {
+            return application == null ? null : _protector.ProtectObject(application);
         }
     }
 }

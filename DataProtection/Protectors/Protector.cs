@@ -27,8 +27,9 @@ namespace DataProtection.Protectors
 
         public T UnprotectObject<T>(T obj)
         {
-            ProtectOperation(obj, ProtectionOperationType.Unprotect);
-            return obj;
+            var copy = DeepCopier.Copy(obj);
+            ProtectOperation(copy, ProtectionOperationType.Unprotect);
+            return copy;
         }
 
         public string ProtectText(string text)

@@ -25,7 +25,7 @@ namespace RegularApi.Tests.Services
         }
 
         [TearDown]
-        public void TeardDown()
+        public void TearDown()
         {
             _applicationDao.VerifyNoOtherCalls();
         }
@@ -35,7 +35,7 @@ namespace RegularApi.Tests.Services
         {
             var expectedApplication = new Application();
 
-            _applicationDao.Setup(_ => _.SaveAsync(expectedApplication))
+            _applicationDao.Setup(dao => dao.SaveAsync(expectedApplication))
                 .ReturnsAsync(Option<Application>.Some(expectedApplication));
 
             var actualApplication = await _applicationSetupService.AddApplicationSetupAsync(expectedApplication);
@@ -45,7 +45,7 @@ namespace RegularApi.Tests.Services
 
             actualApplication.RightAsEnumerable().FirstOrDefault().Should().BeEquivalentTo(expectedApplication);
 
-            _applicationDao.Verify(_ => _.SaveAsync(expectedApplication));
+            _applicationDao.Verify(dao => dao.SaveAsync(expectedApplication));
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace RegularApi.Tests.Services
         {
             var expectedApplications = new List<Application>() { new Application() }; 
 
-            _applicationDao.Setup(_ => _.GetAllAsync())
+            _applicationDao.Setup(dao => dao.GetAllAsync())
                 .ReturnsAsync(expectedApplications);
 
             var actualApplications = await _applicationSetupService.GetAllApplicationsAsync();
@@ -63,7 +63,7 @@ namespace RegularApi.Tests.Services
 
             actualApplications.Should().NotBeEmpty();
 
-            _applicationDao.Verify(_ => _.GetAllAsync());
+            _applicationDao.Verify(dao => dao.GetAllAsync());
         }
     }
 }
