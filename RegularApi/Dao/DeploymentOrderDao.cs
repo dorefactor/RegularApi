@@ -23,8 +23,10 @@ namespace RegularApi.Dao
 
         public async Task<DeploymentOrder> SaveAsync(DeploymentOrder deploymentOrder)
         {
-            await _collection.InsertOneAsync(deploymentOrder);
+            var deploymentOrderProtected = _protector.ProtectObject(deploymentOrder);
+            await _collection.InsertOneAsync(deploymentOrderProtected);
 
+            deploymentOrder.Id = deploymentOrderProtected.Id;
             return deploymentOrder;
         }
 
@@ -50,13 +52,15 @@ namespace RegularApi.Dao
 
             var queryResult = await query.FirstOrDefault();
 
-            return queryResult.IsNull() ? Option<DeploymentOrder>.None : Option<DeploymentOrder>.Some(new DeploymentOrder
+            var value =  queryResult.IsNull() ? Option<DeploymentOrder>.None : Option<DeploymentOrder>.Some(new DeploymentOrder
             {
                 Id = queryResult.Id,
                 RequestId = queryResult.RequestId,
                 Application = GetApplication(queryResult),
                 HostsSetup = GetHostsSetup(queryResult)
             });
+
+            return value.Map(_protector.UnprotectObject);
         }
 
         private Application GetApplication(dynamic queryResult)

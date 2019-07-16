@@ -81,8 +81,8 @@ namespace RegularApi.Tests
             Environment.SetEnvironmentVariable("RD_DPAPI_DATABASE", "keyStorage");
             Environment.SetEnvironmentVariable("RD_DPAPI_COLLECTION", "keys");
             
-            Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
-            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
+            Environment.SetEnvironmentVariable("RABBIT_USER", "xoom");
+            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "xoom123");
         }
 
         private static IDictionary<string, string> SetInMemorySettings()

@@ -45,13 +45,17 @@ namespace RegularApi.Dao
             return OfNullable(unprotectedApplication);
         }
 
-        public async Task<Option<Application>> SaveAsync(Application application) // Change to Save
+        public async Task<Option<Application>> SaveAsync(Application application)
         {
             var protectedApp = ProtectApplication(application);
             
             await _collection.InsertOneAsync(protectedApp);
 
-            return OfNullable(application);
+            return OfNullable(application)
+                .Map(app => {
+                    app.Id = protectedApp.Id;
+                    return app;
+                });
         }
 
         private Application UnprotectApplication(Application application)
