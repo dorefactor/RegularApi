@@ -31,7 +31,7 @@ namespace DoRefactor.AspNetCore.DataProtection
             return WebHost.CreateDefaultBuilder()
                 .UseConfiguration(CreateConfigurationBuilder())
                 .UseEnvironment("Development")
-                 .UseStartup<TestStartup>();
+                .UseStartup<TestStartup>();
         }
         
     }

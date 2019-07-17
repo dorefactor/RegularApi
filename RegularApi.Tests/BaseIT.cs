@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using DataProtection.Protectors;
+using System.Net.Sockets;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -17,7 +17,7 @@ namespace RegularApi.Tests
 {
     public abstract class BaseIT
     {
-        internal static MongoDbRunner MongoDbRunner;
+        internal static MongoDbRunner DbRunner;
         internal static IMongoClient MongoClient;
 
         private TestServer _testServer;
@@ -27,8 +27,10 @@ namespace RegularApi.Tests
 
         internal static void CreateMongoDbServer()
         {
-            MongoDbRunner = MongoDbRunner.Start();
-            MongoClient = new MongoClient(MongoDbRunner.ConnectionString);
+            // 27018 initial port for mongo2go in unit test mode
+            WaitForOpenPort(27018);
+            DbRunner = MongoDbRunner.Start();
+            MongoClient = new MongoClient(DbRunner.ConnectionString);
         }
 
         protected void CreateTestServer()
@@ -44,7 +46,7 @@ namespace RegularApi.Tests
 
         protected static void ReleaseMongoDbServer()
         {
-            MongoDbRunner.Dispose();
+            DbRunner.Dispose();
         }
 
         private static IConfiguration CreateConfigurationBuilder()
@@ -77,12 +79,12 @@ namespace RegularApi.Tests
         private static void AddEnvironmentVariables()
         {
             // DPAPI
-            Environment.SetEnvironmentVariable("RD_DPAPI_CONNECTION_STRING", MongoDbRunner.ConnectionString);
+            Environment.SetEnvironmentVariable("RD_DPAPI_CONNECTION_STRING", DbRunner.ConnectionString);
             Environment.SetEnvironmentVariable("RD_DPAPI_DATABASE", "keyStorage");
             Environment.SetEnvironmentVariable("RD_DPAPI_COLLECTION", "keys");
             
-            Environment.SetEnvironmentVariable("RABBIT_USER", "xoom");
-            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "xoom123");
+            Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
+            Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
         }
 
         private static IDictionary<string, string> SetInMemorySettings()
@@ -95,5 +97,22 @@ namespace RegularApi.Tests
                 { "MongoDb:Database", "regularOrchestrator" }
             };
         }
+
+        private static void WaitForOpenPort(int port)
+        {
+            var available = false;
+            while (!available) {
+
+                using(TcpClient tcpClient = new TcpClient())
+                {
+                    try {
+                        tcpClient.Connect("127.0.0.1", port);
+                    } catch (Exception) {
+                        available = true;
+                    }
+                }            
+
+            }
+        }        
     }
 }
