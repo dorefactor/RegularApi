@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using DataProtection.Protectors;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using RegularApi.Dao;
@@ -10,12 +11,21 @@ namespace RegularApi.Tests.Fixtures
 {
     public class DaoFixture : BaseDaoIT
     {
+        private readonly IProtector _protector;
+
+        public DaoFixture(IProtector protector)
+        {
+            _protector = protector;
+        }
+        
         public async Task<Application> CreateApplicationAsync(string name, ApplicationType applicationType)
         {
             var application = ModelFixture.BuildApplication(name, applicationType);
             var collection = GetCollection<Application>(ApplicationDao.CollectionName);
 
-            await collection.InsertOneAsync(application);
+            var protectedApplication = _protector.ProtectObject(application);
+
+            await collection.InsertOneAsync(protectedApplication);
 
             return application;
         }
@@ -27,7 +37,9 @@ namespace RegularApi.Tests.Fixtures
             var filter = new FilterDefinitionBuilder<Application>().Where(application => application.Id.Equals(id));
             var cursor = await collection.FindAsync(filter);
 
-            return await cursor.FirstOrDefaultAsync();
+            var app = await cursor.FirstOrDefaultAsync();
+
+            return _protector.UnprotectObject(app);
         }
 
         public async Task<DeploymentTemplate> GetDeploymentTemplateByIdAsync(ObjectId id)
@@ -39,16 +51,20 @@ namespace RegularApi.Tests.Fixtures
 
             var cursor = await collection.FindAsync(filter);
 
-            return await cursor.FirstOrDefaultAsync();
+            var dp = await cursor.FirstOrDefaultAsync();
+
+            return _protector.UnprotectObject(dp);
         }
 
         public async Task<DeploymentTemplate> CreateDeploymentTemplateAsync(string name, ApplicationType applicationType)
         {
             var deploymentTemplate = ModelFixture.BuildDeploymentTemplate(name, applicationType);
+            var protectedDeploymentTemplate = _protector.ProtectObject(deploymentTemplate);
             var collection = GetCollection<DeploymentTemplate>(DeploymentTemplateDao.CollectionName);
+            
+            await collection.InsertOneAsync(protectedDeploymentTemplate);
 
-            await collection.InsertOneAsync(deploymentTemplate);
-
+            deploymentTemplate.Id = protectedDeploymentTemplate.Id;
             return deploymentTemplate;
         }
 
@@ -62,8 +78,10 @@ namespace RegularApi.Tests.Fixtures
 
             var collection = GetCollection<DeploymentOrder>(DeploymentOrderDao.CollectionName);
 
-            await collection.InsertOneAsync(deploymentOrder);
+            var protectedDeploymentOrder = _protector.ProtectObject(deploymentOrder);
+            await collection.InsertOneAsync(protectedDeploymentOrder);
 
+            deploymentOrder.Id = protectedDeploymentOrder.Id;
             return deploymentOrder;
         }
 
@@ -75,8 +93,9 @@ namespace RegularApi.Tests.Fixtures
                 .Where(deploymentOrder => deploymentOrder.Id.Equals(new ObjectId(id)));
 
             var cursor = await collection.FindAsync(filter);
+            var dp = await cursor.FirstOrDefaultAsync();
 
-            return await cursor.FirstOrDefaultAsync();
+            return _protector.UnprotectObject(dp);
         }
     }
 }

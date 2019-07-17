@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using DataProtection.Protectors;
 using LanguageExt;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -13,16 +15,18 @@ namespace RegularApi.Dao
 
         private readonly IMongoCollection<DeploymentTemplate> _collection;
         
-        public DeploymentTemplateDao(IMongoClient mongoClient, string databaseName) 
-            : base(mongoClient, databaseName, CollectionName)
+        public DeploymentTemplateDao(IMongoClient mongoClient, IProtector protector, string databaseName) 
+            : base(mongoClient, protector, databaseName, CollectionName)
         {
             _collection = GetCollection<DeploymentTemplate>();
         }
 
         public async Task<DeploymentTemplate> SaveAsync(DeploymentTemplate template)
         {
-            await _collection.InsertOneAsync(template);
+            var protectedTemplate = _protector.ProtectObject(template);
+            await _collection.InsertOneAsync(protectedTemplate);
 
+            template.Id = protectedTemplate.Id;
             return template;
         }
 
@@ -33,7 +37,8 @@ namespace RegularApi.Dao
 
             var deploymentTemplate = await _collection.FindAsync(filter);
 
-            return OfNullable(deploymentTemplate.FirstOrDefault());
+            return OfNullable(deploymentTemplate.FirstOrDefault())
+                .Map(_protector.UnprotectObject);
         }
 
         public async Task<Option<DeploymentTemplate>> GetByIdAsync(ObjectId id)
@@ -43,14 +48,18 @@ namespace RegularApi.Dao
 
             var deploymentTemplateHolder = await _collection.FindAsync(filter);
 
-            return OfNullable(deploymentTemplateHolder.FirstOrDefault());
+            return OfNullable(deploymentTemplateHolder.FirstOrDefault())
+                .Map(_protector.UnprotectObject);
         }
 
         public async Task<IList<DeploymentTemplate>> GetAllAsync()
         {
             var cursor = await _collection.FindAsync(FilterDefinition<DeploymentTemplate>.Empty);
 
-            return await cursor.ToListAsync();
+            var templates = await cursor.ToListAsync();
+
+            return templates.Select(_protector.UnprotectObject)
+                .ToList();
         }
     }
 }

@@ -1,3 +1,4 @@
+using DataProtection.Protectors;
 using LanguageExt;
 using MongoDB.Driver;
 
@@ -9,11 +10,14 @@ namespace RegularApi.Dao
         private readonly string _collectionName;
         private readonly IMongoClient _mongoClient;
 
-        protected BaseDao(IMongoClient mongoClient, string databaseName, string collectionName)
+        protected readonly IProtector _protector;
+
+        protected BaseDao(IMongoClient mongoClient, IProtector protector, string databaseName, string collectionName)
         {
             _databaseName = databaseName;
             _collectionName = collectionName;
             _mongoClient = mongoClient;
+            _protector = protector;
         }
 
         protected static Option<T> OfNullable<T>(T value)

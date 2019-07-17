@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -9,39 +10,43 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mongo2Go;
 using MongoDB.Driver;
+using RegularApi.Configurations;
 using RegularApi.Tests.Fixtures;
 
 namespace RegularApi.Tests
 {
     public abstract class BaseIT
     {
-        internal static MongoDbRunner MongoDbRunner;
+        internal static MongoDbRunner DbRunner;
         internal static IMongoClient MongoClient;
 
-        protected TestServer TestServer;
+        private TestServer _testServer;
+        
         protected HttpClient HttpClient;
         protected IServiceProvider ServiceProvider;
 
         internal static void CreateMongoDbServer()
         {
-            MongoDbRunner = MongoDbRunner.Start();
-            MongoClient = new MongoClient(MongoDbRunner.ConnectionString);
+            // 27018 initial port for mongo2go in unit test mode
+            WaitForOpenPort(27018);
+            DbRunner = MongoDbRunner.Start();
+            MongoClient = new MongoClient(DbRunner.ConnectionString);
         }
 
         protected void CreateTestServer()
         {
-            TestServer = new TestServer(CreateWebHostBuilder());
+            _testServer = new TestServer(CreateWebHostBuilder());
 
-            ServiceProvider = TestServer.Host.Services;
+            ServiceProvider = _testServer.Host.Services;
 
-            HttpClient = TestServer.CreateClient();
+            HttpClient = _testServer.CreateClient();
             HttpClient.DefaultRequestHeaders.Accept.Clear();
             HttpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        protected void ReleaseMongoDbServer()
+        protected static void ReleaseMongoDbServer()
         {
-            MongoDbRunner.Dispose();
+            DbRunner.Dispose();
         }
 
         private static IConfiguration CreateConfigurationBuilder()
@@ -62,6 +67,10 @@ namespace RegularApi.Tests
                 .ConfigureServices(services =>
                  {
                      services.AddSingleton(MongoClient);
+                     
+                     // DPAPI
+                     services.AddCustomDataProtection();
+                     
                      services.AddSingleton<DaoFixture, DaoFixture>();
                  })
                  .UseStartup<TestStartup>();
@@ -69,6 +78,11 @@ namespace RegularApi.Tests
 
         private static void AddEnvironmentVariables()
         {
+            // DPAPI
+            Environment.SetEnvironmentVariable("RD_DPAPI_CONNECTION_STRING", DbRunner.ConnectionString);
+            Environment.SetEnvironmentVariable("RD_DPAPI_DATABASE", "keyStorage");
+            Environment.SetEnvironmentVariable("RD_DPAPI_COLLECTION", "keys");
+            
             Environment.SetEnvironmentVariable("RABBIT_USER", "guest");
             Environment.SetEnvironmentVariable("RABBIT_PASSWORD", "guest");
         }
@@ -83,5 +97,22 @@ namespace RegularApi.Tests
                 { "MongoDb:Database", "regularOrchestrator" }
             };
         }
+
+        private static void WaitForOpenPort(int port)
+        {
+            var available = false;
+            while (!available) {
+
+                using(TcpClient tcpClient = new TcpClient())
+                {
+                    try {
+                        tcpClient.Connect("127.0.0.1", port);
+                    } catch (Exception) {
+                        available = true;
+                    }
+                }            
+
+            }
+        }        
     }
 }

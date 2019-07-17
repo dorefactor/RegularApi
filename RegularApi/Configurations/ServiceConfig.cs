@@ -1,3 +1,5 @@
+using DataProtection.Protectors;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RegularApi.Dao;
@@ -22,7 +24,7 @@ namespace RegularApi.Configurations
             var applicationDao = provider.GetRequiredService<IApplicationDao>();
             var deploymentTemplateDao = provider.GetRequiredService<IDeploymentTemplateDao>();
             var deploymentOrderDao = provider.GetRequiredService<IDeploymentOrderDao>();
-
+                        
             // Transformers
             services.AddSingleton<ITransformer<ApplicationSetupView, ApplicationSetup>>(new ApplicationSetupTransformer());
             services.AddSingleton<ITransformer<ApplicationView, Application>>(_ =>

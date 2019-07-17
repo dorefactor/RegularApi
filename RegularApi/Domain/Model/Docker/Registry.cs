@@ -1,4 +1,6 @@
-﻿namespace RegularApi.Domain.Model.Docker
+﻿using DataProtection.Attributes;
+
+namespace RegularApi.Domain.Model.Docker
 {
     public class Registry
     {
@@ -6,8 +8,10 @@
 
         public string Url { get; set; }
 
+        [Protected]
         public string Username { get; set; }
 
+        [Protected]
         public string Password { get; set; }
     }
 }

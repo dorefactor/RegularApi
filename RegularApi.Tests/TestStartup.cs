@@ -22,7 +22,7 @@ namespace RegularApi.Tests
 
             // MongoDb services
             services.AddDaos();
-
+            
             // Services
             services.AddApplicationServices();
 

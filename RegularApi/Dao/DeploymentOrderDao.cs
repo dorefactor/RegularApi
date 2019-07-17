@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataProtection.Protectors;
 using LanguageExt;
 using MongoDB.Driver;
 using RegularApi.Domain.Model;
@@ -14,16 +15,18 @@ namespace RegularApi.Dao
 
         private readonly IMongoCollection<DeploymentOrder> _collection;
 
-        public DeploymentOrderDao(IMongoClient mongoClient, string databaseName)
-            : base(mongoClient, databaseName, CollectionName)
+        public DeploymentOrderDao(IMongoClient mongoClient, IProtector protector, string databaseName)
+            : base(mongoClient, protector, databaseName, CollectionName)
         {
             _collection = GetCollection<DeploymentOrder>();
         }
 
         public async Task<DeploymentOrder> SaveAsync(DeploymentOrder deploymentOrder)
         {
-            await _collection.InsertOneAsync(deploymentOrder);
+            var deploymentOrderProtected = _protector.ProtectObject(deploymentOrder);
+            await _collection.InsertOneAsync(deploymentOrderProtected);
 
+            deploymentOrder.Id = deploymentOrderProtected.Id;
             return deploymentOrder;
         }
 
@@ -49,13 +52,15 @@ namespace RegularApi.Dao
 
             var queryResult = await query.FirstOrDefault();
 
-            return queryResult.IsNull() ? Option<DeploymentOrder>.None : Option<DeploymentOrder>.Some(new DeploymentOrder
+            var value =  queryResult.IsNull() ? Option<DeploymentOrder>.None : Option<DeploymentOrder>.Some(new DeploymentOrder
             {
                 Id = queryResult.Id,
                 RequestId = queryResult.RequestId,
                 Application = GetApplication(queryResult),
                 HostsSetup = GetHostsSetup(queryResult)
             });
+
+            return value.Map(_protector.UnprotectObject);
         }
 
         private Application GetApplication(dynamic queryResult)

@@ -34,12 +34,12 @@ namespace RegularApi.Tests.Dao
         {
             var deploymentOrder = ModelFixture.BuildDeploymentOrder(ApplicationType.Docker);
 
-            var actualDeploymentOrder = await _deploymentOrderDao.SaveAsync(deploymentOrder);
+            var currentDeploymentOrder = await _deploymentOrderDao.SaveAsync(deploymentOrder);
             var expectedDeploymentOrder = await _daoFixture.GetDeploymentOrderByIdAsync(deploymentOrder.Id.ToString());
 
-            actualDeploymentOrder.Should().NotBeNull();
-            actualDeploymentOrder.Id.Should().BeEquivalentTo(expectedDeploymentOrder.Id);
-            actualDeploymentOrder.RequestId.Should().MatchRegex("\\b");
+            currentDeploymentOrder.Should().NotBeNull();
+            currentDeploymentOrder.Id.Should().BeEquivalentTo(expectedDeploymentOrder.Id);
+            currentDeploymentOrder.RequestId.Should().MatchRegex("\\b");
         }
 
         [Test]
