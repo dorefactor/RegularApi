@@ -29,3 +29,9 @@ jobs:
   - stage: "Unit Tests"
     script:
       - ./Scripts/bash/unit-tests.sh
+  - stage: "Delivery"
+    if: branch = master AND tag IS present
+    script:
+      - ./Scripts/bash/build-docker-image.sh
+      - ./Scripts/bash/push-docker-image.sh
+
