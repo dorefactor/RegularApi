@@ -32,11 +32,9 @@ stages:
 jobs:
   include:
   - stage: tests
-    name: "Unit Tests"
     script:
       - ./Scripts/bash/unit-tests.sh
   - stage: delivery
-    name: "Delivery"
     script:
       - ./Scripts/bash/build-docker-image.sh
       - ./Scripts/bash/push-docker-image.sh
