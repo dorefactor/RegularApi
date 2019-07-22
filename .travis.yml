@@ -24,17 +24,17 @@ before_install:
 after_script:
   - ./Scripts/bash/cleanup-build.sh
 
-stages:
-  - tests
-  - delivery
-    if: branch = master AND tag IS present
-
 jobs:
   include:
   - stage: tests
     script:
       - ./Scripts/bash/unit-tests.sh
   - stage: delivery
-    script:
-      - ./Scripts/bash/build-docker-image.sh
-      - ./Scripts/bash/push-docker-image.sh
+    if: tag IS present
+    deploy:
+      - provider: script
+        script:
+          - ./Scripts/bash/build-docker-image.sh
+          - ./Scripts/bash/push-docker-image.sh
+        on:
+          branch: master
