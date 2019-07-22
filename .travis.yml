@@ -25,9 +25,9 @@ after_script:
   - ./Scripts/bash/cleanup-build.sh
 
 stages:
- - tests
- - delivery
-   if: branch = master AND tag IS present
+  - tests
+  - delivery
+    if: branch = master AND tag IS present
 
 jobs:
   include:
