@@ -27,6 +27,7 @@ after_script:
 jobs:
   include:
   - stage: tests
+    if: branch NOT IN (master)
     script:
       - ./Scripts/bash/unit-tests.sh
   - stage: delivery
