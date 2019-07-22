@@ -27,15 +27,10 @@ after_script:
 jobs:
   include:
   - stage: tests
-    if: branch NOT IN (master)
     script:
       - ./Scripts/bash/unit-tests.sh
   - stage: delivery
-    if: tag IS present
-    deploy:
-      - provider: script
-        script:
-          - ./Scripts/bash/build-docker-image.sh
-          - ./Scripts/bash/push-docker-image.sh
-        on:
-          branch: master
+    if: branch = "master" AND tag IS present
+    script:
+      - ./Scripts/bash/build-docker-image.sh
+      - ./Scripts/bash/push-docker-image.sh
