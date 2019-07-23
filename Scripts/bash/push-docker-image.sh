@@ -1,8 +1,6 @@
 #!/bin/sh
 
-# echo "$REGISTRY_PWD" | docker login -u "$REGISTRY_USER" --password-stdin
-
-docker login -u "$REGISTRY_USER" -p "$REGISTRY_PWD"
+echo "$REGISTRY_PWD" | docker login -u "$REGISTRY_USER" --password-stdin
 
 docker push dorefactor/rd-api:$TRAVIS_TAG
 
