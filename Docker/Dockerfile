@@ -11,7 +11,7 @@ RUN dotnet restore
 
 # copy everything else and build
 COPY . ./
-RUN dotnet publish -c Release -o out
+RUN dotnet publish ./RegularApi/RegularApi.csproj -c Release -o out
 
 # build runtime image
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
@@ -20,7 +20,6 @@ RUN useradd -ms /bin/bash dorefactor
 
 WORKDIR /home/dorefactor/rd-api
 COPY --from=build-env /app/RegularApi/out ./
-COPY --from=build-env /app/DataProtection/out ./
 
 USER dorefactor
 
