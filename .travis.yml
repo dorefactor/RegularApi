@@ -26,12 +26,12 @@ after_script:
 
 jobs:
   include:
-  - stage: "Unit Tests"
+  - stage: tests
+    if: tag IS NOT present AND branch != "master"
     script:
       - ./Scripts/bash/unit-tests.sh
-  - stage: "Delivery"
-    if: branch = master AND tag IS present
+  - stage: delivery
+    if: tag IS present
     script:
       - ./Scripts/bash/build-docker-image.sh
       - ./Scripts/bash/push-docker-image.sh
-

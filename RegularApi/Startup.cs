@@ -28,11 +28,12 @@ namespace RegularApi
 
             // MongoDb services
             services.AddMongoClient();
-            services.AddDaos();
 
             // DPAPI
             services.AddCustomDataProtection();
-            
+
+            services.AddDaos();
+
             // Services
             services.AddApplicationServices();
 
