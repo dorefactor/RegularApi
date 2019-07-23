@@ -1,8 +1,12 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS build-env
 WORKDIR /app
 
-# copy csproj and restore as distinct layers
-COPY RegularApi/*.csproj ./
+# copy sln, csproj and restore as distinct layers
+COPY *.sln .
+COPY DataProtection/*.csproj ./DataProtection/
+COPY DataProtection.Tests/*.csproj ./DataProtection.Tests/
+COPY RegularApi/*.csproj ./RegularApi/
+COPY RegularApi.Tests/*.csproj ./RegularApi.Tests/
 RUN dotnet restore
 
 # copy everything else and build
@@ -14,8 +18,9 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 
 RUN useradd -ms /bin/bash dorefactor
 
-WORKDIR /home/dorefactor/RegularApi
+WORKDIR /home/dorefactor/rd-api
 COPY --from=build-env /app/RegularApi/out ./
+COPY --from=build-env /app/DataProtection/out ./
 
 USER dorefactor
 
